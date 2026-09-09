@@ -30,8 +30,8 @@ from database import (
 init_db()
 
 app = FastAPI(
-    title="CivicTrack REST API",
-    description="Official Evidence-Based Citizen Grievance & Accountability Backend",
+    title="Kizuno-AI REST API",
+    description="Official Evidence-Based Citizen Grievance & Accountability Backend - Kizuno-AI",
     version="2.0.0"
 )
 
@@ -299,7 +299,7 @@ def serve_index():
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("CivicTrack Python Backend & Real SQL Server Starting...")
+    print("Kizuno-AI Python Backend & Real SQL Server Starting...")
     print("REST API available at: http://localhost:8000/api/health")
     print("Frontend Application at: http://localhost:8000/")
     print("SQL Database: civictrack.db (SQLite + SQLAlchemy)")

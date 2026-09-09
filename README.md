@@ -1,12 +1,14 @@
-# 📱 CivicTrack (Kizuna-AI) — Citizen Complaint Tracking & Accountability System
+# 📱 Kizuno-AI — Evidence-Based Citizen Grievance Tracking Engine
 
 > **"Submit your complaint and follow its entire journey until resolution."**  
-> An evidence-based civic grievance platform connecting citizens with municipal departments through day-wise audit journals, bi-directional officer workflows, automated delay detection, a **Python FastAPI backend**, and a **real SQL database (SQLite)**.
+> An ultra-premium, dark cyber-aesthetic civic grievance platform connecting citizens with municipal departments through day-wise audit journals, bi-directional officer workflows, automated delay detection, a **Skiper68 interactive authentication enclave**, a **Python FastAPI backend**, and a **real SQL database (SQLite)**.
 
 ---
 
-## 🏗️ Technology Stack
+## 🏗️ Technology & Design Stack
 
+- **Design Aesthetic**: Cyber Dark Enclave (`#08080a`), floating atmospheric radial orbs (cyan, indigo, purple), isometric grid, translucent glass cards with 24px backdrop blur, and luminous neon telemetry indicators.
+- **Authentication**: Skiper68 animated digit/passcode transitions, tactile Web Audio sound synthesis, Google OAuth, GitHub, FIDO2 Passkeys, and role switcher.
 - **Backend**: Python 3.12, **FastAPI**, **Uvicorn**
 - **Database (SQL)**: **SQLite** with **SQLAlchemy ORM** (`civictrack.db`)
 - **Frontend**: Responsive Single-Page Application (HTML5, Vanilla CSS, Modern JavaScript)

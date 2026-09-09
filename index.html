@@ -4,78 +4,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CivicTrack — Citizen Complaint Tracking & Accountability System</title>
+    <title>Kizuno-AI — Evidence-Based Citizen Grievance Tracking Engine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Official Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
-            --bg-canvas: #f8fafc;
-            --card-bg: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-muted: #94a3b8;
-            --border-light: #e2e8f0;
-            --border-subtle: #cbd5e1;
+            --bg-color: #08080a;
+            --bg-card: rgba(18, 18, 23, 0.82);
+            --bg-card-border: rgba(255, 255, 255, 0.08);
+            --bg-card-border-hover: rgba(255, 255, 255, 0.18);
+            --text-primary: #f5f5f7;
+            --text-secondary: rgba(245, 245, 247, 0.65);
+            --text-muted: rgba(245, 245, 247, 0.4);
 
-            /* Brand & Action Colors */
-            --brand-primary: #2563eb;
-            --brand-primary-hover: #1d4ed8;
-            --brand-primary-subtle: #eff6ff;
-            --brand-green: #16a34a;
-            --brand-green-hover: #15803d;
-            --brand-green-subtle: #f0fdf4;
-            --brand-purple: #8b5cf6;
-            --brand-purple-hover: #7c3aed;
-            --brand-purple-subtle: #f5f3ff;
-            --brand-amber: #d97706;
-            --brand-amber-subtle: #fffbeb;
-            --brand-red: #dc2626;
-            --brand-red-subtle: #fef2f2;
+            /* Luminous Cyber Accents */
+            --brand-primary: #38bdf8;
+            --brand-primary-hover: #0ea5e9;
+            --brand-primary-glow: rgba(56, 189, 248, 0.25);
+            --brand-indigo: #6366f1;
+            --brand-purple: #a855f7;
 
-            /* Status Theme */
-            --status-green: #16a34a;
-            --status-blue: #2563eb;
-            --status-amber: #d97706;
-            --status-red: #dc2626;
-            --status-gray: #64748b;
+            /* Telemetry Status Colors */
+            --status-emerald: #34d399;
+            --status-emerald-glow: rgba(52, 211, 153, 0.25);
+            --status-amber: #f59e0b;
+            --status-amber-glow: rgba(245, 158, 11, 0.25);
+            --status-rose: #f43f5e;
+            --status-rose-glow: rgba(244, 63, 94, 0.25);
+            --status-slate: #64748b;
 
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
-            --radius-lg: 16px;
-            --radius-md: 10px;
-            --radius-sm: 6px;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.6);
+            --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            --radius-lg: 24px;
+            --radius-md: 14px;
+            --radius-sm: 8px;
+            --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        body {
-            background-color: var(--bg-canvas);
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            background-color: var(--bg-color);
             color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            font-family: var(--font-main);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
             line-height: 1.5;
         }
 
-        /* App Main Navbar */
+        /* Ambient Cosmic Atmosphere */
+        .bg-atmosphere {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.45;
+            transition: all 1.2s ease;
+        }
+
+        .glow-orb-1 {
+            width: 580px;
+            height: 580px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(168, 85, 247, 0.1) 50%, transparent 70%);
+            top: -160px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: orbFloat 16s ease-in-out infinite alternate;
+        }
+
+        .glow-orb-2 {
+            width: 520px;
+            height: 520px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.16) 0%, rgba(52, 211, 153, 0.08) 50%, transparent 70%);
+            bottom: -160px;
+            right: 12%;
+            animation: orbFloat 20s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes orbFloat {
+            0% { transform: translate(-50%, 0) scale(1); }
+            100% { transform: translate(-45%, 35px) scale(1.08); }
+        }
+
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(ellipse 75% 65% at 50% 40%, black 20%, transparent 80%);
+        }
+
+        /* Top Application Navigation */
         .app-nav {
-            background: #ffffff;
-            border-bottom: 1px solid var(--border-light);
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            background: rgba(8, 8, 10, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--bg-card-border);
         }
 
         .nav-container {
-            max-width: 1200px;
+            max-width: 1240px;
             margin: 0 auto;
             padding: 0.85rem 1.5rem;
             display: flex;
@@ -87,7 +141,7 @@
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.75rem;
             cursor: pointer;
             text-decoration: none;
             color: var(--text-primary);
@@ -96,51 +150,52 @@
         .brand-shield {
             width: 38px;
             height: 38px;
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            border-radius: 10px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ffffff;
-            box-shadow: 0 3px 6px rgba(37, 99, 235, 0.25);
-        }
-
-        .brand-text {
-            display: flex;
-            flex-direction: column;
+            color: #08080a;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
         }
 
         .brand-title {
             font-size: 1.25rem;
             font-weight: 800;
             letter-spacing: -0.03em;
-            color: var(--brand-primary);
+            color: #ffffff;
             line-height: 1.1;
+        }
+
+        .brand-title span {
+            color: var(--brand-primary);
+            text-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
         }
 
         .brand-tagline {
             font-size: 0.685rem;
             font-weight: 600;
             color: var(--text-muted);
-            letter-spacing: 0.02em;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
         }
 
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.35rem;
         }
 
         .nav-btn {
             background: transparent;
-            border: none;
-            padding: 0.6rem 1rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
+            border: 1px solid transparent;
+            padding: 0.55rem 0.95rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -148,208 +203,297 @@
         }
 
         .nav-btn:hover {
-            color: var(--brand-primary);
-            background: var(--brand-primary-subtle);
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
         }
 
         .nav-btn.active {
-            color: var(--brand-primary);
-            background: var(--brand-primary-subtle);
-            font-weight: 700;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
         }
 
         .nav-btn.officer-btn {
-            background: #1e293b;
-            color: #ffffff;
-            margin-left: 0.5rem;
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
         }
 
         .nav-btn.officer-btn:hover {
-            background: #0f172a;
+            background: rgba(99, 102, 241, 0.22);
             color: #ffffff;
-        }
-
-        .user-pill {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.4rem 0.75rem;
-            border-radius: 9999px;
-            background: #f1f5f9;
-            font-size: 0.825rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .user-avatar {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: #2563eb;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 700;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
         }
 
         .backend-pill {
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
-            padding: 0.35rem 0.75rem;
+            padding: 0.35rem 0.85rem;
             border-radius: 9999px;
-            font-size: 0.75rem;
+            font-size: 0.725rem;
             font-weight: 700;
-            border: 1px solid var(--border-light);
-            background: #f8fafc;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
             color: var(--text-secondary);
             transition: all 0.2s ease;
         }
 
         .backend-pill.online {
-            background: #f0fdf4;
-            color: #15803d;
-            border-color: #bbf7d0;
+            background: rgba(52, 211, 153, 0.1);
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.28);
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.15);
         }
 
         .backend-pill.offline {
-            background: #fffbeb;
-            color: #b45309;
-            border-color: #fde68a;
+            background: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border-color: rgba(245, 158, 11, 0.28);
         }
 
         .backend-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: #cbd5e1;
-            display: inline-block;
         }
 
         .backend-pill.online .backend-dot {
-            background: #16a34a;
-            box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.25);
+            background: #34d399;
+            box-shadow: 0 0 8px #34d399;
         }
 
         .backend-pill.offline .backend-dot {
-            background: #d97706;
+            background: #f59e0b;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .user-pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #38bdf8, #6366f1);
+            color: #08080a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 800;
         }
 
         /* View Container */
         .app-view {
             display: none;
-            flex: 1;
-            padding: 2rem 1.5rem 4rem 1.5rem;
-            max-width: 1200px;
+            position: relative;
+            z-index: 1;
+            padding: 2.5rem 1.5rem 5rem 1.5rem;
+            max-width: 1240px;
             width: 100%;
             margin: 0 auto;
         }
 
         .app-view.active {
             display: block;
-            animation: fadeIn 0.25s ease-out;
+            animation: viewFade 0.3s var(--ease-spring);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+        @keyframes viewFade {
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ----------------------------------------------------
+        /* Glass Content Cards */
+        .content-card {
+            background: var(--bg-card);
+            border: 1px solid var(--bg-card-border);
+            border-radius: var(--radius-lg);
+            padding: 2.25rem;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: var(--shadow-lg);
+            transition: border-color 0.25s ease;
+        }
+
+        .content-card:hover {
+            border-color: var(--bg-card-border-hover);
+        }
+
+        .narrow-container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .standard-container {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        /* ==========================================================
            SCREEN 1: HERO / LANDING PAGE
-           ---------------------------------------------------- */
+           ========================================================== */
         .hero-banner {
             position: relative;
-            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.88)), url('https://images.unsplash.com/photo-1477959858617-67f30bc75b82?w=1600&auto=format&fit=crop&q=80');
-            background-size: cover;
-            background-position: center;
-            border-radius: 20px;
+            background: linear-gradient(160deg, rgba(18, 18, 23, 0.95) 0%, rgba(8, 8, 10, 0.9) 100%);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 28px;
             padding: 4.5rem 2.5rem;
-            color: #ffffff;
             text-align: center;
             box-shadow: var(--shadow-lg);
             margin-bottom: 2.5rem;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #38bdf8, transparent);
         }
 
         .hero-title {
-            font-size: 2.75rem;
+            font-size: 3rem;
             font-weight: 800;
-            line-height: 1.15;
-            letter-spacing: -0.03em;
-            margin-bottom: 1rem;
+            line-height: 1.12;
+            letter-spacing: -0.035em;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, #38bdf8 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-subtitle {
-            font-size: 1.15rem;
-            color: #cbd5e1;
-            max-width: 650px;
-            margin: 0 auto 2.5rem auto;
-            font-weight: 400;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin: 0 auto 3rem auto;
+            line-height: 1.55;
         }
 
         .action-cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
-            max-width: 1000px;
-            margin: 0 auto 2.5rem auto;
+            max-width: 1040px;
+            margin: 0 auto 3rem auto;
         }
 
         .action-card {
-            border-radius: 16px;
-            padding: 2rem 1.75rem;
+            border-radius: 20px;
+            padding: 2.25rem 1.85rem;
             text-align: left;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: var(--shadow-md);
+            transition: all 0.25s var(--ease-spring);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--bg-card-border);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 180px;
-            color: #ffffff;
+            min-height: 195px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .action-card.cyan:hover::before {
+            background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.15), transparent 70%);
+            opacity: 1;
+        }
+
+        .action-card.emerald:hover::before {
+            background: radial-gradient(circle at top left, rgba(52, 211, 153, 0.15), transparent 70%);
+            opacity: 1;
+        }
+
+        .action-card.purple:hover::before {
+            background: radial-gradient(circle at top left, rgba(168, 85, 247, 0.15), transparent 70%);
+            opacity: 1;
         }
 
         .action-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 14px 24px -4px rgba(0, 0, 0, 0.2);
-        }
-
-        .action-card.blue {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-        }
-
-        .action-card.green {
-            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-        }
-
-        .action-card.purple {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
         }
 
         .action-card-icon {
             width: 48px;
             height: 48px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .action-card.cyan .action-card-icon {
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
+        }
+
+        .action-card.emerald .action-card-icon {
+            background: rgba(52, 211, 153, 0.12);
+            color: #34d399;
+            box-shadow: 0 0 16px rgba(52, 211, 153, 0.2);
+        }
+
+        .action-card.purple .action-card-icon {
+            background: rgba(168, 85, 247, 0.12);
+            color: #c084fc;
+            box-shadow: 0 0 16px rgba(168, 85, 247, 0.2);
         }
 
         .action-card-title {
             font-size: 1.35rem;
             font-weight: 800;
             margin-bottom: 0.35rem;
+            color: #ffffff;
         }
 
         .action-card-desc {
-            font-size: 0.9rem;
-            opacity: 0.9;
+            font-size: 0.885rem;
+            color: var(--text-secondary);
             font-weight: 500;
+            line-height: 1.45;
         }
 
         .hero-pillars {
@@ -357,90 +501,66 @@
             justify-content: center;
             gap: 2.5rem;
             flex-wrap: wrap;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .pillar-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            color: #e2e8f0;
+            color: var(--text-muted);
         }
 
-        /* ----------------------------------------------------
-           COMMON CARD STYLES & LAYOUTS
-           ---------------------------------------------------- */
-        .content-card {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 2.25rem;
-            box-shadow: var(--shadow-sm);
+        .pillar-item svg {
+            color: var(--brand-primary);
         }
 
-        .narrow-container {
-            max-width: 720px;
-            margin: 0 auto;
-        }
-
-        .standard-container {
-            max-width: 860px;
-            margin: 0 auto;
-        }
-
-        .page-header {
-            margin-bottom: 2rem;
-        }
-
-        .page-title {
-            font-size: 1.75rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
-            margin-bottom: 0.35rem;
-        }
-
-        .page-desc {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-        }
-
-        /* Form Controls */
+        /* ==========================================================
+           CYBER FORMS & CONTROLS
+           ========================================================== */
         .form-group {
             margin-bottom: 1.5rem;
         }
 
         .form-label {
             display: block;
-            font-size: 0.875rem;
+            font-size: 0.825rem;
             font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.45rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
         }
 
         .form-label span.req {
-            color: var(--brand-red);
+            color: var(--status-rose);
         }
 
         .form-control {
             width: 100%;
-            padding: 0.85rem 1.1rem;
-            border: 1px solid var(--border-light);
+            padding: 0.95rem 1.15rem;
+            border: 1px solid var(--bg-card-border);
             border-radius: var(--radius-md);
             font-size: 0.95rem;
             font-family: inherit;
-            background: #fafbfc;
+            background: rgba(255, 255, 255, 0.03);
+            color: #ffffff;
             outline: none;
             transition: all 0.2s ease;
         }
 
         .form-control:focus {
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.06);
             border-color: var(--brand-primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 0 20px var(--brand-primary-glow);
+        }
+
+        .form-control option {
+            background: #141419;
+            color: #ffffff;
         }
 
         textarea.form-control {
@@ -449,34 +569,37 @@
         }
 
         .btn-primary {
-            background: var(--brand-primary);
-            color: #ffffff;
+            background: #ffffff;
+            color: #08080a;
             border: none;
-            padding: 0.85rem 1.75rem;
+            padding: 0.95rem 1.75rem;
             border-radius: var(--radius-md);
             font-size: 0.95rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s var(--ease-spring);
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
             width: 100%;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
         }
 
         .btn-primary:hover {
-            background: var(--brand-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(255, 255, 255, 0.25);
+            background: #f1f5f9;
         }
 
         .btn-secondary {
-            background: #f1f5f9;
+            background: rgba(255, 255, 255, 0.05);
             color: var(--text-secondary);
-            border: 1px solid var(--border-light);
-            padding: 0.85rem 1.75rem;
+            border: 1px solid var(--bg-card-border);
+            padding: 0.9rem 1.75rem;
             border-radius: var(--radius-md);
-            font-size: 0.95rem;
-            font-weight: 700;
+            font-size: 0.925rem;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
@@ -486,25 +609,25 @@
         }
 
         .btn-secondary:hover {
-            background: #e2e8f0;
-            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.09);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.18);
         }
 
-        /* Upload Preview Area */
+        /* Upload Dropzone */
         .upload-dropzone {
-            border: 2px dashed var(--border-subtle);
+            border: 1.5px dashed rgba(255, 255, 255, 0.15);
             border-radius: var(--radius-md);
-            padding: 1.5rem;
+            padding: 1.75rem;
             text-align: center;
-            background: #fafbfc;
+            background: rgba(255, 255, 255, 0.02);
             cursor: pointer;
-            position: relative;
             transition: all 0.2s;
         }
 
         .upload-dropzone:hover {
             border-color: var(--brand-primary);
-            background: var(--brand-primary-subtle);
+            background: rgba(56, 189, 248, 0.04);
         }
 
         .upload-preview-box {
@@ -513,50 +636,20 @@
             gap: 1rem;
             margin-top: 0.75rem;
             padding: 0.75rem 1rem;
-            background: #f1f5f9;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 10px;
         }
 
         .upload-preview-img {
             width: 50px;
             height: 50px;
-            border-radius: 6px;
+            border-radius: 8px;
             object-fit: cover;
-            border: 1px solid var(--border-light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* ----------------------------------------------------
-           SCREEN 3: COMPLAINT SUBMITTED (KEY GENERATED)
-           ---------------------------------------------------- */
-        .success-hero {
-            text-align: center;
-            padding: 1rem 0 2rem 0;
-        }
-
-        .success-icon-badge {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: #dcfce7;
-            color: #16a34a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.25rem auto;
-        }
-
-        .success-title {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            margin-bottom: 0.4rem;
-        }
-
-        .success-desc {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-        }
-
+        /* Keys Grid (Screen 3) */
         .keys-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -565,24 +658,25 @@
         }
 
         .key-box {
-            background: #f8fafc;
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            padding: 1.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
             position: relative;
         }
 
         .key-box.highlight {
-            background: #eff6ff;
-            border-color: #bfdbfe;
+            background: rgba(56, 189, 248, 0.06);
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 24px rgba(56, 189, 248, 0.1);
         }
 
         .key-label {
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-secondary);
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
             margin-bottom: 0.4rem;
             display: flex;
             justify-content: space-between;
@@ -590,31 +684,26 @@
         }
 
         .key-value {
-            font-size: 1.2rem;
+            font-size: 1.35rem;
             font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-primary);
+            font-family: var(--font-mono);
+            color: #ffffff;
             letter-spacing: -0.02em;
         }
 
         .key-box.highlight .key-value {
             color: var(--brand-primary);
-        }
-
-        .key-subtext {
-            font-size: 0.725rem;
-            color: var(--text-muted);
-            margin-top: 0.35rem;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
         }
 
         .copy-btn {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 6px;
-            padding: 0.25rem 0.55rem;
+            padding: 0.25rem 0.6rem;
             font-size: 0.725rem;
             font-weight: 700;
-            color: var(--text-secondary);
+            color: var(--text-primary);
             cursor: pointer;
             transition: all 0.15s ease;
         }
@@ -622,267 +711,54 @@
         .copy-btn:hover {
             border-color: var(--brand-primary);
             color: var(--brand-primary);
+            background: rgba(56, 189, 248, 0.15);
         }
 
-        .alert-box {
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            border-radius: 10px;
-            padding: 1rem 1.25rem;
-            font-size: 0.875rem;
-            color: #92400e;
-            display: flex;
-            gap: 0.75rem;
-            align-items: flex-start;
-            margin-bottom: 2rem;
-        }
-
-        .keys-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        /* ----------------------------------------------------
-           SCREEN 4: TRACK COMPLAINT (SEARCH)
-           ---------------------------------------------------- */
-        .track-search-card {
-            text-align: center;
-            padding: 3rem 2rem;
-        }
-
-        .track-search-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: #eff6ff;
-            color: var(--brand-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem auto;
-        }
-
-        .track-search-title {
-            font-size: 1.75rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .track-search-desc {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            max-width: 480px;
-            margin: 0 auto 2rem auto;
-        }
-
-        .track-search-form {
-            display: flex;
-            gap: 0.5rem;
-            max-width: 580px;
-            margin: 0 auto 1.5rem auto;
-        }
-
-        .track-search-input {
-            flex: 1;
-            padding: 0.9rem 1.25rem;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-md);
-            font-size: 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            outline: none;
-            background: #fafbfc;
-        }
-
-        .track-search-input:focus {
-            background: #ffffff;
-            border-color: var(--brand-primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-        }
-
-        .sample-search-chips {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-        }
-
-        .chip-btn {
-            background: #f1f5f9;
-            border: 1px solid var(--border-light);
-            border-radius: 9999px;
-            padding: 0.35rem 0.85rem;
-            font-size: 0.775rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .chip-btn:hover {
-            border-color: var(--brand-primary);
-            color: var(--brand-primary);
-            background: #eff6ff;
-        }
-
-        /* ----------------------------------------------------
-           SCREEN 5 & 6: COMPLAINT DETAILS & DAY-WISE TIMELINE
-           ---------------------------------------------------- */
+        /* ==========================================================
+           PUBLIC TRACKING & DAY-WISE TIMELINE
+           ========================================================== */
         .public-view-grid {
             display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
-            gap: 1.75rem;
-        }
-
-        .public-meta-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-light);
-            padding-bottom: 1.25rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-        }
-
-        .meta-id-group {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .public-tracking-key {
-            font-size: 1.25rem;
-            font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--brand-primary);
-        }
-
-        .public-internal-id {
-            font-size: 0.825rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            font-family: 'JetBrains Mono', monospace;
-            background: #f1f5f9;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-        }
-
-        .detail-row {
-            margin-bottom: 1.25rem;
-        }
-
-        .detail-label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: 0.25rem;
-        }
-
-        .detail-value {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .detail-photo-card {
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border-light);
-            margin: 1.25rem 0;
-            max-height: 220px;
-        }
-
-        .detail-photo-img {
-            width: 100%;
-            height: 100%;
-            max-height: 220px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .status-badge-card {
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            border-radius: 12px;
-            padding: 1.25rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1.5rem;
-        }
-
-        .status-badge-card.resolved {
-            background: #ecfdf5;
-            border-color: #a7f3d0;
-        }
-
-        .status-badge-card.in-progress {
-            background: #eff6ff;
-            border-color: #bfdbfe;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2rem;
         }
 
         .status-pill {
-            padding: 0.4rem 0.9rem;
-            border-radius: 9999px;
-            font-size: 0.8rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
             font-weight: 800;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
         }
 
-        .status-pill.delayed { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-        .status-pill.resolved { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-        .status-pill.in-progress { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
-        .status-pill.pending { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+        .status-pill.delayed { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .status-pill.resolved { background: rgba(52, 211, 153, 0.12); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+        .status-pill.in-progress { background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+        .status-pill.pending { background: rgba(255, 255, 255, 0.06); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.1); }
 
         .priority-badge {
             padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.725rem;
             font-weight: 700;
             display: inline-block;
+            text-transform: uppercase;
         }
 
-        .priority-badge.Medium { background: #fef3c7; color: #b45309; }
-        .priority-badge.High { background: #fee2e2; color: #b91c1c; }
-        .priority-badge.Critical { background: #7f1d1d; color: #ffffff; }
-        .priority-badge.Low { background: #f1f5f9; color: #475569; }
+        .priority-badge.Medium { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .priority-badge.High { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+        .priority-badge.Critical { background: rgba(220, 38, 38, 0.25); color: #f87171; border: 1px solid #ef4444; }
+        .priority-badge.Low { background: rgba(255, 255, 255, 0.06); color: var(--text-muted); border: 1px solid rgba(255, 255, 255, 0.08); }
 
-        /* Day-Wise Timeline Styling */
-        .timeline-box {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .timeline-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-light);
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .timeline-title {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: var(--text-primary);
-        }
-
+        /* Timeline Stream */
         .timeline-stream {
             position: relative;
             padding-left: 2rem;
-            border-left: 2px solid var(--border-light);
+            border-left: 2px solid rgba(255, 255, 255, 0.08);
             margin-left: 1rem;
         }
 
@@ -903,84 +779,36 @@
             width: 14px;
             height: 14px;
             border-radius: 50%;
-            background: #ffffff;
-            border: 3px solid var(--border-light);
+            background: #08080a;
+            border: 3px solid rgba(255, 255, 255, 0.2);
             z-index: 2;
         }
 
-        /* Timeline Node Flavors */
-        .timeline-node.submitted::before { border-color: var(--status-green); background: var(--status-green); }
-        .timeline-node.forwarded::before { border-color: var(--status-blue); background: var(--status-blue); }
-        .timeline-node.stationary::before { border-color: var(--status-gray); background: #ffffff; border-style: dashed; }
-        .timeline-node.delayed::before { border-color: var(--status-amber); background: var(--status-amber); }
-        .timeline-node.escalated::before { border-color: var(--status-red); background: var(--status-red); }
-        .timeline-node.work-started::before { border-color: var(--brand-primary); background: var(--brand-primary); }
-        .timeline-node.resolved::before { border-color: var(--status-green); background: var(--status-green); box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2); }
-
-        .timeline-meta {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            margin-bottom: 0.35rem;
-            flex-wrap: wrap;
-        }
-
-        .timeline-day-badge {
-            font-size: 0.725rem;
-            font-weight: 800;
-            padding: 0.15rem 0.5rem;
-            border-radius: 4px;
-            background: #f1f5f9;
-            color: var(--text-secondary);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .timeline-date {
-            font-size: 0.775rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
+        .timeline-node.submitted::before { border-color: var(--status-emerald); background: var(--status-emerald); box-shadow: 0 0 10px var(--status-emerald); }
+        .timeline-node.forwarded::before { border-color: var(--brand-primary); background: var(--brand-primary); box-shadow: 0 0 10px var(--brand-primary); }
+        .timeline-node.stationary::before { border-color: var(--status-slate); background: #08080a; border-style: dashed; }
+        .timeline-node.delayed::before { border-color: var(--status-amber); background: var(--status-amber); box-shadow: 0 0 10px var(--status-amber); }
+        .timeline-node.escalated::before { border-color: var(--status-rose); background: var(--status-rose); box-shadow: 0 0 10px var(--status-rose); }
+        .timeline-node.work-started::before { border-color: var(--brand-indigo); background: var(--brand-indigo); box-shadow: 0 0 10px var(--brand-indigo); }
+        .timeline-node.resolved::before { border-color: var(--status-emerald); background: var(--status-emerald); box-shadow: 0 0 14px var(--status-emerald); }
 
         .timeline-status-tag {
-            font-size: 0.675rem;
+            font-size: 0.65rem;
             font-weight: 800;
             padding: 0.15rem 0.5rem;
             border-radius: 4px;
             text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
-        .tag-verified { background: #dbeafe; color: #1e40af; }
-        .tag-stationary { background: #e2e8f0; color: #475569; }
-        .tag-ai-inference { background: #fef3c7; color: #92400e; }
-        .tag-escalated { background: #fee2e2; color: #991b1b; }
+        .tag-verified { background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25); }
+        .tag-stationary { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .tag-ai-inference { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); }
+        .tag-escalated { background: rgba(244, 63, 94, 0.12); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.25); }
 
-        .timeline-event-name {
-            font-size: 0.975rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .timeline-desc {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            line-height: 1.45;
-        }
-
-        .timeline-footnote {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px dashed var(--border-light);
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        /* ----------------------------------------------------
-           SCREEN 7 & 8: OFFICER DASHBOARD & ACTION CONSOLE
-           ---------------------------------------------------- */
+        /* ==========================================================
+           OFFICER DASHBOARD CYBER TELEMETRY
+           ========================================================== */
         .officer-layout {
             display: grid;
             grid-template-columns: 240px 1fr;
@@ -988,21 +816,11 @@
         }
 
         .officer-sidebar {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            border: 1px solid var(--bg-card-border);
             border-radius: var(--radius-lg);
             padding: 1.5rem 1rem;
             height: fit-content;
-        }
-
-        .sidebar-heading {
-            font-size: 0.725rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            padding: 0 0.75rem;
-            margin-bottom: 0.5rem;
         }
 
         .sidebar-menu {
@@ -1015,62 +833,58 @@
             align-items: center;
             gap: 0.6rem;
             padding: 0.65rem 0.85rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
         }
 
         .sidebar-item:hover, .sidebar-item.active {
-            background: var(--brand-primary-subtle);
+            background: rgba(56, 189, 248, 0.1);
             color: var(--brand-primary);
-            font-weight: 700;
+            border: 1px solid rgba(56, 189, 248, 0.25);
         }
 
-        /* Officer KPIs */
+        /* KPI Tiles */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
 
         .kpi-card {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 16px;
             padding: 1.25rem 1rem;
             box-shadow: var(--shadow-sm);
         }
 
         .kpi-title {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.05em;
             margin-bottom: 0.4rem;
         }
 
         .kpi-number {
-            font-size: 1.85rem;
+            font-size: 2rem;
             font-weight: 800;
-            color: var(--text-primary);
+            color: #ffffff;
             line-height: 1;
+            font-family: var(--font-mono);
         }
 
-        .kpi-number.pending { color: var(--brand-amber); }
-        .kpi-number.in-progress { color: var(--brand-primary); }
-        .kpi-number.resolved { color: var(--brand-green); }
-        .kpi-number.delayed { color: #ea580c; }
-        .kpi-number.escalations { color: var(--brand-red); }
-
-        /* Complaints Table */
-        .table-responsive {
-            overflow-x: auto;
-        }
+        .kpi-number.pending { color: #fbbf24; text-shadow: 0 0 12px rgba(245, 158, 11, 0.4); }
+        .kpi-number.in-progress { color: #38bdf8; text-shadow: 0 0 12px rgba(56, 189, 248, 0.4); }
+        .kpi-number.resolved { color: #34d399; text-shadow: 0 0 12px rgba(52, 211, 153, 0.4); }
+        .kpi-number.delayed { color: #f97316; text-shadow: 0 0 12px rgba(249, 115, 22, 0.4); }
+        .kpi-number.escalations { color: #f43f5e; text-shadow: 0 0 12px rgba(244, 63, 94, 0.4); }
 
         .officer-table {
             width: 100%;
@@ -1080,64 +894,49 @@
         }
 
         .officer-table th {
-            background: #f8fafc;
+            background: rgba(255, 255, 255, 0.02);
             padding: 0.85rem 1rem;
             font-weight: 700;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border-light);
-            font-size: 0.775rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--bg-card-border);
+            font-size: 0.725rem;
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.06em;
         }
 
         .officer-table td {
             padding: 1rem;
-            border-bottom: 1px solid var(--border-light);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             vertical-align: middle;
         }
 
         .officer-table tr:hover td {
-            background: #fafbfc;
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .btn-table-action {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
             padding: 0.4rem 0.85rem;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 0.775rem;
             font-weight: 700;
             color: var(--brand-primary);
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
         }
 
         .btn-table-action:hover {
             background: var(--brand-primary);
-            color: #ffffff;
-            border-color: var(--brand-primary);
+            color: #08080a;
+            box-shadow: 0 0 14px var(--brand-primary-glow);
         }
 
-        /* Action Console Panel (Screen 8) */
-        .action-console-card {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .action-buttons-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 0.85rem;
-            margin: 1.5rem 0;
-        }
-
+        /* Officer Action Buttons */
         .officer-action-btn {
-            background: #ffffff;
-            border: 1.5px solid var(--border-light);
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1.5px solid var(--bg-card-border);
+            border-radius: 12px;
             padding: 1rem;
             font-size: 0.875rem;
             font-weight: 700;
@@ -1150,253 +949,399 @@
             text-align: left;
         }
 
-        .officer-action-btn:hover {
+        .officer-action-btn:hover, .officer-action-btn.selected {
             border-color: var(--brand-primary);
-            color: var(--brand-primary);
-            background: var(--brand-primary-subtle);
-        }
-
-        .officer-action-btn.selected {
-            border-color: var(--brand-primary);
-            background: var(--brand-primary-subtle);
-            color: var(--brand-primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-        }
-
-        /* ----------------------------------------------------
-           SCREEN 10: MY COMPLAINTS (CITIZEN VIEW)
-           ---------------------------------------------------- */
-        .filter-tabs {
-            display: flex;
-            gap: 0.5rem;
-            border-bottom: 1px solid var(--border-light);
-            margin-bottom: 1.75rem;
-            padding-bottom: 0.5rem;
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            padding: 0.5rem 1.1rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .tab-btn.active {
-            background: var(--brand-primary);
             color: #ffffff;
-            font-weight: 700;
+            background: rgba(56, 189, 248, 0.1);
+            box-shadow: 0 0 16px var(--brand-primary-glow);
         }
 
-        .my-complaints-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .complaint-card-row {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: 14px;
-            padding: 1.25rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1.25rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .complaint-card-row:hover {
-            border-color: var(--brand-primary);
-            transform: translateX(4px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .complaint-card-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .category-icon-bubble {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: #f1f5f9;
+        /* ==========================================================
+           SKIPER68 INTERACTIVE LOGIN VIEW STYLES
+           ========================================================== */
+        .auth-card-stage {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.35rem;
-        }
-
-        .complaint-card-title {
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            margin-bottom: 0.2rem;
-        }
-
-        .complaint-card-meta {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .complaint-card-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .day-counter-pill {
-            font-size: 0.775rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            background: #f8fafc;
-            padding: 0.25rem 0.6rem;
-            border-radius: 6px;
-            border: 1px solid var(--border-light);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* ----------------------------------------------------
-           SCREEN 12: LOGIN MODAL (ROLE SWITCHER)
-           ---------------------------------------------------- */
-        .modal-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(4px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 1.25rem;
-        }
-
-        .login-dialog {
-            background: #ffffff;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 440px;
-            padding: 2.25rem;
-            box-shadow: var(--shadow-lg);
+            min-height: 70vh;
+            padding: 20px 0;
             position: relative;
         }
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 1.75rem;
+        .auth-card {
+            width: 100%;
+            max-width: 520px;
+            background: var(--bg-card);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 28px;
+            padding: 44px 36px 36px 36px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .login-role-tabs {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 0.35rem;
-            background: #f1f5f9;
-            padding: 0.3rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
+        .auth-card.shake {
+            animation: errorShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
         }
 
-        .role-tab-btn {
-            background: transparent;
-            border: none;
-            padding: 0.45rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 700;
+        @keyframes errorShake {
+            10%, 90% { transform: translate3d(-3px, 0, 0); }
+            20%, 80% { transform: translate3d(5px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        .auth-card.success-glow {
+            border-color: rgba(52, 211, 153, 0.5);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(52, 211, 153, 0.25);
+        }
+
+        .step-card.hidden-step {
+            display: none !important;
+        }
+
+        .btn-google-oauth {
+            width: 100%;
+            height: 52px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.94rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.22s var(--ease-spring);
+        }
+
+        .btn-google-oauth:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .oauth-secondary-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-secondary-oauth {
+            flex: 1;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .role-tab-btn.active {
-            background: #ffffff;
-            color: var(--brand-primary);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        .btn-secondary-oauth:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: #ffffff;
         }
 
-        .modal-close-btn {
-            position: absolute;
-            top: 1.25rem;
-            right: 1.25rem;
-            background: transparent;
-            border: none;
-            font-size: 1.25rem;
+        /* Skiper Vertical Light Beam */
+        .beam-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin: 18px 0;
+            user-select: none;
+        }
+
+        .beam-caption {
+            font-size: 0.72rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            font-weight: 700;
             color: var(--text-muted);
-            cursor: pointer;
         }
 
-        /* Notification Toast */
+        .beam-vertical-line {
+            position: relative;
+            width: 1px;
+            height: 44px;
+            background: linear-gradient(to bottom, transparent, rgba(56, 189, 248, 0.3) 50%, #38bdf8);
+            overflow: hidden;
+        }
+
+        .beam-light-pulse {
+            position: absolute;
+            top: 0;
+            left: -1px;
+            width: 3px;
+            height: 18px;
+            background: linear-gradient(to bottom, transparent, #ffffff, transparent);
+            animation: beamTravel 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes beamTravel {
+            0% { transform: translateY(-100%); opacity: 0; }
+            30% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(180%); opacity: 0; }
+        }
+
+        /* Skiper Animated Input Core */
+        .skiper-input-wrapper {
+            position: relative;
+            width: 100%;
+            height: 80px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: text;
+            transition: all 0.3s var(--ease-spring);
+            overflow: hidden;
+        }
+
+        .skiper-input-wrapper:hover,
+        .skiper-input-wrapper.focused {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 25px var(--brand-primary-glow);
+        }
+
+        .hidden-native-input {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: text;
+            z-index: 2;
+        }
+
+        .animated-display-layer {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            font-family: var(--font-mono);
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+        }
+
+        .ghost-placeholder {
+            position: absolute;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--text-primary);
+            opacity: 0.15;
+            letter-spacing: 0.18em;
+            user-select: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .ghost-placeholder.hidden-placeholder {
+            opacity: 0;
+        }
+
+        .digits-flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 2px;
+        }
+
+        .digit-slot {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0.62em;
+            height: 56px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .digit-char {
+            display: inline-block;
+            color: #ffffff;
+            animation: skiperDigitEnter 0.25s var(--ease-spring) forwards;
+        }
+
+        @keyframes skiperDigitEnter {
+            0% { transform: translateY(100%); opacity: 0; }
+            100% { transform: translateY(0%); opacity: 1; }
+        }
+
+        .digit-char.leaving {
+            animation: skiperDigitExit 0.18s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+
+        @keyframes skiperDigitExit {
+            0% { transform: translateY(0%); opacity: 1; }
+            100% { transform: translateY(100%); opacity: 0; }
+        }
+
+        .digit-char.is-bullet {
+            font-size: 28px;
+            color: var(--brand-primary);
+            text-shadow: 0 0 10px var(--brand-primary);
+        }
+
+        .skiper-cursor {
+            display: inline-block;
+            width: 2.5px;
+            height: 34px;
+            background-color: var(--brand-primary);
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--brand-primary);
+            margin-left: 2px;
+            animation: cursorBlink 1.05s steps(2, start) infinite;
+        }
+
+        @keyframes cursorBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .mask-toggle-btn {
+            position: absolute;
+            right: 14px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 3;
+            transition: all 0.2s ease;
+        }
+
+        .mask-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+        }
+
+        /* Interactive Keypad */
+        .interactive-keypad {
+            width: 100%;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s var(--ease-spring);
+        }
+
+        .interactive-keypad.collapsed {
+            display: none;
+        }
+
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .key-btn {
+            height: 48px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 1.15rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .key-btn:hover {
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .feedback-banner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .feedback-banner.error { color: #fb7185; }
+        .feedback-banner.success { color: #34d399; }
+
+        /* Toast Notify */
         .toast-notify {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background: #1e293b;
+            background: rgba(18, 18, 23, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: #ffffff;
             padding: 0.85rem 1.4rem;
-            border-radius: 10px;
+            border-radius: 14px;
             font-size: 0.875rem;
             font-weight: 600;
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
             display: none;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
             z-index: 2000;
-            animation: slideUp 0.25s ease-out;
+            backdrop-filter: blur(16px);
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
+        .hidden { display: none !important; }
 
-        /* Responsive Breakpoints */
-        @media (max-width: 900px) {
-            .public-view-grid {
+        @media (max-width: 850px) {
+            .public-view-grid, .officer-layout, .keys-grid {
                 grid-template-columns: 1fr;
             }
-            .officer-layout {
-                grid-template-columns: 1fr;
-            }
-            .keys-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-            .action-cards-grid {
-                grid-template-columns: 1fr;
-            }
-            .nav-links {
-                display: none;
-            }
-            .track-search-form {
-                flex-direction: column;
-            }
-            .keys-actions {
-                flex-direction: column;
-            }
+            .hero-title { font-size: 2.2rem; }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- TOP APPLICATION NAVBAR -->
+    <!-- Atmospheric Glow & Ambient Grid -->
+    <div class="bg-atmosphere" aria-hidden="true">
+        <div class="glow-orb glow-orb-1"></div>
+        <div class="glow-orb glow-orb-2"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Top Application Navbar -->
     <nav class="app-nav">
         <div class="nav-container">
             <a class="brand-logo" onclick="switchView('home')">
@@ -1405,87 +1350,74 @@
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
                 </div>
-                <div class="brand-text">
-                    <span class="brand-title">CivicTrack</span>
-                    <span class="brand-tagline">Your Voice. Our Priority.</span>
+                <div>
+                    <div class="brand-title">Kizuno-<span>AI</span></div>
+                    <div class="brand-tagline">Evidence-Based Redressal</div>
                 </div>
             </a>
 
             <div class="nav-links">
                 <button type="button" class="nav-btn active" id="nav-home" onclick="switchView('home')">Home</button>
-                <button type="button" class="nav-btn" id="nav-track" onclick="switchView('track')">Track Complaint</button>
-                <button type="button" class="nav-btn" id="nav-submit" onclick="switchView('submit')">Submit Complaint</button>
-                <button type="button" class="nav-btn" id="nav-my" onclick="switchView('my-complaints')">My Complaints</button>
+                <button type="button" class="nav-btn" id="nav-track" onclick="switchView('track')">Track</button>
+                <button type="button" class="nav-btn" id="nav-submit" onclick="switchView('submit')">Report</button>
+                <button type="button" class="nav-btn" id="nav-my" onclick="switchView('my-complaints')">My Records</button>
                 <button type="button" class="nav-btn officer-btn" id="nav-officer" onclick="switchView('officer')">
-                    👨‍💼 Officer Portal
+                    👨‍💼 Officer Console
+                </button>
+                <button type="button" class="nav-btn" id="nav-login" onclick="switchView('login')">
+                    🔐 Access
                 </button>
             </div>
 
             <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <div id="backend-status-pill" class="backend-pill" title="Python FastAPI Backend Status">
+                <div id="backend-status-pill" class="backend-pill" title="Python FastAPI & SQLite Status">
                     <span class="backend-dot"></span>
-                    <span id="backend-status-text">Connecting to SQL Backend...</span>
+                    <span id="backend-status-text">Connecting...</span>
                 </div>
-                <div class="user-pill" onclick="openLoginModal()" style="cursor: pointer;">
+                <div class="user-pill" onclick="switchView('login')" title="Authentication Enclave">
                     <div class="user-avatar" id="nav-user-initial">C</div>
-                    <span id="nav-user-name">Citizen View</span>
+                    <span id="nav-user-name">Citizen</span>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- ========================================================
-         VIEW 1: HOME / LANDING PAGE (Screen 1)
+         VIEW 1: HOME / HERO LANDING PAGE
          ======================================================== -->
     <main class="app-view active" id="view-home">
         <div class="hero-banner">
-            <h1 class="hero-title">Report Issues.<br>Track Progress. Build a Better City.</h1>
-            <p class="hero-subtitle">A simple platform to register government complaints and track their resolution in real-time with day-wise audit evidence.</p>
+            <h1 class="hero-title">Report Issues.<br><span>Track Verifiable Truth.</span></h1>
+            <p class="hero-subtitle">Kizuno-AI transforms civic complaints into day-wise evidence streams. No fake steps. Strict demarcation between verified government action and predictive AI delay alerts.</p>
 
             <div class="action-cards-grid">
-                <!-- Card 1: Submit -->
-                <div class="action-card blue" onclick="switchView('submit')">
+                <div class="action-card cyan" onclick="switchView('submit')">
                     <div>
                         <div class="action-card-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                         </div>
-                        <h2 class="action-card-title">Submit Complaint</h2>
-                        <p class="action-card-desc">Report an issue in your area with photos and location.</p>
+                        <h2 class="action-card-title">File Grievance</h2>
+                        <p class="action-card-desc">Report infrastructure failures with geotagging and photographic proof.</p>
                     </div>
                 </div>
 
-                <!-- Card 2: Track -->
-                <div class="action-card green" onclick="switchView('track')">
+                <div class="action-card emerald" onclick="switchView('track')">
                     <div>
                         <div class="action-card-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         </div>
-                        <h2 class="action-card-title">Track Complaint</h2>
-                        <p class="action-card-desc">Check live day-wise status with your unique tracking key.</p>
+                        <h2 class="action-card-title">Track Journey</h2>
+                        <p class="action-card-desc">Audit live day-by-day progress with your unique public tracking key.</p>
                     </div>
                 </div>
 
-                <!-- Card 3: My Complaints -->
-                <div class="action-card purple" onclick="switchView('my-complaints')">
+                <div class="action-card purple" onclick="switchView('officer')">
                     <div>
                         <div class="action-card-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="8" y1="6" x2="21" y2="6"></line>
-                                <line x1="8" y1="12" x2="21" y2="12"></line>
-                                <line x1="8" y1="18" x2="21" y2="18"></line>
-                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                            </svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                         </div>
-                        <h2 class="action-card-title">My Complaints</h2>
-                        <p class="action-card-desc">View and manage all your submitted grievances.</p>
+                        <h2 class="action-card-title">Officer Command</h2>
+                        <p class="action-card-desc">Municipal telemetry console with live SQL status updates & triage.</p>
                     </div>
                 </div>
             </div>
@@ -1493,33 +1425,156 @@
             <div class="hero-pillars">
                 <div class="pillar-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                    Cleaner Streets
-                </div>
-                <div class="pillar-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    Safer Communities
+                    Zero Synthetic Steps
                 </div>
                 <div class="pillar-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
-                    Automatic Delay Detection
+                    Kizuno-AI Inactivity Engine
                 </div>
                 <div class="pillar-item">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    Evidence-Based Truth
+                    Real SQLite & Python Backend
                 </div>
             </div>
         </div>
     </main>
 
     <!-- ========================================================
-         VIEW 2: SUBMIT COMPLAINT (Screen 2)
+         VIEW: SKIPER68 INTERACTIVE LOGIN & PASSCODE ENCLAVE
+         ======================================================== -->
+    <main class="app-view" id="view-login">
+        <div class="auth-card-stage">
+            <!-- Step 1: Identity Card -->
+            <div class="auth-card step-card active" id="stepIdentity">
+                <div class="step-header" style="text-align: center; margin-bottom: 22px;">
+                    <div style="font-size: 0.725rem; font-weight: 700; color: var(--brand-primary); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px;">Kizuno-AI Secure Enclave</div>
+                    <h1 style="font-size: 1.75rem; font-weight: 800; color: #ffffff;">Welcome Back</h1>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Identify your account to access grievance telemetry</p>
+                </div>
+
+                <!-- Role Selector Tabs -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; width: 100%; background: rgba(255,255,255,0.04); padding: 4px; border-radius: 12px; margin-bottom: 18px;">
+                    <button type="button" class="role-tab-btn active" id="login-role-citizen" onclick="selectLoginRole('citizen')" style="padding: 6px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer; background: rgba(255,255,255,0.12); color: #fff;">Citizen</button>
+                    <button type="button" class="role-tab-btn" id="login-role-officer" onclick="selectLoginRole('officer')" style="padding: 6px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer; background: transparent; color: var(--text-muted);">Officer</button>
+                    <button type="button" class="role-tab-btn" id="login-role-admin" onclick="selectLoginRole('admin')" style="padding: 6px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer; background: transparent; color: var(--text-muted);">Admin</button>
+                </div>
+
+                <!-- OAuth Options -->
+                <div style="width: 100%;">
+                    <button type="button" class="btn-google-oauth" onclick="triggerGoogleMock()">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+                            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                        </svg>
+                        <span>Continue with Google</span>
+                    </button>
+
+                    <div class="oauth-secondary-row">
+                        <button type="button" class="btn-secondary-oauth" onclick="triggerGithubMock()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                            <span>GitHub</span>
+                        </button>
+                        <button type="button" class="btn-secondary-oauth" onclick="triggerPasskeyMock()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8a4 4 0 1 0 4 4"/><path d="M12 12h8"/></svg>
+                            <span>Passkey</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Light Beam -->
+                <div class="beam-container">
+                    <span class="beam-caption">ENTER CITIZEN OR OFFICER ID</span>
+                    <div class="beam-vertical-line"><div class="beam-light-pulse"></div></div>
+                </div>
+
+                <!-- Username Form -->
+                <form id="identityForm" onsubmit="handleIdentitySubmit(event)" style="width: 100%;">
+                    <div style="position: relative; margin-bottom: 14px;">
+                        <input type="text" id="usernameInput" class="form-control" placeholder="citizen@gmail.com or officer@gov.in" value="citizen@gmail.com" required style="padding-left: 2.8rem; font-family: var(--font-mono); font-size: 0.9rem;">
+                        <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </span>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="margin-top: 10px;">
+                        <span>Continue to Passcode →</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step 2: Skiper68 Animated Password / PIN Card -->
+            <div class="auth-card step-card hidden-step" id="stepPassword">
+                <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 100px; padding: 4px 14px 4px 6px; margin-bottom: 18px;">
+                    <div class="user-avatar" id="chipAvatar">C</div>
+                    <div style="text-align: left; line-height: 1.2;">
+                        <div style="font-size: 0.62rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Signing in as</div>
+                        <div style="font-size: 0.825rem; font-weight: 700; color: #fff;" id="chipEmail">citizen@gmail.com</div>
+                    </div>
+                    <button type="button" onclick="goToStep('identity')" style="background: none; border: none; color: var(--brand-primary); font-size: 0.75rem; font-weight: 700; cursor: pointer; margin-left: 6px;">Change</button>
+                </div>
+
+                <div class="beam-container">
+                    <span class="beam-caption" id="beamCaption">ENTER 6-DIGIT PASSCODE</span>
+                    <div class="beam-vertical-line"><div class="beam-light-pulse"></div></div>
+                </div>
+
+                <!-- Skiper68 Input Display -->
+                <div class="skiper-input-wrapper" id="inputWrapper" onclick="focusRealInput()">
+                    <input type="text" id="realInput" class="hidden-native-input" maxlength="6" inputmode="numeric" autocomplete="off" oninput="handleRealInput(event)">
+                    
+                    <div class="animated-display-layer">
+                        <div class="ghost-placeholder" id="ghostPlaceholder">000000</div>
+                        <div class="digits-flow-container" id="digitsFlow"></div>
+                        <span class="skiper-cursor" id="skiperCaret"></span>
+                    </div>
+
+                    <button type="button" class="mask-toggle-btn" onclick="toggleMask(event)" title="Toggle Visibility">
+                        <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
+
+                <div class="feedback-banner" id="loginFeedback">
+                    <span id="loginFeedbackText">Enter 6 digits or click on-screen pad</span>
+                </div>
+
+                <!-- Action Unlock Button -->
+                <button type="button" class="btn-primary" onclick="handleUnlockAuth()" style="margin-top: 20px;">
+                    <span>Authenticate & Unlock Enclave</span>
+                </button>
+
+                <!-- Interactive Numeric Keypad -->
+                <div class="interactive-keypad" id="numericKeypad">
+                    <div class="keypad-grid">
+                        <button type="button" class="key-btn" onclick="pressPad('1')">1</button>
+                        <button type="button" class="key-btn" onclick="pressPad('2')">2</button>
+                        <button type="button" class="key-btn" onclick="pressPad('3')">3</button>
+                        <button type="button" class="key-btn" onclick="pressPad('4')">4</button>
+                        <button type="button" class="key-btn" onclick="pressPad('5')">5</button>
+                        <button type="button" class="key-btn" onclick="pressPad('6')">6</button>
+                        <button type="button" class="key-btn" onclick="pressPad('7')">7</button>
+                        <button type="button" class="key-btn" onclick="pressPad('8')">8</button>
+                        <button type="button" class="key-btn" onclick="pressPad('9')">9</button>
+                        <button type="button" class="key-btn" onclick="clearPad()" style="color: var(--text-muted);">C</button>
+                        <button type="button" class="key-btn" onclick="pressPad('0')">0</button>
+                        <button type="button" class="key-btn" onclick="backspacePad()" style="color: var(--text-muted);">⌫</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================
+         VIEW 2: SUBMIT COMPLAINT
          ======================================================== -->
     <main class="app-view" id="view-submit">
         <div class="narrow-container">
             <div class="content-card">
-                <div class="page-header">
-                    <h1 class="page-title">Submit a Complaint</h1>
-                    <p class="page-desc">Fill in the details below to report an infrastructure or service issue.</p>
+                <div style="margin-bottom: 2rem;">
+                    <div style="font-size: 0.75rem; font-weight: 800; color: var(--brand-primary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">Kizuno-AI Grievance Ingestion</div>
+                    <h1 style="font-size: 1.85rem; font-weight: 800; color: #ffffff;">Report an Issue</h1>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary);">Direct intake into municipal SQLite registry with Day 0 timestamp verification.</p>
                 </div>
 
                 <form id="submit-complaint-form" onsubmit="handleFormSubmission(event)">
@@ -1527,47 +1582,47 @@
                         <label class="form-label" for="form-category">Issue Category <span class="req">*</span></label>
                         <select class="form-control" id="form-category" required onchange="calculateAutoPriority()">
                             <option value="Streetlight">💡 Streetlight & Public Lighting</option>
-                            <option value="Water Leak">💧 Water Supply & Pipeline Leakage</option>
-                            <option value="Garbage">🗑️ Garbage & Sanitation Clearance</option>
+                            <option value="Water Leak">💧 Water Pipeline Contamination / Leak</option>
+                            <option value="Garbage">🗑️ Sanitation & Waste Overflow</option>
                             <option value="Road Damage">🚗 Potholes & Road Damage</option>
                             <option value="Drainage">🌊 Blocked Drainage & Sewage Overflow</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="form-title">Issue Title <span class="req">*</span></label>
+                        <label class="form-label" for="form-title">Title / Summary <span class="req">*</span></label>
                         <input type="text" class="form-control" id="form-title" placeholder="e.g. Streetlight not working" value="Streetlight not working" required>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="form-desc">Description <span class="req">*</span></label>
-                        <textarea class="form-control" id="form-desc" placeholder="Describe the problem in detail..." required>The streetlight near my house has not been working for the past 3 days. It's very dark at night.</textarea>
+                        <label class="form-label" for="form-desc">Detailed Description <span class="req">*</span></label>
+                        <textarea class="form-control" id="form-desc" required>The streetlight near my house has not been working for the past 3 days. It's very dark at night.</textarea>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="form-location">Location <span class="req">*</span></label>
-                        <input type="text" class="form-control" id="form-location" placeholder="e.g. Gandhipuram, Coimbatore" value="Gandhipuram, Coimbatore" required>
+                        <label class="form-label" for="form-location">Geographic Location <span class="req">*</span></label>
+                        <input type="text" class="form-control" id="form-location" value="Gandhipuram, Coimbatore" required>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Upload Photo (Evidence)</label>
+                        <label class="form-label">Upload Photographic Proof</label>
                         <div class="upload-dropzone" onclick="document.getElementById('form-photo-file').click()">
                             <input type="file" id="form-photo-file" accept="image/*" style="display: none;" onchange="handlePhotoSelect(event)">
                             <div style="font-size: 1.75rem; margin-bottom: 0.35rem;">📷</div>
-                            <div style="font-size: 0.875rem; font-weight: 700; color: var(--text-primary);">Click to upload photograph</div>
+                            <div style="font-size: 0.875rem; font-weight: 700; color: #ffffff;">Click to attach photographic evidence</div>
                             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">PNG, JPG up to 5MB</div>
                         </div>
                         <div class="upload-preview-box" id="upload-preview-container">
-                            <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80" alt="Streetlight" class="upload-preview-img" id="upload-preview-img">
+                            <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80" alt="Preview" class="upload-preview-img" id="upload-preview-img">
                             <div style="flex: 1;">
-                                <div style="font-size: 0.85rem; font-weight: 700;" id="upload-filename">streetlight_hazard.jpg</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">2.4 MB • Photographic Evidence Attached</div>
+                                <div style="font-size: 0.85rem; font-weight: 700; color: #fff;" id="upload-filename">evidence_hazard.jpg</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">2.4 MB • Photogrammetry Attached</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="form-priority">Priority (AI Auto-Calculated)</label>
+                        <label class="form-label" for="form-priority">Priority (Kizuno-AI Auto SLA)</label>
                         <select class="form-control" id="form-priority">
                             <option value="Medium" selected>🟡 Medium (48h Standard SLA)</option>
                             <option value="High">🔴 High (24h Critical Response)</option>
@@ -1577,7 +1632,7 @@
                     </div>
 
                     <button type="submit" class="btn-primary" style="margin-top: 1rem;">
-                        <span>Submit Complaint & Generate Tracking Key</span>
+                        <span>Register & Generate Cryptographic Tracking Key</span>
                     </button>
                 </form>
             </div>
@@ -1585,57 +1640,37 @@
     </main>
 
     <!-- ========================================================
-         VIEW 3: COMPLAINT SUBMITTED (Screen 3)
+         VIEW 3: COMPLAINT SUBMITTED (SUCCESS KEYS)
          ======================================================== -->
     <main class="app-view" id="view-submitted">
         <div class="narrow-container">
-            <div class="content-card">
-                <div class="success-hero">
-                    <div class="success-icon-badge">
-                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                    </div>
-                    <h2 class="success-title">Complaint Registered Successfully!</h2>
-                    <p class="success-desc">Your complaint has been submitted and routed to the municipal department.</p>
+            <div class="content-card" style="text-align: center;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(52, 211, 153, 0.15); color: #34d399; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto; border: 1px solid rgba(52, 211, 153, 0.3); box-shadow: 0 0 20px rgba(52, 211, 153, 0.3);">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </div>
+                <h2 style="font-size: 1.75rem; font-weight: 800; color: #ffffff; margin-bottom: 0.4rem;">Grievance Logged in SQL Database</h2>
+                <p style="font-size: 0.9rem; color: var(--text-secondary);">Decoupled public and departmental reference keys generated:</p>
 
                 <div class="keys-grid">
-                    <!-- Key 1: Internal ID -->
                     <div class="key-box">
-                        <div class="key-label">
-                            <span>Complaint ID</span>
-                            <span style="font-size: 0.65rem; color: var(--text-muted);">Internal</span>
-                        </div>
+                        <div class="key-label">Internal Department ID</div>
                         <div class="key-value" id="generated-complaint-id">CIV-2026-1042</div>
-                        <div class="key-subtext">Departmental Reference ID</div>
+                        <div style="font-size: 0.725rem; color: var(--text-muted); margin-top: 4px;">Municipal Primary Key</div>
                     </div>
 
-                    <!-- Key 2: Tracking Key -->
                     <div class="key-box highlight">
                         <div class="key-label">
-                            <span style="color: var(--brand-primary);">Tracking Key</span>
+                            <span style="color: var(--brand-primary);">Public Tracking Key</span>
                             <button type="button" class="copy-btn" onclick="copyTrackingKey()">Copy</button>
                         </div>
                         <div class="key-value" id="generated-tracking-key">TN-GOV-X7K92P4M</div>
-                        <div class="key-subtext">Share this key to track public status</div>
+                        <div style="font-size: 0.725rem; color: var(--brand-primary); margin-top: 4px;">Shareable Key (PII Redacted)</div>
                     </div>
                 </div>
 
-                <div class="alert-box">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink: 0;">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
-                    <div>
-                        <strong>Important Notice:</strong> Save your tracking key. You can use it anytime to track the day-wise progress of this complaint. Personal information is protected.
-                    </div>
-                </div>
-
-                <div class="keys-actions">
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                     <button type="button" class="btn-primary" onclick="trackKey(document.getElementById('generated-tracking-key').innerText)">
-                        <span>Track Complaint Now</span>
+                        <span>Track Live Audit Stream</span>
                     </button>
                     <button type="button" class="btn-secondary" onclick="switchView('home')">
                         <span>Back to Home</span>
@@ -1646,143 +1681,101 @@
     </main>
 
     <!-- ========================================================
-         VIEW 4: TRACK COMPLAINT SEARCH (Screen 4)
+         VIEW 4: TRACK COMPLAINT SEARCH
          ======================================================== -->
     <main class="app-view" id="view-track">
         <div class="narrow-container">
-            <div class="content-card track-search-card">
-                <div class="track-search-icon">
-                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
+            <div class="content-card" style="text-align: center; padding: 3.5rem 2rem;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(56, 189, 248, 0.12); color: #38bdf8; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; border: 1px solid rgba(56, 189, 248, 0.25); box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </div>
-                <h1 class="track-search-title">Track Your Complaint</h1>
-                <p class="track-search-desc">Enter the tracking key you received after submitting your complaint to view its verified day-by-day journal.</p>
+                <h1 style="font-size: 1.85rem; font-weight: 800; color: #ffffff; margin-bottom: 0.5rem;">Audit Grievance Journey</h1>
+                <p style="font-size: 0.925rem; color: var(--text-secondary); max-width: 480px; margin: 0 auto 2rem auto;">Enter your tracking key to query live SQLite records and inspect verifiable timestamps.</p>
 
-                <form class="track-search-form" onsubmit="handleTrackFormSubmit(event)">
-                    <input type="text" class="track-search-input" id="track-key-input" placeholder="e.g. TN-GOV-X7K92P4M" value="TN-GOV-X7K92P4M" required autocomplete="off">
-                    <button type="submit" class="btn-primary" style="width: auto; padding: 0.9rem 2rem;">Track</button>
+                <form onsubmit="handleTrackFormSubmit(event)" style="display: flex; gap: 0.6rem; max-width: 580px; margin: 0 auto 1.5rem auto;">
+                    <input type="text" class="form-control" id="track-key-input" placeholder="e.g. TN-GOV-X7K92P4M" value="TN-GOV-X7K92P4M" required style="font-family: var(--font-mono); font-size: 1rem;">
+                    <button type="submit" class="btn-primary" style="width: auto; padding: 0.9rem 2rem;">Audit</button>
                 </form>
 
-                <div class="sample-search-chips">
-                    <span style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600;">Demo Keys:</span>
-                    <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-X7K92P4M')">💡 TN-GOV-X7K92P4M (Streetlight • Delayed)</button>
-                    <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-KA99120')">✓ TN-GOV-KA99120 (Transformer • Resolved)</button>
-                </div>
-
-                <div class="alert-box" style="text-align: left; margin: 0 auto; max-width: 580px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                    <div style="font-size: 0.825rem;">
-                        <strong>Where to find your tracking key?</strong> It is generated when you submit a complaint and also sent to your registered SMS/email (if provided).
-                    </div>
-                </div>
-
-                <div style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted);">
-                    Don't have a key? <a onclick="switchView('submit')" style="color: var(--brand-primary); font-weight: 700; cursor: pointer;">Submit a new complaint</a>
+                <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                    <span style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600; padding: 0.35rem 0;">Test Keys:</span>
+                    <button type="button" class="btn-secondary" style="padding: 0.35rem 0.85rem; font-size: 0.775rem; border-radius: 100px;" onclick="trackKey('TN-GOV-X7K92P4M')">💡 TN-GOV-X7K92P4M (Delayed)</button>
+                    <button type="button" class="btn-secondary" style="padding: 0.35rem 0.85rem; font-size: 0.775rem; border-radius: 100px;" onclick="trackKey('TN-GOV-KA99120')">✓ TN-GOV-KA99120 (Resolved)</button>
                 </div>
             </div>
         </div>
     </main>
 
     <!-- ========================================================
-         VIEW 5 & 6: COMPLAINT DETAILS & DAY-WISE TIMELINE (Screen 5, 6, 9)
+         VIEW 5 & 6: PUBLIC DETAILS & DAY-WISE TIMELINE
          ======================================================== -->
     <main class="app-view" id="view-details">
         <div class="standard-container">
             <div style="margin-bottom: 1.5rem;">
-                <button type="button" class="btn-secondary" onclick="switchView('track')" style="padding: 0.45rem 0.9rem; font-size: 0.825rem;">
-                    ← Back to Track
+                <button type="button" class="btn-secondary" onclick="switchView('track')" style="padding: 0.45rem 1rem; font-size: 0.8rem;">
+                    ← Back to Search
                 </button>
             </div>
 
             <div class="public-view-grid">
-                <!-- Left Column: Public Complaint Details (Screen 5) -->
+                <!-- Left: Public Card -->
                 <div class="content-card">
-                    <div class="public-meta-header">
-                        <div class="meta-id-group">
-                            <span class="public-tracking-key" id="det-tracking-key">TN-GOV-X7K92P4M</span>
-                            <button type="button" class="copy-btn" onclick="copyDetailKey()">Copy</button>
-                        </div>
-                        <div class="public-internal-id" id="det-complaint-id">CIV-2026-1042</div>
-                    </div>
-
-                    <div class="detail-row">
-                        <div class="detail-label">Issue</div>
-                        <div class="detail-value" id="det-title" style="font-size: 1.15rem;">Streetlight not working</div>
-                    </div>
-
-                    <div class="detail-row">
-                        <div class="detail-label">Category</div>
-                        <div class="detail-value" id="det-category">Streetlight</div>
-                    </div>
-
-                    <div class="detail-row">
-                        <div class="detail-label">Location</div>
-                        <div class="detail-value" id="det-location">Gandhipuram, Coimbatore</div>
-                    </div>
-
-                    <div class="detail-row">
-                        <div class="detail-label">Description</div>
-                        <div class="detail-value" id="det-desc" style="color: var(--text-secondary); font-weight: 400; font-size: 0.9rem;">
-                            The streetlight near my house has not been working for the past 3 days. It's very dark at night.
-                        </div>
-                    </div>
-
-                    <div class="detail-photo-card" id="det-photo-container">
-                        <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80" alt="Evidence" class="detail-photo-img" id="det-photo">
-                    </div>
-
-                    <div style="display: flex; gap: 1.5rem; margin-top: 1rem;">
-                        <div class="detail-row">
-                            <div class="detail-label">Priority</div>
-                            <span class="priority-badge Medium" id="det-priority">Medium</span>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Submitted By</div>
-                            <div class="detail-value" style="font-size: 0.85rem; color: var(--text-secondary);">
-                                🛡️ Citizen (Anonymous)
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="status-badge-card" id="det-status-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--bg-card-border); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
                         <div>
-                            <div style="font-size: 0.725rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Current Status</div>
-                            <div style="font-size: 1.15rem; font-weight: 800; color: #92400e;" id="det-status-text">⚠️ Delayed</div>
+                            <span style="font-size: 1.35rem; font-weight: 800; font-family: var(--font-mono); color: var(--brand-primary); text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);" id="det-tracking-key">TN-GOV-X7K92P4M</span>
+                            <button type="button" class="copy-btn" onclick="copyDetailKey()" style="margin-left: 0.5rem;">Copy</button>
+                        </div>
+                        <div style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 0.2rem 0.6rem; border-radius: 6px;" id="det-complaint-id">CIV-2026-1042</div>
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <div class="form-label">Issue</div>
+                        <div style="font-size: 1.2rem; font-weight: 800; color: #ffffff;" id="det-title">Streetlight not working</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                        <div>
+                            <div class="form-label">Category</div>
+                            <div style="font-weight: 600; color: #cbd5e1;" id="det-category">Streetlight</div>
+                        </div>
+                        <div>
+                            <div class="form-label">Location</div>
+                            <div style="font-weight: 600; color: #cbd5e1;" id="det-location">Gandhipuram, Coimbatore</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <div class="form-label">Citizen Description</div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem;" id="det-desc">The streetlight near my house has not been working for the past 3 days.</div>
+                    </div>
+
+                    <div style="border-radius: 14px; overflow: hidden; border: 1px solid var(--bg-card-border); margin: 1.25rem 0;">
+                        <img src="" alt="Evidence" style="width: 100%; max-height: 220px; object-fit: cover; display: block;" id="det-photo">
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid var(--bg-card-border); border-radius: 14px; padding: 1.25rem; margin-top: 1.5rem;">
+                        <div>
+                            <div style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Status Assessment</div>
+                            <div style="font-size: 1.15rem; font-weight: 800; color: #fbbf24;" id="det-status-text">⚠️ Delayed</div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 0.725rem; color: var(--text-muted);">Last Updated</div>
-                            <div style="font-size: 0.85rem; font-weight: 700;" id="det-last-updated">Day 5 - 14 Apr 2026</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">Last Verified Update</div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: #cbd5e1;" id="det-last-updated">Day 5 - 14 Apr 2026</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Column: Day-Wise Verifiable Timeline (Screen 6 & 9) -->
-                <div class="timeline-box">
-                    <div class="timeline-title-row">
-                        <div class="timeline-title">📅 Day-Wise Timeline</div>
-                        <span style="font-size: 0.725rem; font-weight: 700; background: #e0e7ff; color: #3730a3; padding: 0.2rem 0.6rem; border-radius: 9999px;">
-                            Official Audit
+                <!-- Right: Day-Wise Verifiable Timeline -->
+                <div class="content-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--bg-card-border); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                        <h2 style="font-size: 1.2rem; font-weight: 800; color: #ffffff;">📅 Day-Wise Audit Stream</h2>
+                        <span style="font-size: 0.725rem; font-weight: 700; background: rgba(56, 189, 248, 0.12); color: #38bdf8; padding: 0.25rem 0.65rem; border-radius: 100px; border: 1px solid rgba(56, 189, 248, 0.3);">
+                            Kizuno-AI Engine v2.4
                         </span>
                     </div>
 
-                    <!-- Dynamic Timeline Stream -->
                     <div class="timeline-stream" id="timeline-stream-container">
-                        <!-- Populated by JavaScript -->
-                    </div>
-
-                    <div class="timeline-footnote">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
-                        <span>We will keep updating this timeline as the department takes action.</span>
+                        <!-- Filled by JS -->
                     </div>
                 </div>
             </div>
@@ -1790,179 +1783,123 @@
     </main>
 
     <!-- ========================================================
-         VIEW 7 & 8: OFFICER DASHBOARD & ACTION CONSOLE (Screen 7, 8)
+         VIEW 7 & 8: OFFICER DASHBOARD (CYBER COMMAND)
          ======================================================== -->
     <main class="app-view" id="view-officer">
         <div class="officer-layout">
-            <!-- Sidebar (Screen 7 Left) -->
+            <!-- Sidebar -->
             <aside class="officer-sidebar">
-                <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.5rem; padding: 0 0.5rem;">
-                    <div class="user-avatar" style="background: #1e293b;">O</div>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; padding: 0 0.5rem;">
+                    <div class="user-avatar" style="background: linear-gradient(135deg, #a855f7, #6366f1); color: #fff;">O</div>
                     <div>
-                        <div style="font-size: 0.875rem; font-weight: 800;">Officer R. Selvam</div>
+                        <div style="font-size: 0.885rem; font-weight: 800; color: #fff;">Officer R. Selvam</div>
                         <div style="font-size: 0.7rem; color: var(--text-muted);">Coimbatore Corporation</div>
                     </div>
                 </div>
 
-                <div class="sidebar-heading">Navigation</div>
+                <div class="form-label" style="padding: 0 0.5rem;">Operations</div>
                 <ul class="sidebar-menu">
-                    <li class="sidebar-item active" onclick="showOfficerTab('dashboard')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                        Dashboard
-                    </li>
-                    <li class="sidebar-item" onclick="showOfficerTab('complaints')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        Complaints
-                    </li>
-                    <li class="sidebar-item" onclick="filterOfficerStatus('Pending')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
-                        Pending (71)
-                    </li>
-                    <li class="sidebar-item" onclick="filterOfficerStatus('In Progress')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
-                        In Progress (43)
-                    </li>
-                    <li class="sidebar-item" onclick="filterOfficerStatus('Resolved')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        Resolved (134)
-                    </li>
-                    <li class="sidebar-item" onclick="filterOfficerStatus('Delayed')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                        Delayed (18)
-                    </li>
+                    <li class="sidebar-item active" onclick="renderOfficerTable('All')">📊 All Grievances</li>
+                    <li class="sidebar-item" onclick="filterOfficerStatus('Pending')">⏳ Pending Review</li>
+                    <li class="sidebar-item" onclick="filterOfficerStatus('In Progress')">🔧 In Progress</li>
+                    <li class="sidebar-item" onclick="filterOfficerStatus('Delayed')">⚠️ Delayed (>48h)</li>
+                    <li class="sidebar-item" onclick="filterOfficerStatus('Resolved')">✓ Resolved</li>
                 </ul>
 
-                <div class="sidebar-heading">System</div>
+                <div class="form-label" style="padding: 0 0.5rem;">Session</div>
                 <ul class="sidebar-menu">
-                    <li class="sidebar-item" onclick="switchView('home')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                        Exit to Citizen
-                    </li>
+                    <li class="sidebar-item" onclick="switchView('login')">🔐 Switch Role</li>
                 </ul>
             </aside>
 
             <!-- Main Officer Console -->
             <div>
-                <!-- Officer Overview (Screen 7 Right) -->
-                <div id="officer-overview-section">
-                    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div>
-                            <h1 class="page-title">Officer Dashboard</h1>
-                            <p class="page-desc">Manage, triage, and update municipal grievances.</p>
-                        </div>
-                        <span class="user-pill" style="background: #e0f2fe; color: #0369a1;">
-                            ● Live Municipal Sync Active
-                        </span>
-                    </div>
-
-                    <!-- 6 KPIs Cards (Exact numbers from design) -->
-                    <div class="kpi-grid">
-                        <div class="kpi-card">
-                            <div class="kpi-title">Total Complaints</div>
-                            <div class="kpi-number" id="kpi-total">248</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div class="kpi-title">Pending</div>
-                            <div class="kpi-number pending" id="kpi-pending">71</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div class="kpi-title">In Progress</div>
-                            <div class="kpi-number in-progress" id="kpi-progress">43</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div class="kpi-title">Resolved</div>
-                            <div class="kpi-number resolved" id="kpi-resolved">134</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div class="kpi-title">Delayed</div>
-                            <div class="kpi-number delayed" id="kpi-delayed">18</div>
-                        </div>
-                        <div class="kpi-card">
-                            <div class="kpi-title">Escalations</div>
-                            <div class="kpi-number escalations" id="kpi-escalations">6</div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Complaints Management Table -->
-                    <div class="content-card">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                            <h2 style="font-size: 1.1rem; font-weight: 800;">Recent Complaints</h2>
-                            <span style="font-size: 0.8rem; color: var(--brand-primary); font-weight: 700; cursor: pointer;" onclick="renderOfficerTable('All')">View All</span>
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="officer-table">
-                                <thead>
-                                    <tr>
-                                        <th>Complaint ID</th>
-                                        <th>Issue Title</th>
-                                        <th>Location</th>
-                                        <th>Priority</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="officer-table-body">
-                                    <!-- Dynamic rows from JS -->
-                                </tbody>
-                            </table>
-                        </div>
+                <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h1 style="font-size: 1.85rem; font-weight: 800; color: #ffffff;">Municipal Command Center</h1>
+                        <p style="font-size: 0.885rem; color: var(--text-secondary);">Real-time SQLite persistence & automated Kizuno-AI delay auditing.</p>
                     </div>
                 </div>
 
-                <!-- Officer Action Console Modal/Panel (Screen 8) -->
-                <div class="action-console-card" id="officer-action-panel" style="display: none; margin-top: 1.5rem;">
+                <!-- 6 KPIs -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-title">Total Active</div>
+                        <div class="kpi-number" id="kpi-total">248</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Pending</div>
+                        <div class="kpi-number pending" id="kpi-pending">71</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">In Progress</div>
+                        <div class="kpi-number in-progress" id="kpi-progress">43</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Resolved</div>
+                        <div class="kpi-number resolved" id="kpi-resolved">134</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Delayed</div>
+                        <div class="kpi-number delayed" id="kpi-delayed">18</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-title">Escalated</div>
+                        <div class="kpi-number escalations" id="kpi-escalations">6</div>
+                    </div>
+                </div>
+
+                <!-- Complaints Table -->
+                <div class="content-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                        <h2 style="font-size: 1.15rem; font-weight: 800; color: #ffffff;">Municipal Queue</h2>
+                        <span style="font-size: 0.775rem; color: var(--brand-primary); font-weight: 700; cursor: pointer;" onclick="renderOfficerTable('All')">Refresh SQL</span>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table class="officer-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title & Category</th>
+                                    <th>Location</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="officer-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Officer Action Console Modal/Panel -->
+                <div class="content-card" id="officer-action-panel" style="display: none; margin-top: 1.5rem; border-color: var(--brand-primary);">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
                         <div>
-                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--brand-primary); text-transform: uppercase;">
-                                Action Console
-                            </div>
-                            <h2 style="font-size: 1.35rem; font-weight: 800;" id="action-complaint-header">Complaint #CIV-2026-1042</h2>
-                            <div style="font-size: 0.875rem; color: var(--text-secondary);" id="action-complaint-sub">
-                                Streetlight not working • Gandhipuram, Coimbatore
-                            </div>
+                            <div style="font-size: 0.725rem; font-weight: 800; color: var(--brand-primary); text-transform: uppercase;">Direct SQL Dispatch Console</div>
+                            <h2 style="font-size: 1.35rem; font-weight: 800; color: #ffffff;" id="action-complaint-header">Complaint #CIV-2026-1042</h2>
+                            <div style="font-size: 0.85rem; color: var(--text-muted);" id="action-complaint-sub">Streetlight not working • Gandhipuram</div>
                         </div>
-                        <button type="button" class="btn-secondary" onclick="closeOfficerActionPanel()" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
-                            Close
-                        </button>
+                        <button type="button" class="btn-secondary" onclick="closeOfficerActionPanel()" style="padding: 0.35rem 0.85rem; font-size: 0.775rem;">Close</button>
                     </div>
 
-                    <div style="display: flex; gap: 1rem; align-items: center; background: #f8fafc; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
-                        <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80" id="action-thumb" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
-                        <div>
-                            <div style="font-size: 0.95rem; font-weight: 700;" id="action-title">Streetlight not working</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);" id="action-location">Gandhipuram, Coimbatore</div>
-                            <span class="status-pill delayed" id="action-status-pill" style="margin-top: 0.35rem; font-size: 0.7rem; padding: 0.2rem 0.5rem;">Delayed</span>
-                        </div>
-                    </div>
-
-                    <div class="form-label">Update Status</div>
-                    <div class="action-buttons-group">
-                        <button type="button" class="officer-action-btn" id="act-btn-assign" onclick="selectAction('assign')">
-                            <span>👤 Assign to Officer</span>
-                        </button>
-                        <button type="button" class="officer-action-btn" id="act-btn-start" onclick="selectAction('start')">
-                            <span>🔧 Start Work</span>
-                        </button>
-                        <button type="button" class="officer-action-btn" id="act-btn-progress" onclick="selectAction('progress')">
-                            <span>🔄 Update Progress</span>
-                        </button>
-                        <button type="button" class="officer-action-btn" id="act-btn-resolve" onclick="selectAction('resolve')">
-                            <span>✅ Mark as Resolved</span>
-                        </button>
+                    <div class="form-label">Select Action To Publish</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.85rem; margin-bottom: 1.25rem;">
+                        <button type="button" class="officer-action-btn" id="act-btn-assign" onclick="selectAction('assign')">👤 Assign Field Team</button>
+                        <button type="button" class="officer-action-btn" id="act-btn-start" onclick="selectAction('start')">🔧 Start Physical Work</button>
+                        <button type="button" class="officer-action-btn" id="act-btn-progress" onclick="selectAction('progress')">🔄 Parts Requisitioned</button>
+                        <button type="button" class="officer-action-btn" id="act-btn-resolve" onclick="selectAction('resolve')">✅ Mark As Resolved</button>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="officer-comments">Comments / Department Notes</label>
-                        <textarea class="form-control" id="officer-comments" placeholder="Add operational notes or reason for status update..."></textarea>
+                        <label class="form-label" for="officer-comments">Internal Notes / Log Entry</label>
+                        <textarea class="form-control" id="officer-comments" placeholder="Describe operational updates to log in the public audit stream..."></textarea>
                     </div>
 
                     <div style="display: flex; gap: 0.75rem;">
                         <button type="button" class="btn-primary" onclick="applyOfficerUpdate()">
-                            <span>Update Grievance & Publish to Timeline</span>
-                        </button>
-                        <button type="button" class="btn-secondary" onclick="viewUpdatedTimelineFromOfficer()">
-                            <span>View Public Timeline</span>
+                            <span>Publish Verified Event to SQL</span>
                         </button>
                     </div>
                 </div>
@@ -1971,370 +1908,36 @@
     </main>
 
     <!-- ========================================================
-         VIEW 10: MY COMPLAINTS (CITIZEN VIEW) (Screen 10)
+         VIEW 10: MY COMPLAINTS (CITIZEN VIEW)
          ======================================================== -->
     <main class="app-view" id="view-my-complaints">
         <div class="standard-container">
-            <div class="page-header">
-                <h1 class="page-title">My Complaints</h1>
-                <p class="page-desc">View and monitor all your registered grievances and their day-wise tracking progress.</p>
+            <div style="margin-bottom: 2rem;">
+                <h1 style="font-size: 1.85rem; font-weight: 800; color: #ffffff;">My Registered Grievances</h1>
+                <p style="font-size: 0.9rem; color: var(--text-secondary);">Audit the progress of your submitted complaints.</p>
             </div>
 
-            <!-- Filter Tabs (Screen 10 Top) -->
-            <div class="filter-tabs">
-                <button type="button" class="tab-btn active" id="tab-all" onclick="filterMyComplaints('All')">All (3)</button>
-                <button type="button" class="tab-btn" id="tab-pending" onclick="filterMyComplaints('Pending')">Pending (1)</button>
-                <button type="button" class="tab-btn" id="tab-in-progress" onclick="filterMyComplaints('In Progress')">In Progress (1)</button>
-                <button type="button" class="tab-btn" id="tab-resolved" onclick="filterMyComplaints('Resolved')">Resolved (1)</button>
+            <div style="display: flex; gap: 0.5rem; border-bottom: 1px solid var(--bg-card-border); margin-bottom: 1.5rem; padding-bottom: 0.5rem;">
+                <button type="button" class="btn-secondary active" id="tab-all" onclick="filterMyComplaints('All')" style="border-radius: 100px; padding: 0.4rem 1rem; font-size: 0.8rem;">All Records</button>
+                <button type="button" class="btn-secondary" id="tab-pending" onclick="filterMyComplaints('Pending')" style="border-radius: 100px; padding: 0.4rem 1rem; font-size: 0.8rem;">Pending</button>
+                <button type="button" class="btn-secondary" id="tab-in-progress" onclick="filterMyComplaints('In Progress')" style="border-radius: 100px; padding: 0.4rem 1rem; font-size: 0.8rem;">In Progress</button>
+                <button type="button" class="btn-secondary" id="tab-resolved" onclick="filterMyComplaints('Resolved')" style="border-radius: 100px; padding: 0.4rem 1rem; font-size: 0.8rem;">Resolved</button>
             </div>
 
-            <!-- Complaints List (Screen 10 List) -->
-            <div class="my-complaints-list" id="my-complaints-container">
-                <!-- Dynamically generated -->
-            </div>
+            <div style="display: flex; flex-direction: column; gap: 1rem;" id="my-complaints-container"></div>
         </div>
     </main>
-
-    <!-- ========================================================
-         VIEW 12: LOGIN MODAL (OFFICIALS / CITIZENS) (Screen 12)
-         ======================================================== -->
-    <div class="modal-backdrop" id="login-modal" onclick="closeLoginModal(event)">
-        <div class="login-dialog" onclick="event.stopPropagation()">
-            <button type="button" class="modal-close-btn" onclick="closeLoginModal()">✕</button>
-
-            <div class="login-header">
-                <div class="brand-shield" style="margin: 0 auto 0.75rem auto;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
-                </div>
-                <h2 style="font-size: 1.4rem; font-weight: 800;">CivicTrack Login</h2>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Select your account role to proceed</p>
-            </div>
-
-            <div class="login-role-tabs">
-                <button type="button" class="role-tab-btn" id="role-citizen" onclick="selectRole('citizen')">Citizen</button>
-                <button type="button" class="role-tab-btn active" id="role-officer" onclick="selectRole('officer')">Officer</button>
-                <button type="button" class="role-tab-btn" id="role-admin" onclick="selectRole('admin')">Admin</button>
-            </div>
-
-            <form onsubmit="handleLoginSubmit(event)">
-                <div class="form-group">
-                    <label class="form-label" for="login-email">Email / Official Username</label>
-                    <input type="text" class="form-control" id="login-email" value="officer@gov.in" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="login-password">Password</label>
-                    <input type="password" class="form-control" id="login-password" value="••••••••••••" required>
-                </div>
-
-                <button type="submit" class="btn-primary" style="margin-top: 0.5rem;">
-                    <span>Log In to CivicTrack</span>
-                </button>
-            </form>
-        </div>
-    </div>
 
     <!-- Notification Toast -->
     <div class="toast-notify" id="toast-notify">
         <span id="toast-icon">✓</span>
-        <span id="toast-message">Notification message</span>
+        <span id="toast-message">Notification</span>
     </div>
 
     <!-- ========================================================
-         APPLICATION LOGIC & IN-MEMORY REACTIVE DATABASE
+         APPLICATION LOGIC & AUDIO SYNTHESIZER
          ======================================================== -->
     <script>
-        /**
-         * IN-MEMORY DATABASE WITH FULL SAMPLE COMPLAINTS
-         * Reflects exact data from CivicTrack screens.
-         */
-        const CIVICTRACK_DB = {
-            complaints: [
-                // Case 1: The flagship Streetlight complaint (CIV-2026-1042 / TN-GOV-X7K92P4M)
-                {
-                    id: "CIV-2026-1042",
-                    trackingKey: "TN-GOV-X7K92P4M",
-                    category: "Streetlight",
-                    categoryIcon: "💡",
-                    title: "Streetlight not working",
-                    description: "The streetlight near my house has not been working for the past 3 days. It's very dark at night.",
-                    location: "Gandhipuram, Coimbatore",
-                    photoUrl: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80",
-                    priority: "Medium",
-                    status: "Delayed", // Delayed, In Progress, Pending, Resolved
-                    dayLabel: "Day 5",
-                    lastUpdated: "Day 5 - 14 Apr 2026",
-                    timeline: [
-                        {
-                            day: "Day 0",
-                            date: "Apr 10, 2026",
-                            statusType: "submitted",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Complaint Submitted",
-                            desc: "Complaint successfully registered in municipal system."
-                        },
-                        {
-                            day: "Day 1",
-                            date: "Apr 11, 2026",
-                            statusType: "forwarded",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Forwarded to Department",
-                            desc: "Sent to Electrical Department for scheduling and allocation."
-                        },
-                        {
-                            day: "Day 2",
-                            date: "Apr 12, 2026",
-                            statusType: "stationary",
-                            tagType: "tag-stationary",
-                            tagText: "No Event Logged",
-                            title: "No Response Recorded",
-                            desc: "No action recorded in our system."
-                        },
-                        {
-                            day: "Day 3",
-                            date: "Apr 13, 2026",
-                            statusType: "stationary",
-                            tagType: "tag-stationary",
-                            tagText: "No Event Logged",
-                            title: "No Response Recorded",
-                            desc: "No action recorded in our system."
-                        },
-                        {
-                            day: "Day 5",
-                            date: "Apr 15, 2026",
-                            statusType: "delayed",
-                            tagType: "tag-ai-inference",
-                            tagText: "AI Assessment",
-                            title: "Delayed",
-                            desc: "Expected response has not been recorded within standard SLA."
-                        },
-                        {
-                            day: "Day 7",
-                            date: "Apr 17, 2026",
-                            statusType: "escalated",
-                            tagType: "tag-escalated",
-                            tagText: "Escalation Flag",
-                            title: "Escalation Recommended",
-                            desc: "Complaint requires attention from higher-level officer."
-                        }
-                    ]
-                },
-                // Case 2: Water Leak (In Progress)
-                {
-                    id: "CIV-2026-1040",
-                    trackingKey: "TN-GOV-W992014",
-                    category: "Water Leak",
-                    categoryIcon: "💧",
-                    title: "Main Line Valve Water Leakage",
-                    description: "Significant drinking water leaking on 4th cross road, flooding sidewalk.",
-                    location: "Peelamedu, Coimbatore",
-                    photoUrl: "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=600&auto=format&fit=crop&q=80",
-                    priority: "High",
-                    status: "In Progress",
-                    dayLabel: "Day 3",
-                    lastUpdated: "Day 3 - 12 Apr 2026",
-                    timeline: [
-                        {
-                            day: "Day 0",
-                            date: "Apr 09, 2026",
-                            statusType: "submitted",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Complaint Registered",
-                            desc: "Water leakage intake verified and reference generated."
-                        },
-                        {
-                            day: "Day 1",
-                            date: "Apr 10, 2026",
-                            statusType: "forwarded",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Dispatched to TWAD Team",
-                            desc: "Maintenance crew allocated for pressure inspection."
-                        },
-                        {
-                            day: "Day 3",
-                            date: "Apr 12, 2026",
-                            statusType: "work-started",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Excavation and Valve Work Started",
-                            desc: "Team is actively repairing the cracked underground pipe."
-                        }
-                    ]
-                },
-                // Case 3: Transformer Sparking (Fully Resolved)
-                {
-                    id: "CIV-2026-1038",
-                    trackingKey: "TN-GOV-KA99120",
-                    category: "Streetlight",
-                    categoryIcon: "⚡",
-                    title: "Transformer Sparking & Streetlight Blackout",
-                    description: "High tension line sparking and complete blackout of streetlights on 100ft road.",
-                    location: "Ukkadam, Coimbatore",
-                    photoUrl: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&auto=format&fit=crop&q=80",
-                    priority: "Critical",
-                    status: "Resolved",
-                    dayLabel: "Day 10",
-                    lastUpdated: "Day 10 - 08 Apr 2026",
-                    timeline: [
-                        {
-                            day: "Day 0",
-                            date: "Mar 29, 2026",
-                            statusType: "submitted",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Emergency Safety Complaint Logged",
-                            desc: "Priority 1 ticket created for transformer short circuit."
-                        },
-                        {
-                            day: "Day 1",
-                            date: "Mar 30, 2026",
-                            statusType: "work-started",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Rapid Response Gang Deployed",
-                            desc: "Power isolated and faulty jumper cable replaced."
-                        },
-                        {
-                            day: "Day 10",
-                            date: "Apr 08, 2026",
-                            statusType: "resolved",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Resolved & Citizen Sign-Off Verified",
-                            desc: "Streetlights operational, voltage levels certified, case closed."
-                        }
-                    ]
-                },
-                // Case 4: Garbage Overflow (Pending)
-                {
-                    id: "CIV-2026-1041",
-                    trackingKey: "TN-GOV-G771899",
-                    category: "Garbage",
-                    categoryIcon: "🗑️",
-                    title: "Garbage Dump Overflow on School Road",
-                    description: "Municipal waste bin overflowing for 4 days, stray dogs and foul smell.",
-                    location: "RS Puram, Coimbatore",
-                    photoUrl: "https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80",
-                    priority: "Medium",
-                    status: "Pending",
-                    dayLabel: "Day 1",
-                    lastUpdated: "Day 1 - 13 Apr 2026",
-                    timeline: [
-                        {
-                            day: "Day 0",
-                            date: "Apr 12, 2026",
-                            statusType: "submitted",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Sanitation Grievance Lodged",
-                            desc: "Complaint assigned to Ward 24 Sanitation Inspector."
-                        }
-                    ]
-                }
-            ],
-            kpis: {
-                total: 248,
-                pending: 71,
-                inProgress: 43,
-                resolved: 134,
-                delayed: 18,
-                escalations: 6
-            },
-            currentActiveActionId: null,
-            selectedActionType: null
-        };
-
-        // Navigation state
-        let currentView = 'home';
-
-        /**
-         * Switches the active application view
-         */
-        function switchView(viewId) {
-            currentView = viewId;
-            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-
-            const targetView = document.getElementById(`view-${viewId}`);
-            if (targetView) targetView.classList.add('active');
-
-            const activeNavBtn = document.getElementById(`nav-${viewId}`);
-            if (activeNavBtn) activeNavBtn.classList.add('active');
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            if (viewId === 'officer') {
-                renderOfficerTable();
-            } else if (viewId === 'my-complaints') {
-                renderMyComplaints('All');
-            }
-        }
-
-        /**
-         * Renders the day-wise timeline for a complaint
-         */
-        function renderTimeline(timelineArray) {
-            const container = document.getElementById('timeline-stream-container');
-            container.innerHTML = timelineArray.map(item => `
-                <div class="timeline-node ${item.statusType}">
-                    <div class="timeline-meta">
-                        <span class="timeline-day-badge">${escapeHtml(item.day)}</span>
-                        <span class="timeline-date">${escapeHtml(item.date)}</span>
-                        <span class="timeline-status-tag ${item.tagType}">${escapeHtml(item.tagText)}</span>
-                    </div>
-                    <div class="timeline-event-name">${escapeHtml(item.title)}</div>
-                    <div class="timeline-desc">${escapeHtml(item.desc)}</div>
-                </div>
-            `).join('');
-        }
-
-        /**
-         * Displays the public details of a complaint (Screen 5 & 6)
-         */
-        function showComplaintDetails(complaint) {
-            document.getElementById('det-tracking-key').innerText = complaint.trackingKey;
-            document.getElementById('det-complaint-id').innerText = complaint.id;
-            document.getElementById('det-title').innerText = complaint.title;
-            document.getElementById('det-category').innerText = complaint.category;
-            document.getElementById('det-location').innerText = complaint.location;
-            document.getElementById('det-desc').innerText = complaint.description;
-            document.getElementById('det-priority').innerText = complaint.priority;
-            document.getElementById('det-priority').className = `priority-badge ${complaint.priority}`;
-            document.getElementById('det-photo').src = complaint.photoUrl;
-
-            // Status Card
-            const statusCard = document.getElementById('det-status-card');
-            const statusText = document.getElementById('det-status-text');
-            document.getElementById('det-last-updated').innerText = complaint.lastUpdated;
-
-            if (complaint.status === 'Resolved') {
-                statusCard.className = 'status-badge-card resolved';
-                statusText.style.color = 'var(--brand-green)';
-                statusText.innerText = '✓ Resolved';
-            } else if (complaint.status === 'In Progress') {
-                statusCard.className = 'status-badge-card in-progress';
-                statusText.style.color = 'var(--brand-primary)';
-                statusText.innerText = '● In Progress';
-            } else if (complaint.status === 'Delayed') {
-                statusCard.className = 'status-badge-card';
-                statusText.style.color = '#92400e';
-                statusText.innerText = '⚠️ Delayed';
-            } else {
-                statusCard.className = 'status-badge-card';
-                statusText.style.color = 'var(--text-secondary)';
-                statusText.innerText = '⏳ Pending Review';
-            }
-
-            renderTimeline(complaint.timeline);
-            switchView('details');
-        }
-
         /**
          * REAL PYTHON REST API & SQL CLIENT BRIDGE
          */
@@ -2344,6 +1947,101 @@
 
         let isBackendConnected = false;
 
+        // In-memory local fallback store
+        const CIVICTRACK_DB = {
+            complaints: [],
+            kpis: { total: 248, pending: 71, inProgress: 43, resolved: 134, delayed: 18, escalations: 6 },
+            currentActiveActionId: null,
+            selectedActionType: null
+        };
+
+        // Audio Synthesizer (tactile micro-interactions)
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioClass) audioCtx = new AudioClass();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function playKeyClick(frequency = 750, duration = 0.025) {
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + duration);
+                gain.gain.setValueAtTime(0.06, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function playSuccessChime() {
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    const start = ctx.currentTime + idx * 0.08;
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, start);
+                    gain.gain.setValueAtTime(0.001, start);
+                    gain.gain.exponentialRampToValueAtTime(0.1, start + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.3);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(start);
+                    osc.stop(start + 0.3);
+                });
+            } catch (e) {}
+        }
+
+        function playErrorThud() {
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(140, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            } catch (e) {}
+        }
+
+        // View Navigation
+        function switchView(viewId) {
+            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+            const target = document.getElementById(`view-${viewId}`);
+            if (target) target.classList.add('active');
+
+            const navBtn = document.getElementById(`nav-${viewId}`);
+            if (navBtn) navBtn.classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (viewId === 'officer') renderOfficerTable();
+            if (viewId === 'my-complaints') renderMyComplaints();
+        }
+
+        // Health Check & SQL Sync
         async function checkBackendHealth() {
             const pill = document.getElementById('backend-status-pill');
             const text = document.getElementById('backend-status-text');
@@ -2353,13 +2051,11 @@
                     const data = await res.json();
                     isBackendConnected = true;
                     if (pill) pill.className = 'backend-pill online';
-                    if (text) text.innerText = `Python API & SQLite Active (${data.activeComplaintsInSQL} in SQL)`;
+                    if (text) text.innerText = `Kizuno-AI Engine & SQLite Active (${data.activeComplaintsInSQL} in SQL)`;
                     await syncFromSQL();
                     return;
                 }
-            } catch (err) {
-                console.log('Running in local offline fallback mode (Run python server.py for real SQL)');
-            }
+            } catch (err) {}
             isBackendConnected = false;
             if (pill) pill.className = 'backend-pill offline';
             if (text) text.innerText = 'Offline Mode (Run python server.py for SQL)';
@@ -2380,53 +2076,68 @@
                     CIVICTRACK_DB.kpis = await kpisRes.json();
                     updateKpiCounters();
                 }
-            } catch (e) {
-                console.error('SQL Sync error:', e);
-            }
+            } catch (e) {}
         }
 
-        /**
-         * Track a complaint by tracking key or ID (Reads directly from SQL)
-         */
+        // Timeline Renderer
+        function renderTimeline(timelineArray) {
+            const container = document.getElementById('timeline-stream-container');
+            container.innerHTML = timelineArray.map(item => `
+                <div class="timeline-node ${item.statusType}">
+                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
+                        <span style="font-size: 0.725rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(255,255,255,0.06); font-family: var(--font-mono);">${escapeHtml(item.day)}</span>
+                        <span style="font-size: 0.775rem; color: var(--text-muted);">${escapeHtml(item.date)}</span>
+                        <span class="timeline-status-tag ${item.tagType}">${escapeHtml(item.tagText)}</span>
+                    </div>
+                    <div style="font-size: 1rem; font-weight: 800; color: #ffffff; margin-bottom: 0.25rem;">${escapeHtml(item.title)}</div>
+                    <div style="font-size: 0.885rem; color: var(--text-secondary);">${escapeHtml(item.desc)}</div>
+                </div>
+            `).join('');
+        }
+
+        function showComplaintDetails(c) {
+            document.getElementById('det-tracking-key').innerText = c.trackingKey;
+            document.getElementById('det-complaint-id').innerText = c.id;
+            document.getElementById('det-title').innerText = c.title;
+            document.getElementById('det-category').innerText = c.category;
+            document.getElementById('det-location').innerText = c.location;
+            document.getElementById('det-desc').innerText = c.description;
+            document.getElementById('det-photo').src = c.photoUrl || "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80";
+            document.getElementById('det-status-text').innerText = c.status === 'Resolved' ? '✓ Resolved' : (c.status === 'In Progress' ? '● In Progress' : '⚠️ Delayed');
+            document.getElementById('det-last-updated').innerText = c.lastUpdated;
+            renderTimeline(c.timeline);
+            switchView('details');
+        }
+
         async function trackKey(rawKey) {
             const cleanKey = (rawKey || '').trim().toUpperCase();
             if (!cleanKey) return;
-
             if (isBackendConnected) {
                 try {
                     const res = await fetch(`${API_BASE}/complaints/${encodeURIComponent(cleanKey)}`);
                     if (res.ok) {
                         const complaint = await res.json();
                         showComplaintDetails(complaint);
-                        showToast(`Loaded live from SQL Database! (${complaint.id})`, '💾');
+                        playSuccessChime();
+                        showToast(`Loaded live from SQLite: ${complaint.id}`, '💾');
                         return;
                     }
-                } catch (e) {
-                    console.error('API track error:', e);
-                }
+                } catch (e) {}
             }
-
-            const record = CIVICTRACK_DB.complaints.find(c => 
-                c.trackingKey.toUpperCase() === cleanKey || 
-                c.id.toUpperCase() === cleanKey
-            );
-
-            if (record) {
-                showComplaintDetails(record);
+            const local = CIVICTRACK_DB.complaints.find(c => c.trackingKey.toUpperCase() === cleanKey || c.id.toUpperCase() === cleanKey);
+            if (local) {
+                showComplaintDetails(local);
             } else {
-                showToast('Key not found in SQL database. Try TN-GOV-X7K92P4M', '⚠️');
+                playErrorThud();
+                showToast('Key not found in database', '⚠️');
             }
         }
 
         function handleTrackFormSubmit(e) {
             e.preventDefault();
-            const input = document.getElementById('track-key-input').value;
-            trackKey(input);
+            trackKey(document.getElementById('track-key-input').value);
         }
 
-        /**
-         * Form submission handler for new complaints (Saves directly to SQL)
-         */
         async function handleFormSubmission(e) {
             e.preventDefault();
             const category = document.getElementById('form-category').value;
@@ -2438,138 +2149,52 @@
 
             if (isBackendConnected) {
                 try {
-                    const payload = {
-                        category,
-                        title,
-                        description: desc,
-                        location,
-                        photo_url: photoUrl,
-                        priority
-                    };
                     const res = await fetch(`${API_BASE}/complaints`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify({ category, title, description: desc, location, photo_url: photoUrl, priority })
                     });
                     if (res.ok) {
                         const created = await res.json();
-                        CIVICTRACK_DB.complaints.unshift(created);
                         document.getElementById('generated-complaint-id').innerText = created.id;
                         document.getElementById('generated-tracking-key').innerText = created.trackingKey;
                         await syncFromSQL();
+                        playSuccessChime();
                         switchView('submitted');
-                        showToast(`Stored in SQLite DB! (${created.id})`, '💾');
+                        showToast(`Stored in SQLite DB! (#${created.id})`, '💾');
                         return;
                     }
-                } catch (err) {
-                    console.error('Backend submission error:', err);
-                }
+                } catch (err) {}
             }
-
-            // Fallback client submission
-            const randomNum = Math.floor(1000 + Math.random() * 9000);
-            const newComplaintId = `CIV-2026-${randomNum}`;
-            const randomHex = Math.random().toString(36).substring(2, 8).toUpperCase();
-            const newTrackingKey = `TN-GOV-X${randomHex}`;
-
-            const newComplaint = {
-                id: newComplaintId,
-                trackingKey: newTrackingKey,
-                category: category,
-                categoryIcon: getCategoryIcon(category),
-                title: title,
-                description: desc,
-                location: location,
-                photoUrl: photoUrl,
-                priority: priority,
-                status: "Pending",
-                dayLabel: "Day 0",
-                lastUpdated: "Day 0 - Just Now",
-                timeline: [
-                    {
-                        day: "Day 0",
-                        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
-                        statusType: "submitted",
-                        tagType: "tag-verified",
-                        tagText: "Verified Event",
-                        title: "Complaint Submitted & Registered",
-                        desc: "Citizen complaint accepted and validated in CivicTrack municipal registry."
-                    }
-                ]
-            };
-
-            CIVICTRACK_DB.complaints.unshift(newComplaint);
-            CIVICTRACK_DB.kpis.total += 1;
-            CIVICTRACK_DB.kpis.pending += 1;
-            updateKpiCounters();
-
-            document.getElementById('generated-complaint-id').innerText = newComplaintId;
-            document.getElementById('generated-tracking-key').innerText = newTrackingKey;
-
-            switchView('submitted');
-            showToast('Complaint registered locally', '✅');
         }
 
-        /**
-         * Renders the officer complaints management table (Screen 7)
-         */
         function renderOfficerTable(filterStatus = 'All') {
             const tbody = document.getElementById('officer-table-body');
             let list = CIVICTRACK_DB.complaints;
-
-            if (filterStatus !== 'All') {
-                list = list.filter(c => c.status === filterStatus);
-            }
-
+            if (filterStatus !== 'All') list = list.filter(c => c.status === filterStatus);
             tbody.innerHTML = list.map(c => `
                 <tr>
-                    <td><strong style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">${escapeHtml(c.id)}</strong></td>
-                    <td>
-                        <div style="font-weight: 700; color: var(--text-primary);">${escapeHtml(c.title)}</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(c.category)}</div>
-                    </td>
+                    <td><strong style="font-family: var(--font-mono); color: var(--brand-primary); font-size: 0.8rem;">${escapeHtml(c.id)}</strong></td>
+                    <td><div style="font-weight: 700; color: #fff;">${escapeHtml(c.title)}</div><div style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(c.category)}</div></td>
                     <td>${escapeHtml(c.location)}</td>
                     <td><span class="priority-badge ${c.priority}">${c.priority}</span></td>
-                    <td><span class="status-pill ${getStatusPillClass(c.status)}">${escapeHtml(c.status)}</span></td>
-                    <td>
-                        <button type="button" class="btn-table-action" onclick="openOfficerActionConsole('${c.id}')">
-                            Update
-                        </button>
-                    </td>
+                    <td><span class="status-pill ${c.status === 'Resolved' ? 'resolved' : (c.status === 'In Progress' ? 'in-progress' : 'delayed')}">${escapeHtml(c.status)}</span></td>
+                    <td><button type="button" class="btn-table-action" onclick="openOfficerActionConsole('${c.id}')">Update</button></td>
                 </tr>
             `).join('');
         }
 
-        function filterOfficerStatus(status) {
-            renderOfficerTable(status);
-            showToast(`Filtering officer complaints: ${status}`, '🔍');
+        function filterOfficerStatus(st) {
+            renderOfficerTable(st);
+            showToast(`Filtering: ${st}`, '🔍');
         }
 
-        function showOfficerTab(tab) {
-            renderOfficerTable('All');
-        }
-
-        /**
-         * Opens the action console for an officer (Screen 8)
-         */
-        function openOfficerActionConsole(complaintId) {
-            const complaint = CIVICTRACK_DB.complaints.find(c => c.id === complaintId);
-            if (!complaint) return;
-
-            CIVICTRACK_DB.currentActiveActionId = complaintId;
-            CIVICTRACK_DB.selectedActionType = null;
-
-            document.querySelectorAll('.officer-action-btn').forEach(btn => btn.classList.remove('selected'));
-
-            document.getElementById('action-complaint-header').innerText = `Complaint #${complaint.id}`;
-            document.getElementById('action-complaint-sub').innerText = `${complaint.title} • ${complaint.location}`;
-            document.getElementById('action-thumb').src = complaint.photoUrl || "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80";
-            document.getElementById('action-title').innerText = complaint.title;
-            document.getElementById('action-location').innerText = complaint.location;
-            document.getElementById('action-status-pill').innerText = complaint.status;
-            document.getElementById('action-status-pill').className = `status-pill ${getStatusPillClass(complaint.status)}`;
-            document.getElementById('officer-comments').value = "";
-
+        function openOfficerActionConsole(id) {
+            const c = CIVICTRACK_DB.complaints.find(item => item.id === id);
+            if (!c) return;
+            CIVICTRACK_DB.currentActiveActionId = id;
+            document.getElementById('action-complaint-header').innerText = `Complaint #${c.id}`;
+            document.getElementById('action-complaint-sub').innerText = `${c.title} • ${c.location}`;
             const panel = document.getElementById('officer-action-panel');
             panel.style.display = 'block';
             panel.scrollIntoView({ behavior: 'smooth' });
@@ -2579,23 +2204,21 @@
             document.getElementById('officer-action-panel').style.display = 'none';
         }
 
-        function selectAction(actionType) {
-            CIVICTRACK_DB.selectedActionType = actionType;
-            document.querySelectorAll('.officer-action-btn').forEach(btn => btn.classList.remove('selected'));
-            const btn = document.getElementById(`act-btn-${actionType}`);
-            if (btn) btn.classList.add('selected');
+        function selectAction(type) {
+            CIVICTRACK_DB.selectedActionType = type;
+            document.querySelectorAll('.officer-action-btn').forEach(b => b.classList.remove('selected'));
+            const b = document.getElementById(`act-btn-${type}`);
+            if (b) b.classList.add('selected');
+            playKeyClick(680);
         }
 
-        /**
-         * Applies the officer update (Saves directly to SQL database)
-         */
         async function applyOfficerUpdate() {
-            const complaintId = CIVICTRACK_DB.currentActiveActionId;
-            const actionType = CIVICTRACK_DB.selectedActionType;
-            const comments = document.getElementById('officer-comments').value.trim();
+            const cid = CIVICTRACK_DB.currentActiveActionId;
+            const act = CIVICTRACK_DB.selectedActionType;
+            const comm = document.getElementById('officer-comments').value.trim();
 
-            if (!actionType) {
-                showToast('Please select an action (Assign, Start Work, etc.)', '⚠️');
+            if (!act) {
+                showToast('Select an action to publish', '⚠️');
                 return;
             }
 
@@ -2604,134 +2227,35 @@
                     const res = await fetch(`${API_BASE}/officer/update`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            complaint_id: complaintId,
-                            action_type: actionType,
-                            comments: comments,
-                            officer_name: "Officer R. Selvam"
-                        })
+                        body: JSON.stringify({ complaint_id: cid, action_type: act, comments: comm })
                     });
                     if (res.ok) {
-                        const result = await res.json();
-                        showToast(`SQL Updated: ${result.message}`, '💾');
+                        playSuccessChime();
+                        showToast(`SQL Database updated!`, '💾');
                         await syncFromSQL();
                         closeOfficerActionPanel();
                         return;
                     }
-                } catch (err) {
-                    console.error('Officer update API error:', err);
-                }
-            }
-
-            // Client fallback
-            const complaint = CIVICTRACK_DB.complaints.find(c => c.id === complaintId);
-            if (!complaint) return;
-
-            const today = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-
-            if (actionType === 'start') {
-                complaint.status = 'In Progress';
-                complaint.timeline.push({
-                    day: "Day 8",
-                    date: today,
-                    statusType: "work-started",
-                    tagType: "tag-verified",
-                    tagText: "Verified Event",
-                    title: "Work Started",
-                    desc: comments || "Officer assigned and physical repair work has begun on site."
-                });
-                CIVICTRACK_DB.kpis.inProgress += 1;
-                if (CIVICTRACK_DB.kpis.delayed > 0) CIVICTRACK_DB.kpis.delayed -= 1;
-                showToast(`Work Started logged for ${complaint.id}`, '🔧');
-            } else if (actionType === 'resolve') {
-                complaint.status = 'Resolved';
-                complaint.timeline.push({
-                    day: "Day 10",
-                    date: today,
-                    statusType: "resolved",
-                    tagType: "tag-verified",
-                    tagText: "Verified Event",
-                    title: "Resolved",
-                    desc: comments || "Issue has been verified, tested, and resolved."
-                });
-                CIVICTRACK_DB.kpis.resolved += 1;
-                if (CIVICTRACK_DB.kpis.inProgress > 0) CIVICTRACK_DB.kpis.inProgress -= 1;
-                showToast(`Complaint ${complaint.id} marked as RESOLVED!`, '✅');
-            } else if (actionType === 'assign') {
-                complaint.timeline.push({
-                    day: "Day 7",
-                    date: today,
-                    statusType: "forwarded",
-                    tagType: "tag-verified",
-                    tagText: "Verified Event",
-                    title: "Assigned to Field Unit",
-                    desc: comments || "Allocated to Junior Engineer R. Selvam."
-                });
-                showToast(`Officer assigned to ${complaint.id}`, '👤');
-            } else if (actionType === 'progress') {
-                complaint.timeline.push({
-                    day: "Day 6",
-                    date: today,
-                    statusType: "work-started",
-                    tagType: "tag-verified",
-                    tagText: "Verified Event",
-                    title: "Progress Milestone Updated",
-                    desc: comments || "Materials requisitioned from municipal store."
-                });
-                showToast(`Progress update added to ${complaint.id}`, '🔄');
-            }
-
-            complaint.lastUpdated = `Just Now (${today})`;
-            updateKpiCounters();
-            renderOfficerTable();
-            closeOfficerActionPanel();
-        }
-
-        function viewUpdatedTimelineFromOfficer() {
-            const complaint = CIVICTRACK_DB.complaints.find(c => c.id === CIVICTRACK_DB.currentActiveActionId);
-            if (complaint) {
-                showComplaintDetails(complaint);
+                } catch (e) {}
             }
         }
 
-        /**
-         * Renders the citizen "My Complaints" list (Screen 10)
-         */
         function renderMyComplaints(filter = 'All') {
             const container = document.getElementById('my-complaints-container');
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            const activeTab = document.getElementById(`tab-${filter.toLowerCase().replace(' ', '-')}`);
-            if (activeTab) activeTab.classList.add('active');
-
             let list = CIVICTRACK_DB.complaints;
-            if (filter !== 'All') {
-                list = list.filter(c => c.status === filter);
-            }
-
+            if (filter !== 'All') list = list.filter(c => c.status === filter);
             container.innerHTML = list.map(c => `
-                <div class="complaint-card-row" onclick="trackKey('${c.trackingKey}')">
-                    <div class="complaint-card-left">
-                        <div class="category-icon-bubble">${c.categoryIcon || '📋'}</div>
+                <div class="content-card" style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="trackKey('${c.trackingKey}')">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(56,189,248,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.35rem;">${c.categoryIcon || '📋'}</div>
                         <div>
-                            <div class="complaint-card-title">${escapeHtml(c.title)}</div>
-                            <div class="complaint-card-meta">
-                                <span>📍 ${escapeHtml(c.location)}</span>
-                                <span>•</span>
-                                <span style="font-family: 'JetBrains Mono', monospace;">${escapeHtml(c.id)}</span>
-                            </div>
+                            <div style="font-weight: 800; color: #fff; font-size: 1rem;">${escapeHtml(c.title)}</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);">📍 ${escapeHtml(c.location)} • ${escapeHtml(c.id)}</div>
                         </div>
                     </div>
-                    <div class="complaint-card-right">
-                        <span class="status-pill ${getStatusPillClass(c.status)}">${escapeHtml(c.status)}</span>
-                        <span class="day-counter-pill">${escapeHtml(c.dayLabel || 'Day 0')}</span>
-                        <span style="color: var(--text-muted); font-size: 1.1rem;">›</span>
-                    </div>
+                    <span class="status-pill ${c.status === 'Resolved' ? 'resolved' : (c.status === 'In Progress' ? 'in-progress' : 'delayed')}">${escapeHtml(c.status)}</span>
                 </div>
             `).join('');
-        }
-
-        function filterMyComplaints(filter) {
-            renderMyComplaints(filter);
         }
 
         function updateKpiCounters() {
@@ -2743,62 +2267,34 @@
             document.getElementById('kpi-escalations').innerText = CIVICTRACK_DB.kpis.escalations;
         }
 
-        function getStatusPillClass(status) {
-            if (status === 'Resolved') return 'resolved';
-            if (status === 'In Progress') return 'in-progress';
-            if (status === 'Delayed') return 'delayed';
-            return 'pending';
-        }
-
-        function getCategoryIcon(cat) {
-            switch (cat) {
-                case 'Streetlight': return '💡';
-                case 'Water Leak': return '💧';
-                case 'Garbage': return '🗑️';
-                case 'Road Damage': return '🚗';
-                case 'Drainage': return '🌊';
-                default: return '📋';
-            }
-        }
-
         function calculateAutoPriority() {
             const cat = document.getElementById('form-category').value;
-            const prioritySelect = document.getElementById('form-priority');
-            if (cat === 'Water Leak' || cat === 'Drainage') {
-                prioritySelect.value = 'High';
-            } else if (cat === 'Streetlight') {
-                prioritySelect.value = 'Medium';
-            } else if (cat === 'Road Damage') {
-                prioritySelect.value = 'Medium';
-            } else {
-                prioritySelect.value = 'Low';
-            }
+            const p = document.getElementById('form-priority');
+            if (cat === 'Water Leak' || cat === 'Drainage') p.value = 'High';
+            else if (cat === 'Streetlight' || cat === 'Road Damage') p.value = 'Medium';
+            else p.value = 'Low';
         }
 
         function handlePhotoSelect(event) {
             const file = event.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
+                const r = new FileReader();
+                r.onload = e => {
                     document.getElementById('upload-preview-img').src = e.target.result;
                     document.getElementById('upload-filename').innerText = file.name;
                 };
-                reader.readAsDataURL(file);
+                r.readAsDataURL(file);
             }
         }
 
         function copyTrackingKey() {
-            const key = document.getElementById('generated-tracking-key').innerText;
-            navigator.clipboard.writeText(key).then(() => {
-                showToast(`Tracking Key ${key} copied!`, '📋');
-            });
+            const k = document.getElementById('generated-tracking-key').innerText;
+            navigator.clipboard.writeText(k).then(() => showToast(`Key ${k} copied!`, '📋'));
         }
 
         function copyDetailKey() {
-            const key = document.getElementById('det-tracking-key').innerText;
-            navigator.clipboard.writeText(key).then(() => {
-                showToast(`Tracking Key ${key} copied!`, '📋');
-            });
+            const k = document.getElementById('det-tracking-key').innerText;
+            navigator.clipboard.writeText(k).then(() => showToast(`Key ${k} copied!`, '📋'));
         }
 
         function showToast(msg, icon = '✓') {
@@ -2806,51 +2302,194 @@
             document.getElementById('toast-icon').innerText = icon;
             document.getElementById('toast-message').innerText = msg;
             toast.style.display = 'flex';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
+            setTimeout(() => { toast.style.display = 'none'; }, 3200);
         }
 
-        // Login Modal Logic
-        function openLoginModal() {
-            document.getElementById('login-modal').style.display = 'flex';
-        }
+        // =========================================================
+        // SKIPER68 ANIMATED DIGIT ENGINE & AUTHENTICATION
+        // =========================================================
+        let selectedRole = 'citizen';
+        let isMasked = false;
+        let previousInputVal = '';
 
-        function closeLoginModal(e) {
-            if (!e || e.target === document.getElementById('login-modal')) {
-                document.getElementById('login-modal').style.display = 'none';
+        function selectLoginRole(role) {
+            selectedRole = role;
+            document.querySelectorAll('.role-tab-btn').forEach(b => {
+                b.style.background = 'transparent';
+                b.style.color = 'var(--text-muted)';
+            });
+            const btn = document.getElementById(`login-role-${role}`);
+            if (btn) {
+                btn.style.background = 'rgba(255,255,255,0.12)';
+                btn.style.color = '#fff';
             }
+            const input = document.getElementById('usernameInput');
+            if (role === 'officer') input.value = 'officer@gov.in';
+            else if (role === 'admin') input.value = 'admin@kizuno.ai';
+            else input.value = 'citizen@gmail.com';
+            playKeyClick(600);
         }
 
-        function selectRole(role) {
-            document.querySelectorAll('.role-tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`role-${role}`).classList.add('active');
-
-            const emailInput = document.getElementById('login-email');
-            if (role === 'officer') {
-                emailInput.value = 'officer@gov.in';
-            } else if (role === 'admin') {
-                emailInput.value = 'admin@civictrack.gov.in';
-            } else {
-                emailInput.value = 'citizen@gmail.com';
-            }
+        function triggerGoogleMock() {
+            document.getElementById('usernameInput').value = 'alex.google@gmail.com';
+            goToStep('password');
+            playSuccessChime();
         }
 
-        function handleLoginSubmit(e) {
+        function triggerGithubMock() {
+            document.getElementById('usernameInput').value = 'github.developer@id';
+            goToStep('password');
+            playSuccessChime();
+        }
+
+        function triggerPasskeyMock() {
+            document.getElementById('usernameInput').value = 'passkey.fido2@device';
+            goToStep('password');
+            playSuccessChime();
+        }
+
+        function handleIdentitySubmit(e) {
             e.preventDefault();
-            const activeRoleBtn = document.querySelector('.role-tab-btn.active');
-            const role = activeRoleBtn ? activeRoleBtn.innerText : 'Citizen';
+            const val = document.getElementById('usernameInput').value.trim();
+            if (!val) return;
+            goToStep('password');
+        }
 
-            document.getElementById('nav-user-name').innerText = `${role} View`;
-            document.getElementById('nav-user-initial').innerText = role.charAt(0);
-            closeLoginModal();
-            showToast(`Logged in as ${role}`, '👤');
-
-            if (role === 'Officer') {
-                switchView('officer');
+        function goToStep(step) {
+            playKeyClick(700);
+            if (step === 'password') {
+                document.getElementById('stepIdentity').classList.add('hidden-step');
+                document.getElementById('stepPassword').classList.remove('hidden-step');
+                const user = document.getElementById('usernameInput').value.trim();
+                document.getElementById('chipEmail').innerText = user;
+                document.getElementById('chipAvatar').innerText = user.charAt(0).toUpperCase();
+                focusRealInput();
             } else {
-                switchView('home');
+                document.getElementById('stepPassword').classList.add('hidden-step');
+                document.getElementById('stepIdentity').classList.remove('hidden-step');
             }
+        }
+
+        function focusRealInput() {
+            const input = document.getElementById('realInput');
+            input.focus();
+            document.getElementById('inputWrapper').classList.add('focused');
+            getAudioContext();
+        }
+
+        function handleRealInput(e) {
+            let val = e.target.value.replace(/\D/g, '').slice(0, 6);
+            e.target.value = val;
+
+            if (val.length > previousInputVal.length) playKeyClick(650 + val.length * 60);
+            else if (val.length < previousInputVal.length) playKeyClick(420);
+
+            renderSkiperDigits(val);
+        }
+
+        function renderSkiperDigits(newVal) {
+            const ghost = document.getElementById('ghostPlaceholder');
+            const flow = document.getElementById('digitsFlow');
+
+            if (newVal.length === 0) ghost.classList.remove('hidden-placeholder');
+            else ghost.classList.add('hidden-placeholder');
+
+            const chars = newVal.split('');
+            const currentSlots = Array.from(flow.children);
+
+            if (chars.length >= currentSlots.length) {
+                chars.forEach((c, idx) => {
+                    const displayChar = isMasked ? '•' : c;
+                    if (idx < currentSlots.length) {
+                        const span = currentSlots[idx].querySelector('.digit-char');
+                        if (span && span.dataset.raw !== c) {
+                            span.dataset.raw = c;
+                            span.textContent = displayChar;
+                        }
+                    } else {
+                        const slot = document.createElement('div');
+                        slot.className = 'digit-slot';
+                        const span = document.createElement('span');
+                        span.className = 'digit-char' + (isMasked ? ' is-bullet' : '');
+                        span.dataset.raw = c;
+                        span.textContent = displayChar;
+                        slot.appendChild(span);
+                        flow.appendChild(slot);
+                    }
+                });
+            } else {
+                const diff = currentSlots.length - chars.length;
+                for (let i = 0; i < diff; i++) {
+                    const toRemove = flow.lastElementChild;
+                    if (toRemove) flow.removeChild(toRemove);
+                }
+            }
+            previousInputVal = newVal;
+        }
+
+        function toggleMask(e) {
+            e.stopPropagation();
+            isMasked = !isMasked;
+            playKeyClick(850);
+            renderSkiperDigits(document.getElementById('realInput').value);
+        }
+
+        function pressPad(num) {
+            const input = document.getElementById('realInput');
+            if (input.value.length < 6) {
+                input.value += num;
+                playKeyClick(600 + input.value.length * 50);
+                renderSkiperDigits(input.value);
+            }
+        }
+
+        function clearPad() {
+            const input = document.getElementById('realInput');
+            input.value = '';
+            playKeyClick(350);
+            renderSkiperDigits('');
+        }
+
+        function backspacePad() {
+            const input = document.getElementById('realInput');
+            if (input.value.length > 0) {
+                input.value = input.value.slice(0, -1);
+                playKeyClick(400);
+                renderSkiperDigits(input.value);
+            }
+        }
+
+        function handleUnlockAuth() {
+            const val = document.getElementById('realInput').value;
+            const card = document.getElementById('stepPassword');
+            const feedback = document.getElementById('loginFeedback');
+
+            if (val.length < 6) {
+                playErrorThud();
+                card.classList.add('shake');
+                setTimeout(() => card.classList.remove('shake'), 450);
+                feedback.className = 'feedback-banner error';
+                document.getElementById('loginFeedbackText').innerText = 'Please enter all 6 passcode digits.';
+                return;
+            }
+
+            // Success unlock
+            playSuccessChime();
+            card.classList.add('success-glow');
+            feedback.className = 'feedback-banner success';
+            document.getElementById('loginFeedbackText').innerText = 'Enclave Authenticated! Welcome back.';
+
+            const email = document.getElementById('usernameInput').value;
+            const role = email.includes('officer') ? 'Officer' : (email.includes('admin') ? 'Admin' : 'Citizen');
+            document.getElementById('nav-user-name').innerText = `${role}`;
+            document.getElementById('nav-user-initial').innerText = role.charAt(0);
+
+            setTimeout(() => {
+                card.classList.remove('success-glow');
+                showToast(`Authenticated as ${role} in Kizuno-AI Enclave`, '🔐');
+                if (role === 'Officer') switchView('officer');
+                else switchView('home');
+            }, 1200);
         }
 
         function escapeHtml(text) {
@@ -2859,7 +2498,6 @@
             return String(text).replace(/[&<>"']/g, m => map[m]);
         }
 
-        // Initialize on DOM load
         window.addEventListener('DOMContentLoaded', async () => {
             await checkBackendHealth();
             renderOfficerTable();
