@@ -18,7 +18,8 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     func,
-    text
+    text,
+    Boolean
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
@@ -170,7 +171,7 @@ class Officer(Base):
 class User(Base):
     """
     SQL Table: users
-    Stores authenticated citizens, officers, and administrators (including Google OAuth accounts).
+    Stores authenticated citizens, officers, and administrators (including Google OAuth & verified Gmail accounts).
     """
     __tablename__ = "users"
 
@@ -179,8 +180,10 @@ class User(Base):
     email = Column(String(128), unique=True, nullable=False, index=True)
     name = Column(String(128), nullable=False)
     avatar_url = Column(Text, nullable=True)
-    role = Column(String(32), default="citizen")  # citizen, officer, admin
-    auth_provider = Column(String(32), default="google")  # google, password, mock
+    role = Column(String(32), default="citizen")  # citizen, officer
+    auth_provider = Column(String(32), default="google")  # google, email, pin
+    password_hash = Column(String(255), nullable=True)
+    is_verified = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     last_login = Column(DateTime, default=datetime.utcnow)
 
@@ -193,8 +196,32 @@ class User(Base):
             "avatarUrl": self.avatar_url,
             "role": self.role,
             "authProvider": self.auth_provider,
+            "isVerified": self.is_verified,
             "createdAt": self.created_at.isoformat() if self.created_at else None,
             "lastLogin": self.last_login.isoformat() if self.last_login else None
+        }
+
+
+class EmailVerification(Base):
+    """
+    SQL Table: email_verifications
+    Stores real 6-digit verification OTP codes linked to Gmail addresses with expiration.
+    """
+    __tablename__ = "email_verifications"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    email = Column(String(128), nullable=False, index=True)
+    code = Column(String(6), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False)
+    is_used = Column(Boolean, default=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "email": self.email,
+            "expiresAt": self.expires_at.isoformat(),
+            "isUsed": self.is_used
         }
 
 
@@ -213,16 +240,26 @@ def init_db():
     """
     Base.metadata.create_all(bind=engine)
 
-    # Ensure citizen ownership columns exist for existing databases
+    # Ensure citizen ownership columns and user auth columns exist for existing databases
     try:
         with engine.connect() as conn:
             if "sqlite" in str(engine.url):
+                # Check complaints table
                 res = conn.execute(text("PRAGMA table_info(complaints)"))
                 existing_cols = [row[1] for row in res.fetchall()]
                 if "citizen_email" not in existing_cols:
                     conn.execute(text("ALTER TABLE complaints ADD COLUMN citizen_email VARCHAR(128) DEFAULT 'kumar.citizen@gmail.com'"))
                 if "citizen_name" not in existing_cols:
                     conn.execute(text("ALTER TABLE complaints ADD COLUMN citizen_name VARCHAR(128) DEFAULT 'Citizen Kumar'"))
+
+                # Check users table
+                u_res = conn.execute(text("PRAGMA table_info(users)"))
+                u_cols = [row[1] for row in u_res.fetchall()]
+                if "password_hash" not in u_cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR(255)"))
+                if "is_verified" not in u_cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN is_verified BOOLEAN DEFAULT 0"))
+
                 conn.commit()
     except Exception as e:
         print("Schema migration note:", e)

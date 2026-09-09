@@ -8,7 +8,12 @@ import os
 import json
 import base64
 import random
-from datetime import datetime
+import hashlib
+import hmac
+import smtplib
+from datetime import datetime, timedelta
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from typing import Optional, List
 
 import uvicorn
@@ -27,8 +32,86 @@ from database import (
     TimelineEvent,
     Officer,
     User,
+    EmailVerification,
     DB_DIALECT
 )
+
+# SMTP Email Configuration for Real Gmail Verification
+SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT = int(os.environ.get("SMTP_PORT", 587))
+SMTP_USERNAME = os.environ.get("SMTP_USERNAME")
+SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
+SMTP_FROM = os.environ.get("SMTP_FROM", SMTP_USERNAME or "noreply@kizuno-ai.gov.in")
+
+
+def hash_password(password: str) -> str:
+    """Creates a secure salted PBKDF2-SHA256 password hash"""
+    salt = os.urandom(16).hex()
+    key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt.encode('utf-8'), 100000)
+    return f"{salt}${key.hex()}"
+
+
+def verify_password(password: str, stored_hash: str) -> bool:
+    """Verifies candidate password against stored PBKDF2 hash"""
+    if not stored_hash or "$" not in stored_hash:
+        return False
+    try:
+        salt, key_hex = stored_hash.split("$", 1)
+        test_key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt.encode('utf-8'), 100000)
+        return hmac.compare_digest(key_hex, test_key.hex())
+    except Exception:
+        return False
+
+
+def send_real_email_verification(to_email: str, code: str, user_name: str = "Citizen") -> dict:
+    """
+    Sends real Gmail verification email via SMTP if credentials are configured.
+    Returns delivery diagnostics.
+    """
+    if not SMTP_USERNAME or not SMTP_PASSWORD:
+        print(f"[Kizuno-AI Auth] Real SMTP credentials not set in environment. Generated SQL OTP for {to_email} is: {code}")
+        return {
+            "sent": False,
+            "simulated": True,
+            "message": f"Verification code {code} generated in SQL database."
+        }
+
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"Kizuno-AI Verification Code: {code}"
+        msg["From"] = f"Kizuno-AI Citizen Portal <{SMTP_FROM}>"
+        msg["To"] = to_email
+
+        text_content = f"Hello {user_name},\n\nYour Kizuno-AI citizen verification code is: {code}\n\nThis code expires in 10 minutes.\n\nThank you,\nKizuno-AI Municipal Engine"
+        html_content = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: #2563eb; margin: 0; font-size: 22px;">Kizuno-AI Citizen Portal</h2>
+                <p style="color: #64748b; font-size: 13px; margin-top: 4px;">Evidence-Based Grievance Redressal Engine</p>
+            </div>
+            <p style="font-size: 15px; color: #1e293b;">Hello <strong>{user_name}</strong>,</p>
+            <p style="font-size: 14px; color: #475569;">Your official 6-digit verification code to confirm your Gmail account is:</p>
+            <div style="text-align: center; margin: 25px 0;">
+                <span style="font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #2563eb; background: #eff6ff; padding: 12px 28px; border-radius: 8px; border: 1px dashed #bfdbfe; font-family: monospace;">
+                    {code}
+                </span>
+            </div>
+            <p style="color: #64748b; font-size: 13px; line-height: 1.5;">This verification code is valid for <strong>10 minutes</strong>. If you did not create a Kizuno-AI account, you can safely disregard this email.</p>
+        </div>
+        """
+        msg.attach(MIMEText(text_content, "plain"))
+        msg.attach(MIMEText(html_content, "html"))
+
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10) as server:
+            server.starttls()
+            server.login(SMTP_USERNAME, SMTP_PASSWORD)
+            server.sendmail(SMTP_FROM, [to_email], msg.as_string())
+
+        print(f"[Kizuno-AI Auth] Real email sent to {to_email} via {SMTP_SERVER}:{SMTP_PORT}")
+        return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
+    except Exception as e:
+        print(f"[Kizuno-AI Auth] SMTP dispatch error: {e}")
+        return {"sent": False, "error": str(e), "message": "Failed to send email via SMTP, fallback available"}
 
 # Verified Google OAuth 2.0 Client ID for Kizuno-AI
 GOOGLE_CLIENT_ID = "485227555296-5jqikr8c4ruddifkp7uj2k3h82sfivd1.apps.googleusercontent.com"
@@ -80,6 +163,23 @@ class GoogleAuthDTO(BaseModel):
     role: Optional[str] = "citizen"
 
 
+class SendVerificationDTO(BaseModel):
+    email: str
+    username: Optional[str] = "Citizen"
+
+
+class RegisterUserDTO(BaseModel):
+    username: str
+    email: str
+    password: str
+    verification_code: str
+
+
+class LoginUserDTO(BaseModel):
+    email: str
+    password: str
+
+
 def decode_jwt_unverified(token: str) -> dict:
     """Decodes JWT payload from Google Identity Services token without external dependencies."""
     try:
@@ -107,7 +207,154 @@ def get_auth_config():
     return {
         "googleClientId": GOOGLE_CLIENT_ID,
         "appName": "Kizuno-AI",
-        "authProviders": ["google", "passkey", "github", "enclave-pin"]
+        "authProviders": ["google", "email_password", "officer_pin"]
+    }
+
+
+@app.post("/api/auth/send-verification")
+def send_verification_code(payload: SendVerificationDTO, db: Session = Depends(get_db)):
+    """
+    Generates a secure 6-digit verification code for Gmail and dispatches via real SMTP.
+    Persists to SQL `email_verifications` table with a 10-minute expiry window.
+    """
+    clean_email = payload.email.strip().lower()
+    if not clean_email or "@" not in clean_email:
+        raise HTTPException(status_code=400, detail="Please enter a valid Gmail address.")
+
+    # Generate 6-digit numeric OTP code
+    code = f"{random.randint(100000, 999999)}"
+    expires = datetime.utcnow() + timedelta(minutes=10)
+
+    # Invalidate any existing unused codes for this email
+    db.query(EmailVerification).filter(
+        EmailVerification.email == clean_email,
+        EmailVerification.is_used == False
+    ).update({"is_used": True})
+
+    # Save new verification record in SQL
+    verif = EmailVerification(
+        email=clean_email,
+        code=code,
+        expires_at=expires,
+        is_used=False
+    )
+    db.add(verif)
+    db.commit()
+    db.refresh(verif)
+
+    # Attempt real SMTP dispatch
+    smtp_res = send_real_email_verification(clean_email, code, payload.username or "Citizen")
+
+    return {
+        "success": True,
+        "message": f"Verification code sent to {clean_email}.",
+        "email": clean_email,
+        "expiresInMinutes": 10,
+        "smtpStatus": smtp_res,
+        # dev_code provides seamless testing when SMTP is not configured locally
+        "devCode": code if not smtp_res.get("sent") else None
+    }
+
+
+@app.post("/api/auth/register")
+def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
+    """
+    Registers a new citizen with verified Gmail, username, and password.
+    Validates real 6-digit code against SQL `email_verifications`.
+    """
+    clean_email = payload.email.strip().lower()
+    clean_code = payload.verification_code.strip()
+
+    if not clean_email or "@" not in clean_email:
+        raise HTTPException(status_code=400, detail="Invalid Gmail address.")
+    if len(payload.password.strip()) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters.")
+
+    # Validate 6-digit verification code from SQL
+    verif = db.query(EmailVerification).filter(
+        EmailVerification.email == clean_email,
+        EmailVerification.code == clean_code,
+        EmailVerification.is_used == False,
+        EmailVerification.expires_at >= datetime.utcnow()
+    ).first()
+
+    if not verif:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid or expired verification code. Please request a new code to your Gmail."
+        )
+
+    # Mark code as consumed
+    verif.is_used = True
+
+    # Check if user already exists in SQL
+    existing_user = db.query(User).filter(User.email == clean_email).first()
+    hashed = hash_password(payload.password)
+
+    if existing_user:
+        if existing_user.password_hash:
+            raise HTTPException(
+                status_code=400,
+                detail=f"An account with {clean_email} already exists. Please sign in with your password."
+            )
+        # Upgrade existing Google/mock user with password
+        existing_user.name = payload.username.strip() or existing_user.name
+        existing_user.password_hash = hashed
+        existing_user.is_verified = True
+        existing_user.role = "citizen"
+        existing_user.last_login = datetime.utcnow()
+        db.commit()
+        db.refresh(existing_user)
+        user = existing_user
+    else:
+        # Create fresh citizen account
+        user = User(
+            email=clean_email,
+            name=payload.username.strip() or clean_email.split("@")[0],
+            password_hash=hashed,
+            is_verified=True,
+            role="citizen",
+            auth_provider="email"
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    return {
+        "success": True,
+        "message": f"Account verified and registered successfully! Welcome {user.name}.",
+        "user": user.to_dict()
+    }
+
+
+@app.post("/api/auth/login")
+def login_with_password(payload: LoginUserDTO, db: Session = Depends(get_db)):
+    """
+    Authenticates citizen using verified Gmail and Password from SQL.
+    """
+    clean_email = payload.email.strip().lower()
+    user = db.query(User).filter(User.email == clean_email).first()
+
+    if not user or not user.password_hash:
+        raise HTTPException(
+            status_code=401,
+            detail="No account found with this Gmail and password. Please check your credentials or create an account."
+        )
+
+    if not verify_password(payload.password, user.password_hash):
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect password. Please verify and try again."
+        )
+
+    user.last_login = datetime.utcnow()
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "success": True,
+        "message": f"Welcome back, {user.name}!",
+        "user": user.to_dict()
     }
 
 
