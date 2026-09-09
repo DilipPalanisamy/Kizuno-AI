@@ -1,0 +1,1647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kizuna-AI — Evidence-Based Citizen Grievance Tracking Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-canvas: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-light: #e2e8f0;
+            --border-subtle: #cbd5e1;
+
+            /* Verified & Primary Colors */
+            --brand-blue: #2563eb;
+            --brand-blue-hover: #1d4ed8;
+            --brand-blue-subtle: #eff6ff;
+            --status-green: #16a34a;
+            --status-green-border: #86efac;
+            --bg-green-light: #f0fdf4;
+            --text-green-dark: #14532d;
+
+            /* AI & Warning Colors */
+            --status-yellow: #d97706;
+            --status-yellow-border: #fde68a;
+            --bg-yellow-light: #fffbeb;
+            --text-yellow-dark: #78350f;
+            --ai-purple: #7c3aed;
+            --ai-purple-light: #f5f3ff;
+            --ai-purple-border: #ddd6fe;
+
+            /* Stationary & Inactive Colors */
+            --status-gray: #64748b;
+            --bg-gray-light: #f1f5f9;
+            --border-dashed: #cbd5e1;
+
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+            --radius-lg: 14px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
+            padding: 2.5rem 1rem 4rem 1rem;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        /* Top Header & Search */
+        .header-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            margin-bottom: 1.75rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .brand-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .brand-logo {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .brand-logo span {
+            color: var(--brand-blue);
+        }
+
+        .brand-badge {
+            font-size: 0.725rem;
+            font-weight: 700;
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.6rem;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+            background-color: #fafbfc;
+        }
+
+        .search-input:focus {
+            background-color: #ffffff;
+            border-color: var(--brand-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-btn {
+            background: var(--brand-blue);
+            color: #ffffff;
+            border: none;
+            padding: 0.85rem 1.6rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .search-btn:hover {
+            background: var(--brand-blue-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Demo Switcher Chips */
+        .sample-chips {
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .sample-chips-label {
+            font-size: 0.775rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .sample-chip {
+            background: var(--bg-gray-light);
+            border: 1px solid var(--border-light);
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.775rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .sample-chip:hover {
+            border-color: var(--brand-blue);
+            color: var(--brand-blue);
+            background: var(--brand-blue-subtle);
+        }
+
+        .sample-chip.active {
+            background: #1e293b;
+            color: #ffffff;
+            border-color: #1e293b;
+        }
+
+        .sample-chip .chip-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        .chip-dot.delayed {
+            background-color: var(--status-yellow);
+        }
+
+        .chip-dot.resolved {
+            background-color: var(--status-green);
+        }
+
+        /* Main Tracking Card */
+        .tracking-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 2.25rem;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+
+        /* Metadata Header */
+        .meta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .ref-tag-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .ref-id {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .dept-info {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-subtext {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.35rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Status Pills */
+        .status-pill {
+            padding: 0.4rem 0.9rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .status-pill.in-progress {
+            background: var(--bg-green-light);
+            color: var(--status-green);
+            border: 1px solid var(--status-green-border);
+        }
+
+        .status-pill.delayed {
+            background: var(--bg-yellow-light);
+            color: var(--status-yellow);
+            border: 1px solid var(--status-yellow-border);
+        }
+
+        .status-pill.resolved {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        /* E-Commerce Horizontal Stepper */
+        .stepper-section {
+            background: #fafbfc;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 1.75rem 1.25rem 1.25rem 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stepper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .stepper-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+
+        .stepper-sla-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: var(--radius-sm);
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            padding: 0 1rem;
+        }
+
+        /* Stepper Background Track */
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 2.5rem;
+            right: 2.5rem;
+            height: 3px;
+            background: var(--border-light);
+            z-index: 1;
+        }
+
+        /* Stepper Active Dynamic Fill Track */
+        .stepper-progress-fill {
+            position: absolute;
+            top: 18px;
+            left: 2.5rem;
+            height: 3px;
+            background: var(--brand-blue);
+            z-index: 1;
+            transition: width 0.4s ease;
+        }
+
+        .step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            min-width: 70px;
+        }
+
+        .step-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #ffffff;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin: 0 auto 0.6rem auto;
+            border: 2px solid var(--border-light);
+            transition: all 0.25s ease;
+        }
+
+        .step.completed .step-icon {
+            background: var(--status-green);
+            color: #ffffff;
+            border-color: var(--status-green);
+        }
+
+        .step.active .step-icon {
+            background: var(--brand-blue);
+            color: #ffffff;
+            border-color: var(--brand-blue);
+            box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.2);
+        }
+
+        .step.delayed-step.active .step-icon {
+            background: var(--status-yellow);
+            color: #ffffff;
+            border-color: var(--status-yellow);
+            box-shadow: 0 0 0 5px rgba(217, 119, 6, 0.2);
+        }
+
+        .step-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 0.15rem;
+        }
+
+        .step.completed .step-label,
+        .step.active .step-label {
+            color: var(--text-primary);
+        }
+
+        .step-date {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Timeline Section */
+        .timeline-section-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .timeline-legend {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.725rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.verified {
+            background: var(--brand-blue);
+        }
+
+        .legend-dot.stationary {
+            background: var(--text-muted);
+        }
+
+        .legend-dot.ai {
+            background: var(--status-yellow);
+        }
+
+        /* Vertical Event Journal Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 2px solid var(--border-light);
+            margin-left: 1.25rem;
+        }
+
+        .timeline-event {
+            position: relative;
+            margin-bottom: 2.25rem;
+            padding-bottom: 0.25rem;
+        }
+
+        .timeline-event:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Node icon pin on the vertical line */
+        .timeline-event::before {
+            content: '';
+            position: absolute;
+            left: -2.48rem;
+            top: 0.25rem;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid var(--border-light);
+            z-index: 2;
+            transition: all 0.2s ease;
+        }
+
+        /* Node Style: VERIFIED */
+        .timeline-event.verified::before {
+            border-color: var(--brand-blue);
+            background: var(--brand-blue);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        }
+
+        /* Node Style: STATIONARY */
+        .timeline-event.stationary::before {
+            border-color: var(--status-gray);
+            background: #ffffff;
+            border-style: dashed;
+            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12);
+        }
+
+        /* Node Style: AI AUDIT INFERENCE */
+        .timeline-event.flagged::before {
+            border-color: var(--status-yellow);
+            background: var(--status-yellow);
+            box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.2);
+            animation: pulse-ring 2.5s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 7px rgba(217, 119, 6, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
+            }
+        }
+
+        .event-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .day-tag {
+            font-size: 0.725rem;
+            font-weight: 800;
+            background: var(--bg-gray-light);
+            color: var(--text-secondary);
+            padding: 0.15rem 0.5rem;
+            border-radius: var(--radius-sm);
+            letter-spacing: 0.05em;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .event-timestamp {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Badges */
+        .verified-badge {
+            font-size: 0.675rem;
+            font-weight: 800;
+            color: #1e40af;
+            background: #dbeafe;
+            border: 1px solid #bfdbfe;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            letter-spacing: 0.04em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stationary-badge {
+            font-size: 0.675rem;
+            font-weight: 800;
+            color: #475569;
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            letter-spacing: 0.04em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .ai-badge {
+            font-size: 0.675rem;
+            font-weight: 800;
+            color: #92400e;
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            padding: 0.15rem 0.55rem;
+            border-radius: 4px;
+            letter-spacing: 0.04em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .event-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .event-hub {
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--brand-blue);
+            margin-bottom: 0.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .event-desc {
+            font-size: 0.885rem;
+            color: var(--text-secondary);
+            line-height: 1.45;
+        }
+
+        /* Card Container for Stationary & AI flags */
+        .event-detail-box {
+            margin-top: 0.5rem;
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+        }
+
+        .event-detail-box.stationary-box {
+            background: #f8fafc;
+            border: 1px dashed var(--border-dashed);
+            color: var(--text-secondary);
+        }
+
+        .event-detail-box.flagged-box {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #78350f;
+        }
+
+        .audit-metric-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.775rem;
+            font-weight: 600;
+        }
+
+        .audit-metric {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .event-evidence-footer {
+            margin-top: 0.6rem;
+            font-size: 0.725rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* AI Audit / Banner Section */
+        .ai-audit-box {
+            background: linear-gradient(145deg, #ffffff 0%, #fffbeb 100%);
+            border: 1px solid #fde68a;
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-top: 2.5rem;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-audit-box.resolved-mode {
+            background: linear-gradient(145deg, #ffffff 0%, #f0fdf4 100%);
+            border-color: var(--status-green-border);
+        }
+
+        .ai-audit-box::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--status-yellow);
+        }
+
+        .ai-audit-box.resolved-mode::before {
+            background: var(--status-green);
+        }
+
+        .ai-audit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .ai-audit-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+
+        .ai-audit-box.resolved-mode .ai-audit-title {
+            color: var(--text-green-dark);
+        }
+
+        .ai-audit-score-pill {
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: #ffffff;
+            border: 1px solid #fde68a;
+            color: #92400e;
+            padding: 0.25rem 0.65rem;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .ai-audit-box.resolved-mode .ai-audit-score-pill {
+            border-color: var(--status-green-border);
+            color: var(--text-green-dark);
+        }
+
+        .ai-audit-desc {
+            font-size: 0.885rem;
+            color: #78350f;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .ai-audit-box.resolved-mode .ai-audit-desc {
+            color: #166534;
+        }
+
+        .ai-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed rgba(217, 119, 6, 0.2);
+        }
+
+        .ai-audit-box.resolved-mode .ai-metrics-grid {
+            border-top-color: rgba(22, 163, 74, 0.2);
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 0.6rem 0.8rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .metric-label {
+            font-size: 0.725rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.2rem;
+        }
+
+        .metric-value {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        /* Citizen Action Bar */
+        .citizen-action-bar {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-action.escalate {
+            background: #ea580c;
+            color: #ffffff;
+            border-color: #c2410c;
+        }
+
+        .btn-action.escalate:hover {
+            background: #c2410c;
+        }
+
+        .btn-action.secondary:hover {
+            background: #f1f5f9;
+        }
+
+        /* Empty / Not Found State */
+        .not-found-state {
+            text-align: center;
+            padding: 3.5rem 1.5rem;
+        }
+
+        .not-found-icon {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .not-found-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .not-found-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            max-width: 460px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        /* Modal Overlay for Action Simulation */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            max-width: 520px;
+            width: 100%;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-content {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-code-block {
+            background: #f8fafc;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.775rem;
+            color: #1e293b;
+            margin: 0.75rem 0;
+            white-space: pre-wrap;
+        }
+
+        .modal-btn-close {
+            background: var(--brand-blue);
+            color: #ffffff;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .tracking-card {
+                padding: 1.25rem;
+            }
+
+            .stepper {
+                padding: 0;
+            }
+
+            .step-label {
+                font-size: 0.7rem;
+            }
+
+            .step-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 0.75rem;
+            }
+
+            .stepper::before,
+            .stepper-progress-fill {
+                left: 1.5rem;
+                right: 1.5rem;
+                top: 15px;
+            }
+
+            .timeline {
+                margin-left: 0.75rem;
+                padding-left: 1.5rem;
+            }
+
+            .timeline-event::before {
+                left: -1.95rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Top Header & Search -->
+        <div class="header-card">
+            <div class="brand-header">
+                <div class="brand-logo">
+                    Kizuna<span>X</span>
+                    <span class="brand-badge">Audit Engine v2.4</span>
+                </div>
+                <div style="font-size: 0.825rem; color: var(--text-secondary); font-weight: 500;">
+                    Evidence-Based Citizen Grievance Tracker
+                </div>
+            </div>
+
+            <!-- Dynamic Search Form -->
+            <form class="search-form" id="search-form">
+                <div class="search-input-wrapper">
+                    <span class="search-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </span>
+                    <input type="text" class="search-input" id="search-input" value="TN-2026-839274"
+                        placeholder="Enter Grievance Reference ID (e.g. TN-2026-839274, KA-2026-419082)"
+                        autocomplete="off">
+                </div>
+                <button type="submit" class="search-btn" id="search-btn">
+                    <span>Track Status</span>
+                </button>
+            </form>
+
+            <!-- Quick Test Sample Switcher Chips -->
+            <div class="sample-chips">
+                <span class="sample-chips-label">Demo Test Cases:</span>
+                <button type="button" class="sample-chip active" id="chip-sample-1"
+                    onclick="switchSample('TN-2026-839274')">
+                    <span class="chip-dot delayed"></span>
+                    TN-2026-839274 (Active • 24h Inactivity Flag)
+                </button>
+                <button type="button" class="sample-chip" id="chip-sample-2" onclick="switchSample('KA-2026-419082')">
+                    <span class="chip-dot resolved"></span>
+                    KA-2026-419082 (Resolved • 100% SLA Compliant)
+                </button>
+            </div>
+        </div>
+
+        <!-- Live Content Container (Dynamic Rendering Target) -->
+        <main id="tracking-container">
+            <!-- Will be dynamically generated by JavaScript -->
+        </main>
+
+    </div>
+
+    <!-- Interactive Escalation Modal -->
+    <div class="modal-overlay" id="action-modal" onclick="closeActionModal(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-title" id="modal-title">⚡ Action Preview</div>
+            <div class="modal-content" id="modal-body"></div>
+            <div style="text-align: right;">
+                <button type="button" class="modal-btn-close" onclick="closeActionModal()">Acknowledge & Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         DYNAMIC DATA & RENDERING SCRIPT
+         ========================================================= -->
+    <script>
+        /**
+         * KIZUNAX OFFICIAL GRIEVANCE MOCK DATABASE
+         * 
+         * Rule 1: Zero synthetic steps based on elapsed calendar days.
+         * Rule 2: Strict separation between 'verified', 'stationary', and 'flagged' (AI).
+         */
+        const GRIEVANCE_DATABASE = {
+            // Case 1: Active with Delays (>24h silence post-inspection, AI SLA threat flag)
+            "TN-2026-839274": {
+                refId: "TN-2026-839274",
+                department: "TWAD Board",
+                subCategory: "Main Line Water Contamination & High Pressure Leak",
+                location: "Zone 4, Coimbatore Municipal Corporation (Ward 14)",
+                filedDate: "Sep 07, 2026",
+                targetSla: "Day 3 (Sep 10, 2026 — 06:00 PM)",
+                statusPill: {
+                    text: "SLA Warning / Active",
+                    type: "delayed"
+                },
+                stepper: {
+                    activeStepIndex: 2, // 0: Lodged, 1: Assigned, 2: Inspection (Active), 3: Work Order, 4: Resolved
+                    isDelayed: true,
+                    steps: [
+                        { label: "Lodged", date: "Sep 07" },
+                        { label: "Assigned", date: "Sep 07" },
+                        { label: "Inspection", date: "Sep 08" },
+                        { label: "Work Order", date: "Pending" },
+                        { label: "Resolved", date: "Est. Sep 10" }
+                    ]
+                },
+                events: [
+                    {
+                        type: "verified",
+                        dayLabel: "DAY 0",
+                        timestamp: "Sep 07, 2026 — 09:15 AM",
+                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
+                        title: "Grievance Registered & Ingested",
+                        hub: "Node: CM Helpline Central Intake Gateway",
+                        description: "Citizen complaint accepted and validated. Cryptographic tracking receipt generated and dispatched to TWAD centralized monitoring hub.",
+                        evidence: "Source API: TWAD_CENTRAL_GATEWAY • TxID: 0x8f2a...c31b"
+                    },
+                    {
+                        type: "verified",
+                        dayLabel: "DAY 0",
+                        timestamp: "Sep 07, 2026 — 02:30 PM",
+                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
+                        title: "Routed to Department Sub-Division",
+                        hub: "Node: Zone 4 Sub-Division Office",
+                        description: "Forwarded to Assistant Executive Engineer (Water Systems) for administrative review and team resource allocation.",
+                        evidence: "Source API: CM_PORTAL_ROUTER_V2 • DispatchRef: DSP-9428-TN"
+                    },
+                    {
+                        type: "verified",
+                        dayLabel: "DAY 1",
+                        timestamp: "Sep 08, 2026 — 10:45 AM",
+                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
+                        title: "Out for Field Inspection",
+                        hub: "Officer: R. Selvam (Junior Engineer, TWAD)",
+                        description: "Field team deployed on site for physical assessment of underground valve leak and chlorine level testing.",
+                        evidence: "Source API: FIELD_INSPECT_SYS • GeoTag: 11.0168°N, 76.9558°E"
+                    },
+                    {
+                        type: "stationary",
+                        dayLabel: "DAY 2",
+                        timestamp: "Sep 09, 2026 — 00:00 to 23:59",
+                        badgeLabel: "STATIONARY / NO EVENT LOGGED",
+                        title: "Stationary Period — Zero Government Activity Logged",
+                        hub: "Node: Zone 4 Sub-Division Operations Desk",
+                        description: "Audit confirms zero administrative entries, inspection reports, or material requisitions logged in official departmental servers during this 24-hour cycle.",
+                        evidence: "Verified via TWAD Central Audit Polling • 0 updates received in 24 hrs"
+                    },
+                    {
+                        type: "flagged",
+                        dayLabel: "DAY 2",
+                        timestamp: "Sep 09, 2026 — 06:00 PM",
+                        badgeLabel: "AI AUDIT INFERENCE — NOT A GOV RECORD",
+                        title: "⚠️ Administrative Inactivity & Bottleneck Flagged",
+                        hub: "Rule Engine: KizunaX Inactivity Detector v2.4",
+                        description: "Ticket has remained completely stationary for 28 consecutive hours post-inspection. Historical benchmark for Zone 4 indicates a 72% likelihood of SLA breach if procurement order is not posted within 6 hours.",
+                        evidence: "AI SLA Confidence: 85% • Inactivity Threshold: >24h Exceeded"
+                    }
+                ],
+                aiAudit: {
+                    mode: "warning",
+                    title: "KizunaX Audit Engine Assessment",
+                    confidenceScore: "85% Confidence",
+                    summary: "Official API records confirm complaint intake, routing, and preliminary field dispatch. However, no physical progress or work order has been logged for over 24 hours. While currently within the outer SLA envelope (Day 2 of 3), the stationary state indicates an acute administrative bottleneck in Zone 4 Sub-Division.",
+                    metrics: [
+                        { label: "SLA Deadline", value: "Day 3 (14h Remaining)" },
+                        { label: "Dormant Duration", value: "28 Hours Inactive" },
+                        { label: "Bottleneck Stage", value: "Zone 4 Sub-Division" },
+                        { label: "Risk Level", value: "Elevated Delay Risk" }
+                    ],
+                    actions: [
+                        {
+                            label: "Draft 1st Escalation to Executive Engineer",
+                            type: "escalate",
+                            actionId: "escalate-twad"
+                        },
+                        {
+                            label: "Generate RTI Audit Dossier",
+                            type: "secondary",
+                            actionId: "rti-dossier"
+                        }
+                    ]
+                }
+            },
+
+            // Case 2: Fully Resolved & 100% SLA Compliant (Fast repair of electrical transformer)
+            "KA-2026-419082": {
+                refId: "KA-2026-419082",
+                department: "BESCOM (Bangalore Electricity Supply)",
+                subCategory: "Hazardous Transformer Sparking & Streetlight Blackout",
+                location: "Indiranagar 2nd Stage, Ward 112, Bengaluru",
+                filedDate: "Sep 08, 2026",
+                targetSla: "Day 2 (Sep 10, 2026 — 12:00 PM)",
+                statusPill: {
+                    text: "Resolved & Verified",
+                    type: "resolved"
+                },
+                stepper: {
+                    activeStepIndex: 4, // 0: Lodged, 1: Assigned, 2: Inspection, 3: Work Order, 4: Resolved (100% complete)
+                    isDelayed: false,
+                    steps: [
+                        { label: "Lodged", date: "Sep 08" },
+                        { label: "Assigned", date: "Sep 08" },
+                        { label: "Inspection", date: "Sep 08" },
+                        { label: "Repaired", date: "Sep 09" },
+                        { label: "Resolved", date: "Sep 09" }
+                    ]
+                },
+                events: [
+                    {
+                        type: "verified",
+                        dayLabel: "DAY 0",
+                        timestamp: "Sep 08, 2026 — 08:30 AM",
+                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
+                        title: "Grievance Lodged via Sahayaa 24x7 Portal",
+                        hub: "Node: BESCOM Central Customer Care Gateway",
+                        description: "Urgent safety complaint filed with photos of sparking distribution transformer. Priority 1 (Safety Critical) tag assigned.",
+                        evidence: "Source API: BESCOM_SAHAYAA_PORTAL • TxID: 0x41ab...e89d"
+                    },
+                    {
+                        type: "verified",
+                        dayLabel: "DAY 0",
+                        timestamp: "Sep 08, 2026 — 09:15 AM",
+                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
+                        title: "Dispatched to Rapid Response Gang (RRG)",
+                        hub: "Node: Indiranagar Sub-Station O&M Unit",
+                        description: "Section Officer assigned Lineman gang #4 with emergency repair van KA-04-G-8821.",
+                        evidence: "Source API: BESCOM_CREW_DISPATCH • GangID: RRG-IND-04"
+                    },
+                    {
+                        type: "verified",
+                        dayLabel: "DAY 0",
+                        timestamp: "Sep 08, 2026 — 11:40 AM",
+                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
+                        title: "Site Isolated & Damage Assessed",
+                        hub: "Officer: S. Nayak (Assistant Executive Engineer)",
+                        description: "Feeder breaker tripped for safety. Blown 11kV lightning arrester and burnt LT copper jumper identified for immediate replacement.",
+                        evidence: "Source API: BESCOM_SAFETY_LOG • Feeder: 11kV Binnamangala"
+                    },
+                    {
+                        type: "verified",
+                        dayLabel: "DAY 1",
+                        timestamp: "Sep 09, 2026 — 01:20 PM",
+                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
+                        title: "Replacement Completed & Power Restored",
+                        hub: "Node: Indiranagar Sub-Station O&M Unit",
+                        description: "New 11kV arrester installed, insulator bushed, and earthing verified at 2.1 Ohms. Feeder re-energized successfully.",
+                        evidence: "Source API: BESCOM_SCADA_FEEDER • Status: ENERGIZED_OK"
+                    },
+                    {
+                        type: "verified",
+                        dayLabel: "DAY 1",
+                        timestamp: "Sep 09, 2026 — 04:30 PM",
+                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
+                        title: "Citizen Sign-off & Official Case Closure",
+                        hub: "Node: Citizen Verification IVR / SMS Gateway",
+                        description: "Citizen OTP validation completed. Formal resolution certificate generated and grievance closed in full compliance with KERC standards.",
+                        evidence: "Source API: BESCOM_CLOSURE_CERT • CertificateHash: #CERT-KA-99120"
+                    }
+                ],
+                aiAudit: {
+                    mode: "resolved",
+                    title: "KizunaX Audit Engine Assessment",
+                    confidenceScore: "98% Verified SLA",
+                    summary: "Exemplary departmental responsiveness detected. The grievance traversed from central intake to physical rectification in 32 hours, beating the regulatory 48-hour SLA deadline by 16 hours. Zero stationary anomalies or administrative gaps detected across 5 government verification checkpoints.",
+                    metrics: [
+                        { label: "Resolution Time", value: "32 Hours (Ahead of SLA)" },
+                        { label: "Stationary Gaps", value: "0 Hours (Continuous Flow)" },
+                        { label: "Regulatory SLA", value: "100% Met (KERC Compliant)" },
+                        { label: "Audit Result", value: "Authentic & Verified" }
+                    ],
+                    actions: [
+                        {
+                            label: "Download Official Resolution Certificate",
+                            type: "secondary",
+                            actionId: "download-cert"
+                        },
+                        {
+                            label: "Submit Citizen Quality Rating",
+                            type: "secondary",
+                            actionId: "rate-service"
+                        }
+                    ]
+                }
+            }
+        };
+
+        /**
+         * Renders the complete tracking view for a grievance record
+         */
+        function renderGrievance(complaint) {
+            const container = document.getElementById('tracking-container');
+
+            // 1. Calculate Stepper fill width
+            const totalSteps = complaint.stepper.steps.length;
+            const progressPercent = totalSteps > 1
+                ? (complaint.stepper.activeStepIndex / (totalSteps - 1)) * 100
+                : 0;
+
+            // 2. Build Stepper HTML
+            const stepsHtml = complaint.stepper.steps.map((step, idx) => {
+                let stateClass = "";
+                let iconContent = idx + 1;
+
+                if (idx < complaint.stepper.activeStepIndex) {
+                    stateClass = "completed";
+                    iconContent = `
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    `;
+                } else if (idx === complaint.stepper.activeStepIndex) {
+                    stateClass = "active";
+                    if (complaint.stepper.isDelayed) {
+                        stateClass += " delayed-step";
+                    }
+                    if (complaint.statusPill.type === "resolved") {
+                        stateClass = "completed";
+                        iconContent = `
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        `;
+                    }
+                }
+
+                return `
+                    <div class="step ${stateClass}">
+                        <div class="step-icon">${iconContent}</div>
+                        <div class="step-label">${escapeHtml(step.label)}</div>
+                        <div class="step-date">${escapeHtml(step.date)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // 3. Build Timeline Nodes conditionally based on event type
+            const eventsHtml = complaint.events.map(event => renderTimelineNode(event)).join('');
+
+            // 4. Build AI Audit Box
+            const audit = complaint.aiAudit;
+            const isResolved = audit.mode === "resolved";
+
+            const metricsHtml = audit.metrics.map(m => `
+                <div class="metric-card">
+                    <div class="metric-label">${escapeHtml(m.label)}</div>
+                    <div class="metric-value">${escapeHtml(m.value)}</div>
+                </div>
+            `).join('');
+
+            const actionsHtml = audit.actions.map(btn => `
+                <button type="button" class="btn-action ${btn.type}" onclick="triggerAction('${btn.actionId}', '${complaint.refId}')">
+                    ${btn.type === 'escalate' ? '⚡' : '📄'} ${escapeHtml(btn.label)}
+                </button>
+            `).join('');
+
+            // 5. Assemble the complete tracking view
+            container.innerHTML = `
+                <div class="tracking-card">
+
+                    <!-- Metadata Header -->
+                    <div class="meta-header">
+                        <div>
+                            <div class="ref-tag-group">
+                                <span class="ref-id">Reference ID: ${escapeHtml(complaint.refId)}</span>
+                            </div>
+                            <div class="dept-info">
+                                <strong>${escapeHtml(complaint.department)}</strong>
+                                <span>•</span>
+                                <span>${escapeHtml(complaint.subCategory)}</span>
+                            </div>
+                            <div class="meta-subtext">
+                                <span>📍 ${escapeHtml(complaint.location)}</span>
+                                <span>📅 Lodged: ${escapeHtml(complaint.filedDate)}</span>
+                                <span>🎯 SLA Deadline: ${escapeHtml(complaint.targetSla)}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="status-pill ${complaint.statusPill.type}">
+                                ${complaint.statusPill.type === 'resolved' ? '✓ ' : '● '}
+                                ${escapeHtml(complaint.statusPill.text)}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- E-Commerce Horizontal Stepper -->
+                    <div class="stepper-section">
+                        <div class="stepper-header">
+                            <span class="stepper-title">Grievance Life Cycle Stage</span>
+                            <span class="stepper-sla-badge">Target SLA: ${escapeHtml(complaint.targetSla)}</span>
+                        </div>
+                        <div class="stepper">
+                            <div class="stepper-progress-fill" style="width: ${progressPercent}%;"></div>
+                            ${stepsHtml}
+                        </div>
+                    </div>
+
+                    <!-- Timeline Title & Legend -->
+                    <div class="timeline-section-title">
+                        <span>Official Event Stream & Audit Journal</span>
+                        <div class="timeline-legend">
+                            <span class="legend-item"><span class="legend-dot verified"></span> Verified Event</span>
+                            <span class="legend-item"><span class="legend-dot stationary"></span> Stationary</span>
+                            <span class="legend-item"><span class="legend-dot ai"></span> AI Inference</span>
+                        </div>
+                    </div>
+
+                    <!-- Vertical Event Journal Timeline -->
+                    <div class="timeline">
+                        ${eventsHtml}
+                    </div>
+
+                    <!-- AI Audit Card -->
+                    <div class="ai-audit-box ${isResolved ? 'resolved-mode' : ''}">
+                        <div class="ai-audit-header">
+                            <div class="ai-audit-title">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                </svg>
+                                <span>${escapeHtml(audit.title)}</span>
+                            </div>
+                            <span class="ai-audit-score-pill">
+                                🛡️ ${escapeHtml(audit.confidenceScore)}
+                            </span>
+                        </div>
+                        <div class="ai-audit-desc">
+                            ${escapeHtml(audit.summary)}
+                        </div>
+                        <div class="ai-metrics-grid">
+                            ${metricsHtml}
+                        </div>
+                        <div class="citizen-action-bar">
+                            ${actionsHtml}
+                        </div>
+                    </div>
+
+                </div>
+            `;
+        }
+
+        /**
+         * Dynamic Timeline Node Generator:
+         * Strictly differentiates Verified Gov Events, Stationary Gaps, and AI Inferences.
+         */
+        function renderTimelineNode(event) {
+            if (event.type === 'verified') {
+                return `
+                    <div class="timeline-event verified">
+                        <div class="event-meta">
+                            <span class="day-tag">${escapeHtml(event.dayLabel)}</span>
+                            <span class="event-timestamp">${escapeHtml(event.timestamp)}</span>
+                            <span class="verified-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                                ${escapeHtml(event.badgeLabel)}
+                            </span>
+                        </div>
+                        <div class="event-title">${escapeHtml(event.title)}</div>
+                        <div class="event-hub">${escapeHtml(event.hub)}</div>
+                        <div class="event-desc">${escapeHtml(event.description)}</div>
+                        <div class="event-evidence-footer">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <span>${escapeHtml(event.evidence)}</span>
+                        </div>
+                    </div>
+                `;
+            } else if (event.type === 'stationary') {
+                return `
+                    <div class="timeline-event stationary">
+                        <div class="event-meta">
+                            <span class="day-tag">${escapeHtml(event.dayLabel)}</span>
+                            <span class="event-timestamp">${escapeHtml(event.timestamp)}</span>
+                            <span class="stationary-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="10" y1="15" x2="10" y2="9"></line>
+                                    <line x1="14" y1="15" x2="14" y2="9"></line>
+                                </svg>
+                                ${escapeHtml(event.badgeLabel)}
+                            </span>
+                        </div>
+                        <div class="event-title" style="color: var(--text-muted);">${escapeHtml(event.title)}</div>
+                        <div class="event-hub" style="color: var(--text-muted);">${escapeHtml(event.hub)}</div>
+                        <div class="event-detail-box stationary-box">
+                            <div class="event-desc" style="color: var(--text-secondary);">${escapeHtml(event.description)}</div>
+                            <div class="event-evidence-footer">
+                                <span>ℹ️ ${escapeHtml(event.evidence)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (event.type === 'flagged') {
+                return `
+                    <div class="timeline-event flagged">
+                        <div class="event-meta">
+                            <span class="day-tag" style="background: #fef3c7; color: #92400e;">${escapeHtml(event.dayLabel)}</span>
+                            <span class="event-timestamp">${escapeHtml(event.timestamp)}</span>
+                            <span class="ai-badge">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+                                </svg>
+                                ${escapeHtml(event.badgeLabel)}
+                            </span>
+                        </div>
+                        <div class="event-title" style="color: var(--status-yellow); font-weight: 800;">${escapeHtml(event.title)}</div>
+                        <div class="event-hub" style="color: var(--status-yellow);">${escapeHtml(event.hub)}</div>
+                        <div class="event-detail-box flagged-box">
+                            <div class="event-desc">${escapeHtml(event.description)}</div>
+                            <div class="audit-metric-row">
+                                <span class="audit-metric">⚡ ${escapeHtml(event.evidence)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            return '';
+        }
+
+        /**
+         * Renders a clean "Not Found" state if the entered ID doesn't exist
+         */
+        function renderNotFound(refId) {
+            const container = document.getElementById('tracking-container');
+            container.innerHTML = `
+                <div class="tracking-card">
+                    <div class="not-found-state">
+                        <div class="not-found-icon">🔍</div>
+                        <div class="not-found-title">Grievance Record Not Found</div>
+                        <div class="not-found-desc">
+                            No government database record or audit trace found matching reference identifier 
+                            <strong style="color: var(--brand-blue); font-family: 'JetBrains Mono', monospace;">"${escapeHtml(refId)}"</strong>.
+                            Please double-check your receipt number or try one of the verified sample test records below.
+                        </div>
+                        <div style="display: inline-flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+                            <button type="button" class="btn-action secondary" onclick="switchSample('TN-2026-839274')">
+                                ⚡ Load Active Case (TN-2026-839274)
+                            </button>
+                            <button type="button" class="btn-action secondary" onclick="switchSample('KA-2026-419082')">
+                                ✓ Load Resolved Case (KA-2026-419082)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * Helper to sanitize text preventing XSS
+         */
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+
+        /**
+         * Handles search query execution
+         */
+        function trackGrievance(rawId) {
+            const cleanId = (rawId || '').trim().toUpperCase();
+            if (!cleanId) return;
+
+            // Update search input field to show normalized query
+            document.getElementById('search-input').value = cleanId;
+
+            // Update sample chip active state
+            document.querySelectorAll('.sample-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            if (cleanId === 'TN-2026-839274') {
+                const c1 = document.getElementById('chip-sample-1');
+                if (c1) c1.classList.add('active');
+            } else if (cleanId === 'KA-2026-419082') {
+                const c2 = document.getElementById('chip-sample-2');
+                if (c2) c2.classList.add('active');
+            }
+
+            // Query database
+            const record = GRIEVANCE_DATABASE[cleanId];
+            if (record) {
+                renderGrievance(record);
+            } else {
+                renderNotFound(cleanId);
+            }
+        }
+
+        /**
+         * Quick switcher for sample test cases
+         */
+        function switchSample(sampleId) {
+            document.getElementById('search-input').value = sampleId;
+            trackGrievance(sampleId);
+        }
+
+        /**
+         * Action modal simulations (Escalation / RTI Query / Certificate)
+         */
+        function triggerAction(actionId, refId) {
+            const modal = document.getElementById('action-modal');
+            const titleEl = document.getElementById('modal-title');
+            const bodyEl = document.getElementById('modal-body');
+
+            if (actionId === 'escalate-twad') {
+                titleEl.innerHTML = '⚡ Escalation Notice Generated';
+                bodyEl.innerHTML = `
+                    <p>An official SLA Inactivity Notice has been drafted targeting the <strong>Superintending Engineer (TWAD Board)</strong> based on KizunaX Rule #24 (28h stationary duration):</p>
+                    <div class="modal-code-block">MEMORANDUM OF DELAY ESCALATION
+Ref ID: ${refId}
+Target Office: Zone 4 Sub-Division Office, Coimbatore
+Status: Stationary for >24h post-inspection
+Grounds: Non-compliance with State Citizen Charter SLA (Sec 4.2)
+Demand: Immediate work order issuance within 12 business hours.</div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">This dossier is ready to be dispatched via CM Helpline Grievance Escalation API.</p>
+                `;
+            } else if (actionId === 'rti-dossier') {
+                titleEl.innerHTML = '📄 RTI Citizen Audit Dossier';
+                bodyEl.innerHTML = `
+                    <p>Evidence package assembled with cryptographic timestamps for submission under Right to Information Act (Section 6(1)):</p>
+                    <div class="modal-code-block">RTI QUERY EVIDENCE LOG
+1. Date of Intake: 07-09-2026 09:15 AM (Verified)
+2. Last Official Update: 08-09-2026 10:45 AM (Verified)
+3. Stationary Inactive Gap: 08-09-2026 10:45 AM to Present (No Entries Logged)
+4. Officer Allocated: R. Selvam, Junior Engineer
+Query: Provide daily register logs explaining 28h lack of action.</div>
+                `;
+            } else if (actionId === 'download-cert') {
+                titleEl.innerHTML = '✓ Official Resolution Certificate';
+                bodyEl.innerHTML = `
+                    <p>Digital resolution certificate verified by BESCOM Sahayaa Gateway:</p>
+                    <div class="modal-code-block">GOVERNMENT OF KARNATAKA - BESCOM
+Certificate Ref: #CERT-KA-99120
+Grievance ID: ${refId}
+Department: Indiranagar Sub-Station O&M Unit
+Resolution Timestamp: Sep 09, 2026 — 04:30 PM
+Status: Verified & Closed (OTP Authenticated by Citizen)</div>
+                    <p style="color: var(--status-green); font-weight: 600; font-size: 0.85rem;">Cryptographic hash authenticated against State Ledger.</p>
+                `;
+            } else {
+                titleEl.innerHTML = 'Citizen Quality Feedback';
+                bodyEl.innerHTML = `
+                    <p>Thank you for participating in the KizunaX Civic Integrity Program. Your feedback rating for grievance <strong>${refId}</strong> has been logged to the public accountability index.</p>
+                `;
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeActionModal() {
+            document.getElementById('action-modal').style.display = 'none';
+        }
+
+        // Search Form Submission Handler
+        document.getElementById('search-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const inputVal = document.getElementById('search-input').value;
+            trackGrievance(inputVal);
+        });
+
+        // Initialize default view on load (Active Delayed case)
+        window.addEventListener('DOMContentLoaded', () => {
+            trackGrievance('TN-2026-839274');
+        });
+    </script>
+</body>
+
+</html>
