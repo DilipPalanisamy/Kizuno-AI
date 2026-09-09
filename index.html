@@ -4,12 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kizuna-AI — Evidence-Based Citizen Grievance Tracking Engine</title>
+    <title>CivicTrack — Citizen Complaint Tracking & Accountability System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-canvas: #f8fafc;
@@ -20,33 +18,32 @@
             --border-light: #e2e8f0;
             --border-subtle: #cbd5e1;
 
-            /* Verified & Primary Colors */
-            --brand-blue: #2563eb;
-            --brand-blue-hover: #1d4ed8;
-            --brand-blue-subtle: #eff6ff;
+            /* Brand & Action Colors */
+            --brand-primary: #2563eb;
+            --brand-primary-hover: #1d4ed8;
+            --brand-primary-subtle: #eff6ff;
+            --brand-green: #16a34a;
+            --brand-green-hover: #15803d;
+            --brand-green-subtle: #f0fdf4;
+            --brand-purple: #8b5cf6;
+            --brand-purple-hover: #7c3aed;
+            --brand-purple-subtle: #f5f3ff;
+            --brand-amber: #d97706;
+            --brand-amber-subtle: #fffbeb;
+            --brand-red: #dc2626;
+            --brand-red-subtle: #fef2f2;
+
+            /* Status Theme */
             --status-green: #16a34a;
-            --status-green-border: #86efac;
-            --bg-green-light: #f0fdf4;
-            --text-green-dark: #14532d;
-
-            /* AI & Warning Colors */
-            --status-yellow: #d97706;
-            --status-yellow-border: #fde68a;
-            --bg-yellow-light: #fffbeb;
-            --text-yellow-dark: #78350f;
-            --ai-purple: #7c3aed;
-            --ai-purple-light: #f5f3ff;
-            --ai-purple-border: #ddd6fe;
-
-            /* Stationary & Inactive Colors */
+            --status-blue: #2563eb;
+            --status-amber: #d97706;
+            --status-red: #dc2626;
             --status-gray: #64748b;
-            --bg-gray-light: #f1f5f9;
-            --border-dashed: #cbd5e1;
 
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
-            --radius-lg: 14px;
+            --radius-lg: 16px;
             --radius-md: 10px;
             --radius-sm: 6px;
         }
@@ -61,453 +58,801 @@
         body {
             background-color: var(--bg-canvas);
             color: var(--text-primary);
-            padding: 2.5rem 1rem 4rem 1rem;
-            display: flex;
-            justify-content: center;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             line-height: 1.5;
         }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
+        /* App Main Navbar */
+        .app-nav {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
-        /* Top Header & Search */
-        .header-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 1.75rem;
-            margin-bottom: 1.75rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .brand-header {
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.85rem 1.5rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-bottom: 1.25rem;
+            justify-content: space-between;
+            gap: 1rem;
         }
 
         .brand-logo {
-            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .brand-shield {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: 0 3px 6px rgba(37, 99, 235, 0.25);
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-size: 1.25rem;
             font-weight: 800;
             letter-spacing: -0.03em;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            color: var(--brand-primary);
+            line-height: 1.1;
         }
 
-        .brand-logo span {
-            color: var(--brand-blue);
-        }
-
-        .brand-badge {
-            font-size: 0.725rem;
-            font-weight: 700;
-            background: #e0e7ff;
-            color: #3730a3;
-            padding: 0.2rem 0.6rem;
-            border-radius: 9999px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .search-form {
-            display: flex;
-            gap: 0.6rem;
-        }
-
-        .search-input-wrapper {
-            position: relative;
-            flex: 1;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 0.85rem 1rem 0.85rem 2.6rem;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-md);
-            font-size: 0.95rem;
-            font-family: inherit;
-            outline: none;
-            transition: all 0.2s ease;
-            background-color: #fafbfc;
-        }
-
-        .search-input:focus {
-            background-color: #ffffff;
-            border-color: var(--brand-blue);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 0.9rem;
-            top: 50%;
-            transform: translateY(-50%);
+        .brand-tagline {
+            font-size: 0.685rem;
+            font-weight: 600;
             color: var(--text-muted);
-            pointer-events: none;
-            display: flex;
-            align-items: center;
+            letter-spacing: 0.02em;
         }
 
-        .search-btn {
-            background: var(--brand-blue);
-            color: #ffffff;
-            border: none;
-            padding: 0.85rem 1.6rem;
-            border-radius: var(--radius-md);
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        .nav-links {
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            white-space: nowrap;
         }
 
-        .search-btn:hover {
-            background: var(--brand-blue-hover);
-            transform: translateY(-1px);
+        .nav-btn {
+            background: transparent;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
         }
 
-        /* Demo Switcher Chips */
-        .sample-chips {
-            margin-top: 1rem;
+        .nav-btn:hover {
+            color: var(--brand-primary);
+            background: var(--brand-primary-subtle);
+        }
+
+        .nav-btn.active {
+            color: var(--brand-primary);
+            background: var(--brand-primary-subtle);
+            font-weight: 700;
+        }
+
+        .nav-btn.officer-btn {
+            background: #1e293b;
+            color: #ffffff;
+            margin-left: 0.5rem;
+        }
+
+        .nav-btn.officer-btn:hover {
+            background: #0f172a;
+            color: #ffffff;
+        }
+
+        .user-pill {
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
             gap: 0.5rem;
-        }
-
-        .sample-chips-label {
-            font-size: 0.775rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            font-size: 0.825rem;
             font-weight: 600;
             color: var(--text-secondary);
         }
 
-        .sample-chip {
-            background: var(--bg-gray-light);
+        .user-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* View Container */
+        .app-view {
+            display: none;
+            flex: 1;
+            padding: 2rem 1.5rem 4rem 1.5rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .app-view.active {
+            display: block;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ----------------------------------------------------
+           SCREEN 1: HERO / LANDING PAGE
+           ---------------------------------------------------- */
+        .hero-banner {
+            position: relative;
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.88)), url('https://images.unsplash.com/photo-1477959858617-67f30bc75b82?w=1600&auto=format&fit=crop&q=80');
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            padding: 4.5rem 2.5rem;
+            color: #ffffff;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: #cbd5e1;
+            max-width: 650px;
+            margin: 0 auto 2.5rem auto;
+            font-weight: 400;
+        }
+
+        .action-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1000px;
+            margin: 0 auto 2.5rem auto;
+        }
+
+        .action-card {
+            border-radius: 16px;
+            padding: 2rem 1.75rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 180px;
+            color: #ffffff;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 24px -4px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-card.blue {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        .action-card.green {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        }
+
+        .action-card.purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .action-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .action-card-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            margin-bottom: 0.35rem;
+        }
+
+        .action-card-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .hero-pillars {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .pillar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        /* ----------------------------------------------------
+           COMMON CARD STYLES & LAYOUTS
+           ---------------------------------------------------- */
+        .content-card {
+            background: #ffffff;
             border: 1px solid var(--border-light);
-            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-lg);
+            padding: 2.25rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .narrow-container {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .standard-container {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 0.35rem;
+        }
+
+        .page-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.45rem;
+        }
+
+        .form-label span.req {
+            color: var(--brand-red);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.85rem 1.1rem;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-family: inherit;
+            background: #fafbfc;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            background: #ffffff;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        textarea.form-control {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .btn-primary {
+            background: var(--brand-primary);
+            color: #ffffff;
+            border: none;
+            padding: 0.85rem 1.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: var(--brand-primary-hover);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+            padding: 0.85rem 1.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: var(--text-primary);
+        }
+
+        /* Upload Preview Area */
+        .upload-dropzone {
+            border: 2px dashed var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            text-align: center;
+            background: #fafbfc;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .upload-dropzone:hover {
+            border-color: var(--brand-primary);
+            background: var(--brand-primary-subtle);
+        }
+
+        .upload-preview-box {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+
+        .upload-preview-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid var(--border-light);
+        }
+
+        /* ----------------------------------------------------
+           SCREEN 3: COMPLAINT SUBMITTED (KEY GENERATED)
+           ---------------------------------------------------- */
+        .success-hero {
+            text-align: center;
+            padding: 1rem 0 2rem 0;
+        }
+
+        .success-icon-badge {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #dcfce7;
+            color: #16a34a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.25rem auto;
+        }
+
+        .success-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.4rem;
+        }
+
+        .success-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .keys-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin: 2rem 0;
+        }
+
+        .key-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1.25rem;
+            position: relative;
+        }
+
+        .key-box.highlight {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .key-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .key-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .key-box.highlight .key-value {
+            color: var(--brand-primary);
+        }
+
+        .key-subtext {
+            font-size: 0.725rem;
+            color: var(--text-muted);
+            margin-top: 0.35rem;
+        }
+
+        .copy-btn {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            padding: 0.25rem 0.55rem;
+            font-size: 0.725rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .copy-btn:hover {
+            border-color: var(--brand-primary);
+            color: var(--brand-primary);
+        }
+
+        .alert-box {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            font-size: 0.875rem;
+            color: #92400e;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .keys-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* ----------------------------------------------------
+           SCREEN 4: TRACK COMPLAINT (SEARCH)
+           ---------------------------------------------------- */
+        .track-search-card {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .track-search-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #eff6ff;
+            color: var(--brand-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .track-search-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .track-search-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            max-width: 480px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .track-search-form {
+            display: flex;
+            gap: 0.5rem;
+            max-width: 580px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .track-search-input {
+            flex: 1;
+            padding: 0.9rem 1.25rem;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            outline: none;
+            background: #fafbfc;
+        }
+
+        .track-search-input:focus {
+            background: #ffffff;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .sample-search-chips {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .chip-btn {
+            background: #f1f5f9;
+            border: 1px solid var(--border-light);
             border-radius: 9999px;
+            padding: 0.35rem 0.85rem;
             font-size: 0.775rem;
             font-weight: 600;
             color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
         }
 
-        .sample-chip:hover {
-            border-color: var(--brand-blue);
-            color: var(--brand-blue);
-            background: var(--brand-blue-subtle);
+        .chip-btn:hover {
+            border-color: var(--brand-primary);
+            color: var(--brand-primary);
+            background: #eff6ff;
         }
 
-        .sample-chip.active {
-            background: #1e293b;
-            color: #ffffff;
-            border-color: #1e293b;
+        /* ----------------------------------------------------
+           SCREEN 5 & 6: COMPLAINT DETAILS & DAY-WISE TIMELINE
+           ---------------------------------------------------- */
+        .public-view-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 1.75rem;
         }
 
-        .sample-chip .chip-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-        }
-
-        .chip-dot.delayed {
-            background-color: var(--status-yellow);
-        }
-
-        .chip-dot.resolved {
-            background-color: var(--status-green);
-        }
-
-        /* Main Tracking Card */
-        .tracking-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 2.25rem;
-            box-shadow: var(--shadow-md);
-            position: relative;
-        }
-
-        /* Metadata Header */
-        .meta-header {
+        .public-meta-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             border-bottom: 1px solid var(--border-light);
-            padding-bottom: 1.5rem;
-            margin-bottom: 2rem;
-            gap: 1.25rem;
+            padding-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
             flex-wrap: wrap;
+            gap: 0.75rem;
         }
 
-        .ref-tag-group {
+        .meta-id-group {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            margin-bottom: 0.35rem;
+            gap: 0.75rem;
         }
 
-        .ref-id {
-            font-size: 1.35rem;
+        .public-tracking-key {
+            font-size: 1.25rem;
             font-weight: 800;
-            color: var(--text-primary);
-            letter-spacing: -0.02em;
             font-family: 'JetBrains Mono', monospace;
+            color: var(--brand-primary);
         }
 
-        .dept-info {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            flex-wrap: wrap;
-        }
-
-        .meta-subtext {
-            font-size: 0.8rem;
+        .public-internal-id {
+            font-size: 0.825rem;
+            font-weight: 600;
             color: var(--text-muted);
-            margin-top: 0.35rem;
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
+            font-family: 'JetBrains Mono', monospace;
+            background: #f1f5f9;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
         }
 
-        /* Status Pills */
+        .detail-row {
+            margin-bottom: 1.25rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .detail-photo-card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            margin: 1.25rem 0;
+            max-height: 220px;
+        }
+
+        .detail-photo-img {
+            width: 100%;
+            height: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .status-badge-card {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .status-badge-card.resolved {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+        }
+
+        .status-badge-card.in-progress {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
         .status-pill {
             padding: 0.4rem 0.9rem;
             border-radius: 9999px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 800;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.04em;
             text-transform: uppercase;
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
-            white-space: nowrap;
         }
 
-        .status-pill.in-progress {
-            background: var(--bg-green-light);
-            color: var(--status-green);
-            border: 1px solid var(--status-green-border);
-        }
+        .status-pill.delayed { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .status-pill.resolved { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .status-pill.in-progress { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+        .status-pill.pending { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
 
-        .status-pill.delayed {
-            background: var(--bg-yellow-light);
-            color: var(--status-yellow);
-            border: 1px solid var(--status-yellow-border);
-        }
-
-        .status-pill.resolved {
-            background: #ecfdf5;
-            color: #047857;
-            border: 1px solid #a7f3d0;
-        }
-
-        /* E-Commerce Horizontal Stepper */
-        .stepper-section {
-            background: #fafbfc;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-md);
-            padding: 1.75rem 1.25rem 1.25rem 1.25rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .stepper-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding: 0 0.5rem;
-        }
-
-        .stepper-title {
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-        }
-
-        .stepper-sla-badge {
+        .priority-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
             font-size: 0.75rem;
             font-weight: 700;
-            padding: 0.2rem 0.6rem;
-            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        .priority-badge.Medium { background: #fef3c7; color: #b45309; }
+        .priority-badge.High { background: #fee2e2; color: #b91c1c; }
+        .priority-badge.Critical { background: #7f1d1d; color: #ffffff; }
+        .priority-badge.Low { background: #f1f5f9; color: #475569; }
+
+        /* Day-Wise Timeline Styling */
+        .timeline-box {
             background: #ffffff;
             border: 1px solid var(--border-light);
-            color: var(--text-secondary);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
         }
 
-        .stepper {
+        .timeline-title-row {
             display: flex;
             justify-content: space-between;
-            position: relative;
-            padding: 0 1rem;
-        }
-
-        /* Stepper Background Track */
-        .stepper::before {
-            content: '';
-            position: absolute;
-            top: 18px;
-            left: 2.5rem;
-            right: 2.5rem;
-            height: 3px;
-            background: var(--border-light);
-            z-index: 1;
-        }
-
-        /* Stepper Active Dynamic Fill Track */
-        .stepper-progress-fill {
-            position: absolute;
-            top: 18px;
-            left: 2.5rem;
-            height: 3px;
-            background: var(--brand-blue);
-            z-index: 1;
-            transition: width 0.4s ease;
-        }
-
-        .step {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            min-width: 70px;
-        }
-
-        .step-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #ffffff;
-            color: var(--text-muted);
-            display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            font-weight: 700;
-            margin: 0 auto 0.6rem auto;
-            border: 2px solid var(--border-light);
-            transition: all 0.25s ease;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .step.completed .step-icon {
-            background: var(--status-green);
-            color: #ffffff;
-            border-color: var(--status-green);
-        }
-
-        .step.active .step-icon {
-            background: var(--brand-blue);
-            color: #ffffff;
-            border-color: var(--brand-blue);
-            box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.2);
-        }
-
-        .step.delayed-step.active .step-icon {
-            background: var(--status-yellow);
-            color: #ffffff;
-            border-color: var(--status-yellow);
-            box-shadow: 0 0 0 5px rgba(217, 119, 6, 0.2);
-        }
-
-        .step-label {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-            margin-bottom: 0.15rem;
-        }
-
-        .step.completed .step-label,
-        .step.active .step-label {
-            color: var(--text-primary);
-        }
-
-        .step-date {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* Timeline Section */
-        .timeline-section-title {
-            font-size: 1.05rem;
+        .timeline-title {
+            font-size: 1.15rem;
             font-weight: 800;
             color: var(--text-primary);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
         }
 
-        .timeline-legend {
-            display: flex;
-            gap: 0.75rem;
-            font-size: 0.725rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .legend-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        .legend-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-
-        .legend-dot.verified {
-            background: var(--brand-blue);
-        }
-
-        .legend-dot.stationary {
-            background: var(--text-muted);
-        }
-
-        .legend-dot.ai {
-            background: var(--status-yellow);
-        }
-
-        /* Vertical Event Journal Timeline */
-        .timeline {
+        .timeline-stream {
             position: relative;
             padding-left: 2rem;
             border-left: 2px solid var(--border-light);
-            margin-left: 1.25rem;
+            margin-left: 1rem;
         }
 
-        .timeline-event {
+        .timeline-node {
             position: relative;
-            margin-bottom: 2.25rem;
-            padding-bottom: 0.25rem;
+            margin-bottom: 2rem;
         }
 
-        .timeline-event:last-child {
+        .timeline-node:last-child {
             margin-bottom: 0;
         }
 
-        /* Node icon pin on the vertical line */
-        .timeline-event::before {
+        .timeline-node::before {
             content: '';
             position: absolute;
             left: -2.48rem;
@@ -518,457 +863,489 @@
             background: #ffffff;
             border: 3px solid var(--border-light);
             z-index: 2;
-            transition: all 0.2s ease;
         }
 
-        /* Node Style: VERIFIED */
-        .timeline-event.verified::before {
-            border-color: var(--brand-blue);
-            background: var(--brand-blue);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
-        }
+        /* Timeline Node Flavors */
+        .timeline-node.submitted::before { border-color: var(--status-green); background: var(--status-green); }
+        .timeline-node.forwarded::before { border-color: var(--status-blue); background: var(--status-blue); }
+        .timeline-node.stationary::before { border-color: var(--status-gray); background: #ffffff; border-style: dashed; }
+        .timeline-node.delayed::before { border-color: var(--status-amber); background: var(--status-amber); }
+        .timeline-node.escalated::before { border-color: var(--status-red); background: var(--status-red); }
+        .timeline-node.work-started::before { border-color: var(--brand-primary); background: var(--brand-primary); }
+        .timeline-node.resolved::before { border-color: var(--status-green); background: var(--status-green); box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2); }
 
-        /* Node Style: STATIONARY */
-        .timeline-event.stationary::before {
-            border-color: var(--status-gray);
-            background: #ffffff;
-            border-style: dashed;
-            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12);
-        }
-
-        /* Node Style: AI AUDIT INFERENCE */
-        .timeline-event.flagged::before {
-            border-color: var(--status-yellow);
-            background: var(--status-yellow);
-            box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.2);
-            animation: pulse-ring 2.5s infinite;
-        }
-
-        @keyframes pulse-ring {
-            0% {
-                box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4);
-            }
-
-            70% {
-                box-shadow: 0 0 0 7px rgba(217, 119, 6, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
-            }
-        }
-
-        .event-meta {
+        .timeline-meta {
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.35rem;
             flex-wrap: wrap;
         }
 
-        .day-tag {
+        .timeline-day-badge {
             font-size: 0.725rem;
             font-weight: 800;
-            background: var(--bg-gray-light);
-            color: var(--text-secondary);
             padding: 0.15rem 0.5rem;
-            border-radius: var(--radius-sm);
-            letter-spacing: 0.05em;
+            border-radius: 4px;
+            background: #f1f5f9;
+            color: var(--text-secondary);
             font-family: 'JetBrains Mono', monospace;
         }
 
-        .event-timestamp {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
+        .timeline-date {
+            font-size: 0.775rem;
+            color: var(--text-muted);
             font-weight: 500;
         }
 
-        /* Badges */
-        .verified-badge {
+        .timeline-status-tag {
             font-size: 0.675rem;
             font-weight: 800;
-            color: #1e40af;
-            background: #dbeafe;
-            border: 1px solid #bfdbfe;
             padding: 0.15rem 0.5rem;
             border-radius: 4px;
-            letter-spacing: 0.04em;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
+            text-transform: uppercase;
         }
 
-        .stationary-badge {
-            font-size: 0.675rem;
+        .tag-verified { background: #dbeafe; color: #1e40af; }
+        .tag-stationary { background: #e2e8f0; color: #475569; }
+        .tag-ai-inference { background: #fef3c7; color: #92400e; }
+        .tag-escalated { background: #fee2e2; color: #991b1b; }
+
+        .timeline-event-name {
+            font-size: 0.975rem;
             font-weight: 800;
-            color: #475569;
-            background: #e2e8f0;
-            border: 1px solid #cbd5e1;
-            padding: 0.15rem 0.5rem;
-            border-radius: 4px;
-            letter-spacing: 0.04em;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .ai-badge {
-            font-size: 0.675rem;
-            font-weight: 800;
-            color: #92400e;
-            background: #fef3c7;
-            border: 1px solid #fde68a;
-            padding: 0.15rem 0.55rem;
-            border-radius: 4px;
-            letter-spacing: 0.04em;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .event-title {
-            font-size: 1rem;
-            font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.25rem;
         }
 
-        .event-hub {
-            font-size: 0.825rem;
-            font-weight: 600;
-            color: var(--brand-blue);
-            margin-bottom: 0.35rem;
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        .event-desc {
-            font-size: 0.885rem;
+        .timeline-desc {
+            font-size: 0.875rem;
             color: var(--text-secondary);
             line-height: 1.45;
         }
 
-        /* Card Container for Stationary & AI flags */
-        .event-detail-box {
-            margin-top: 0.5rem;
-            padding: 0.85rem 1rem;
-            border-radius: var(--radius-md);
-            font-size: 0.85rem;
-        }
-
-        .event-detail-box.stationary-box {
-            background: #f8fafc;
-            border: 1px dashed var(--border-dashed);
-            color: var(--text-secondary);
-        }
-
-        .event-detail-box.flagged-box {
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            color: #78350f;
-        }
-
-        .audit-metric-row {
-            display: flex;
-            gap: 1rem;
-            margin-top: 0.5rem;
-            font-size: 0.775rem;
-            font-weight: 600;
-        }
-
-        .audit-metric {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        .event-evidence-footer {
-            margin-top: 0.6rem;
-            font-size: 0.725rem;
-            font-family: 'JetBrains Mono', monospace;
+        .timeline-footnote {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border-light);
+            font-size: 0.8rem;
             color: var(--text-muted);
             display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* AI Audit / Banner Section */
-        .ai-audit-box {
-            background: linear-gradient(145deg, #ffffff 0%, #fffbeb 100%);
-            border: 1px solid #fde68a;
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            margin-top: 2.5rem;
-            box-shadow: var(--shadow-sm);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ai-audit-box.resolved-mode {
-            background: linear-gradient(145deg, #ffffff 0%, #f0fdf4 100%);
-            border-color: var(--status-green-border);
-        }
-
-        .ai-audit-box::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: var(--status-yellow);
-        }
-
-        .ai-audit-box.resolved-mode::before {
-            background: var(--status-green);
-        }
-
-        .ai-audit-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .ai-audit-title {
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: #92400e;
-            display: flex;
-            align-items: center;
-            gap: 0.45rem;
-        }
-
-        .ai-audit-box.resolved-mode .ai-audit-title {
-            color: var(--text-green-dark);
-        }
-
-        .ai-audit-score-pill {
-            font-size: 0.75rem;
-            font-weight: 700;
-            background: #ffffff;
-            border: 1px solid #fde68a;
-            color: #92400e;
-            padding: 0.25rem 0.65rem;
-            border-radius: 9999px;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        .ai-audit-box.resolved-mode .ai-audit-score-pill {
-            border-color: var(--status-green-border);
-            color: var(--text-green-dark);
-        }
-
-        .ai-audit-desc {
-            font-size: 0.885rem;
-            color: #78350f;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-
-        .ai-audit-box.resolved-mode .ai-audit-desc {
-            color: #166534;
-        }
-
-        .ai-metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 0.75rem;
-            padding-top: 0.75rem;
-            border-top: 1px dashed rgba(217, 119, 6, 0.2);
-        }
-
-        .ai-audit-box.resolved-mode .ai-metrics-grid {
-            border-top-color: rgba(22, 163, 74, 0.2);
-        }
-
-        .metric-card {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            padding: 0.6rem 0.8rem;
-            border-radius: var(--radius-sm);
-        }
-
-        .metric-label {
-            font-size: 0.725rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 0.2rem;
-        }
-
-        .metric-value {
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: var(--text-primary);
-        }
-
-        /* Citizen Action Bar */
-        .citizen-action-bar {
-            margin-top: 1rem;
-            display: flex;
-            gap: 0.6rem;
-            flex-wrap: wrap;
-        }
-
-        .btn-action {
-            font-size: 0.8rem;
-            font-weight: 700;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border-light);
-            background: #ffffff;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            display: inline-flex;
             align-items: center;
             gap: 0.4rem;
         }
 
-        .btn-action.escalate {
-            background: #ea580c;
-            color: #ffffff;
-            border-color: #c2410c;
+        /* ----------------------------------------------------
+           SCREEN 7 & 8: OFFICER DASHBOARD & ACTION CONSOLE
+           ---------------------------------------------------- */
+        .officer-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 2rem;
         }
 
-        .btn-action.escalate:hover {
-            background: #c2410c;
+        .officer-sidebar {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 1rem;
+            height: fit-content;
         }
 
-        .btn-action.secondary:hover {
-            background: #f1f5f9;
-        }
-
-        /* Empty / Not Found State */
-        .not-found-state {
-            text-align: center;
-            padding: 3.5rem 1.5rem;
-        }
-
-        .not-found-icon {
-            font-size: 2.8rem;
-            margin-bottom: 1rem;
+        .sidebar-heading {
+            font-size: 0.725rem;
+            font-weight: 700;
             color: var(--text-muted);
-        }
-
-        .not-found-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0 0.75rem;
             margin-bottom: 0.5rem;
         }
 
-        .not-found-desc {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            max-width: 460px;
-            margin: 0 auto 1.5rem auto;
+        .sidebar-menu {
+            list-style: none;
+            margin-bottom: 1.5rem;
         }
 
-        /* Modal Overlay for Action Simulation */
-        .modal-overlay {
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.65rem 0.85rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .sidebar-item:hover, .sidebar-item.active {
+            background: var(--brand-primary-subtle);
+            color: var(--brand-primary);
+            font-weight: 700;
+        }
+
+        /* Officer KPIs */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1.25rem 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .kpi-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.4rem;
+        }
+
+        .kpi-number {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .kpi-number.pending { color: var(--brand-amber); }
+        .kpi-number.in-progress { color: var(--brand-primary); }
+        .kpi-number.resolved { color: var(--brand-green); }
+        .kpi-number.delayed { color: #ea580c; }
+        .kpi-number.escalations { color: var(--brand-red); }
+
+        /* Complaints Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .officer-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+
+        .officer-table th {
+            background: #f8fafc;
+            padding: 0.85rem 1rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.775rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .officer-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle;
+        }
+
+        .officer-table tr:hover td {
+            background: #fafbfc;
+        }
+
+        .btn-table-action {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            padding: 0.4rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.775rem;
+            font-weight: 700;
+            color: var(--brand-primary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-table-action:hover {
+            background: var(--brand-primary);
+            color: #ffffff;
+            border-color: var(--brand-primary);
+        }
+
+        /* Action Console Panel (Screen 8) */
+        .action-console-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .action-buttons-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.85rem;
+            margin: 1.5rem 0;
+        }
+
+        .officer-action-btn {
+            background: #ffffff;
+            border: 1.5px solid var(--border-light);
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-align: left;
+        }
+
+        .officer-action-btn:hover {
+            border-color: var(--brand-primary);
+            color: var(--brand-primary);
+            background: var(--brand-primary-subtle);
+        }
+
+        .officer-action-btn.selected {
+            border-color: var(--brand-primary);
+            background: var(--brand-primary-subtle);
+            color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        /* ----------------------------------------------------
+           SCREEN 10: MY COMPLAINTS (CITIZEN VIEW)
+           ---------------------------------------------------- */
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 1.75rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1.1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--brand-primary);
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .my-complaints-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .complaint-card-row {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .complaint-card-row:hover {
+            border-color: var(--brand-primary);
+            transform: translateX(4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .complaint-card-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .category-icon-bubble {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+        }
+
+        .complaint-card-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .complaint-card-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .complaint-card-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .day-counter-pill {
+            font-size: 0.775rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: #f8fafc;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-light);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ----------------------------------------------------
+           SCREEN 12: LOGIN MODAL (ROLE SWITCHER)
+           ---------------------------------------------------- */
+        .modal-backdrop {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            padding: 1rem;
+            padding: 1.25rem;
         }
 
-        .modal-box {
+        .login-dialog {
             background: #ffffff;
-            border-radius: var(--radius-lg);
-            max-width: 520px;
+            border-radius: 20px;
             width: 100%;
-            padding: 2rem;
+            max-width: 440px;
+            padding: 2.25rem;
             box-shadow: var(--shadow-lg);
             position: relative;
         }
 
-        .modal-title {
-            font-size: 1.2rem;
-            font-weight: 800;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .login-header {
+            text-align: center;
+            margin-bottom: 1.75rem;
         }
 
-        .modal-content {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
+        .login-role-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.35rem;
+            background: #f1f5f9;
+            padding: 0.3rem;
+            border-radius: 10px;
             margin-bottom: 1.5rem;
         }
 
-        .modal-code-block {
-            background: #f8fafc;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-sm);
-            padding: 0.85rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.775rem;
-            color: #1e293b;
-            margin: 0.75rem 0;
-            white-space: pre-wrap;
-        }
-
-        .modal-btn-close {
-            background: var(--brand-blue);
-            color: #ffffff;
+        .role-tab-btn {
+            background: transparent;
             border: none;
-            padding: 0.6rem 1.25rem;
-            border-radius: var(--radius-md);
+            padding: 0.45rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
             font-weight: 700;
+            color: var(--text-secondary);
             cursor: pointer;
         }
 
+        .role-tab-btn.active {
+            background: #ffffff;
+            color: var(--brand-primary);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: transparent;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* Notification Toast */
+        .toast-notify {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e293b;
+            color: #ffffff;
+            padding: 0.85rem 1.4rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 2000;
+            animation: slideUp 0.25s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 900px) {
+            .public-view-grid {
+                grid-template-columns: 1fr;
+            }
+            .officer-layout {
+                grid-template-columns: 1fr;
+            }
+            .keys-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 640px) {
-            body {
-                padding: 1rem 0.5rem;
+            .hero-title {
+                font-size: 2rem;
             }
-
-            .tracking-card {
-                padding: 1.25rem;
+            .action-cards-grid {
+                grid-template-columns: 1fr;
             }
-
-            .stepper {
-                padding: 0;
+            .nav-links {
+                display: none;
             }
-
-            .step-label {
-                font-size: 0.7rem;
+            .track-search-form {
+                flex-direction: column;
             }
-
-            .step-icon {
-                width: 30px;
-                height: 30px;
-                font-size: 0.75rem;
-            }
-
-            .stepper::before,
-            .stepper-progress-fill {
-                left: 1.5rem;
-                right: 1.5rem;
-                top: 15px;
-            }
-
-            .timeline {
-                margin-left: 0.75rem;
-                padding-left: 1.5rem;
-            }
-
-            .timeline-event::before {
-                left: -1.95rem;
+            .keys-actions {
+                flex-direction: column;
             }
         }
     </style>
@@ -976,670 +1353,1350 @@
 
 <body>
 
-    <div class="container">
+    <!-- TOP APPLICATION NAVBAR -->
+    <nav class="app-nav">
+        <div class="nav-container">
+            <a class="brand-logo" onclick="switchView('home')">
+                <div class="brand-shield">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">CivicTrack</span>
+                    <span class="brand-tagline">Your Voice. Our Priority.</span>
+                </div>
+            </a>
 
-        <!-- Top Header & Search -->
-        <div class="header-card">
-            <div class="brand-header">
-                <div class="brand-logo">
-                    Kizuna<span>X</span>
-                    <span class="brand-badge">Audit Engine v2.4</span>
-                </div>
-                <div style="font-size: 0.825rem; color: var(--text-secondary); font-weight: 500;">
-                    Evidence-Based Citizen Grievance Tracker
-                </div>
+            <div class="nav-links">
+                <button type="button" class="nav-btn active" id="nav-home" onclick="switchView('home')">Home</button>
+                <button type="button" class="nav-btn" id="nav-track" onclick="switchView('track')">Track Complaint</button>
+                <button type="button" class="nav-btn" id="nav-submit" onclick="switchView('submit')">Submit Complaint</button>
+                <button type="button" class="nav-btn" id="nav-my" onclick="switchView('my-complaints')">My Complaints</button>
+                <button type="button" class="nav-btn officer-btn" id="nav-officer" onclick="switchView('officer')">
+                    👨‍💼 Officer Portal
+                </button>
             </div>
 
-            <!-- Dynamic Search Form -->
-            <form class="search-form" id="search-form">
-                <div class="search-input-wrapper">
-                    <span class="search-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </span>
-                    <input type="text" class="search-input" id="search-input" value="TN-2026-839274"
-                        placeholder="Enter Grievance Reference ID (e.g. TN-2026-839274, KA-2026-419082)"
-                        autocomplete="off">
-                </div>
-                <button type="submit" class="search-btn" id="search-btn">
-                    <span>Track Status</span>
-                </button>
-            </form>
-
-            <!-- Quick Test Sample Switcher Chips -->
-            <div class="sample-chips">
-                <span class="sample-chips-label">Demo Test Cases:</span>
-                <button type="button" class="sample-chip active" id="chip-sample-1"
-                    onclick="switchSample('TN-2026-839274')">
-                    <span class="chip-dot delayed"></span>
-                    TN-2026-839274 (Active • 24h Inactivity Flag)
-                </button>
-                <button type="button" class="sample-chip" id="chip-sample-2" onclick="switchSample('KA-2026-419082')">
-                    <span class="chip-dot resolved"></span>
-                    KA-2026-419082 (Resolved • 100% SLA Compliant)
-                </button>
+            <div class="user-pill" onclick="openLoginModal()" style="cursor: pointer;">
+                <div class="user-avatar" id="nav-user-initial">C</div>
+                <span id="nav-user-name">Citizen View</span>
             </div>
         </div>
+    </nav>
 
-        <!-- Live Content Container (Dynamic Rendering Target) -->
-        <main id="tracking-container">
-            <!-- Will be dynamically generated by JavaScript -->
-        </main>
+    <!-- ========================================================
+         VIEW 1: HOME / LANDING PAGE (Screen 1)
+         ======================================================== -->
+    <main class="app-view active" id="view-home">
+        <div class="hero-banner">
+            <h1 class="hero-title">Report Issues.<br>Track Progress. Build a Better City.</h1>
+            <p class="hero-subtitle">A simple platform to register government complaints and track their resolution in real-time with day-wise audit evidence.</p>
 
-    </div>
+            <div class="action-cards-grid">
+                <!-- Card 1: Submit -->
+                <div class="action-card blue" onclick="switchView('submit')">
+                    <div>
+                        <div class="action-card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="action-card-title">Submit Complaint</h2>
+                        <p class="action-card-desc">Report an issue in your area with photos and location.</p>
+                    </div>
+                </div>
 
-    <!-- Interactive Escalation Modal -->
-    <div class="modal-overlay" id="action-modal" onclick="closeActionModal(event)">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="modal-title" id="modal-title">⚡ Action Preview</div>
-            <div class="modal-content" id="modal-body"></div>
-            <div style="text-align: right;">
-                <button type="button" class="modal-btn-close" onclick="closeActionModal()">Acknowledge & Close</button>
+                <!-- Card 2: Track -->
+                <div class="action-card green" onclick="switchView('track')">
+                    <div>
+                        <div class="action-card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </div>
+                        <h2 class="action-card-title">Track Complaint</h2>
+                        <p class="action-card-desc">Check live day-wise status with your unique tracking key.</p>
+                    </div>
+                </div>
+
+                <!-- Card 3: My Complaints -->
+                <div class="action-card purple" onclick="switchView('my-complaints')">
+                    <div>
+                        <div class="action-card-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="8" y1="6" x2="21" y2="6"></line>
+                                <line x1="8" y1="12" x2="21" y2="12"></line>
+                                <line x1="8" y1="18" x2="21" y2="18"></line>
+                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                            </svg>
+                        </div>
+                        <h2 class="action-card-title">My Complaints</h2>
+                        <p class="action-card-desc">View and manage all your submitted grievances.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-pillars">
+                <div class="pillar-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    Cleaner Streets
+                </div>
+                <div class="pillar-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Safer Communities
+                </div>
+                <div class="pillar-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                    Automatic Delay Detection
+                </div>
+                <div class="pillar-item">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Evidence-Based Truth
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <!-- =========================================================
-         DYNAMIC DATA & RENDERING SCRIPT
-         ========================================================= -->
-    <script>
-        /**
-         * KIZUNAX OFFICIAL GRIEVANCE MOCK DATABASE
-         * 
-         * Rule 1: Zero synthetic steps based on elapsed calendar days.
-         * Rule 2: Strict separation between 'verified', 'stationary', and 'flagged' (AI).
-         */
-        const GRIEVANCE_DATABASE = {
-            // Case 1: Active with Delays (>24h silence post-inspection, AI SLA threat flag)
-            "TN-2026-839274": {
-                refId: "TN-2026-839274",
-                department: "TWAD Board",
-                subCategory: "Main Line Water Contamination & High Pressure Leak",
-                location: "Zone 4, Coimbatore Municipal Corporation (Ward 14)",
-                filedDate: "Sep 07, 2026",
-                targetSla: "Day 3 (Sep 10, 2026 — 06:00 PM)",
-                statusPill: {
-                    text: "SLA Warning / Active",
-                    type: "delayed"
-                },
-                stepper: {
-                    activeStepIndex: 2, // 0: Lodged, 1: Assigned, 2: Inspection (Active), 3: Work Order, 4: Resolved
-                    isDelayed: true,
-                    steps: [
-                        { label: "Lodged", date: "Sep 07" },
-                        { label: "Assigned", date: "Sep 07" },
-                        { label: "Inspection", date: "Sep 08" },
-                        { label: "Work Order", date: "Pending" },
-                        { label: "Resolved", date: "Est. Sep 10" }
-                    ]
-                },
-                events: [
-                    {
-                        type: "verified",
-                        dayLabel: "DAY 0",
-                        timestamp: "Sep 07, 2026 — 09:15 AM",
-                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
-                        title: "Grievance Registered & Ingested",
-                        hub: "Node: CM Helpline Central Intake Gateway",
-                        description: "Citizen complaint accepted and validated. Cryptographic tracking receipt generated and dispatched to TWAD centralized monitoring hub.",
-                        evidence: "Source API: TWAD_CENTRAL_GATEWAY • TxID: 0x8f2a...c31b"
-                    },
-                    {
-                        type: "verified",
-                        dayLabel: "DAY 0",
-                        timestamp: "Sep 07, 2026 — 02:30 PM",
-                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
-                        title: "Routed to Department Sub-Division",
-                        hub: "Node: Zone 4 Sub-Division Office",
-                        description: "Forwarded to Assistant Executive Engineer (Water Systems) for administrative review and team resource allocation.",
-                        evidence: "Source API: CM_PORTAL_ROUTER_V2 • DispatchRef: DSP-9428-TN"
-                    },
-                    {
-                        type: "verified",
-                        dayLabel: "DAY 1",
-                        timestamp: "Sep 08, 2026 — 10:45 AM",
-                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
-                        title: "Out for Field Inspection",
-                        hub: "Officer: R. Selvam (Junior Engineer, TWAD)",
-                        description: "Field team deployed on site for physical assessment of underground valve leak and chlorine level testing.",
-                        evidence: "Source API: FIELD_INSPECT_SYS • GeoTag: 11.0168°N, 76.9558°E"
-                    },
-                    {
-                        type: "stationary",
-                        dayLabel: "DAY 2",
-                        timestamp: "Sep 09, 2026 — 00:00 to 23:59",
-                        badgeLabel: "STATIONARY / NO EVENT LOGGED",
-                        title: "Stationary Period — Zero Government Activity Logged",
-                        hub: "Node: Zone 4 Sub-Division Operations Desk",
-                        description: "Audit confirms zero administrative entries, inspection reports, or material requisitions logged in official departmental servers during this 24-hour cycle.",
-                        evidence: "Verified via TWAD Central Audit Polling • 0 updates received in 24 hrs"
-                    },
-                    {
-                        type: "flagged",
-                        dayLabel: "DAY 2",
-                        timestamp: "Sep 09, 2026 — 06:00 PM",
-                        badgeLabel: "AI AUDIT INFERENCE — NOT A GOV RECORD",
-                        title: "⚠️ Administrative Inactivity & Bottleneck Flagged",
-                        hub: "Rule Engine: KizunaX Inactivity Detector v2.4",
-                        description: "Ticket has remained completely stationary for 28 consecutive hours post-inspection. Historical benchmark for Zone 4 indicates a 72% likelihood of SLA breach if procurement order is not posted within 6 hours.",
-                        evidence: "AI SLA Confidence: 85% • Inactivity Threshold: >24h Exceeded"
-                    }
-                ],
-                aiAudit: {
-                    mode: "warning",
-                    title: "KizunaX Audit Engine Assessment",
-                    confidenceScore: "85% Confidence",
-                    summary: "Official API records confirm complaint intake, routing, and preliminary field dispatch. However, no physical progress or work order has been logged for over 24 hours. While currently within the outer SLA envelope (Day 2 of 3), the stationary state indicates an acute administrative bottleneck in Zone 4 Sub-Division.",
-                    metrics: [
-                        { label: "SLA Deadline", value: "Day 3 (14h Remaining)" },
-                        { label: "Dormant Duration", value: "28 Hours Inactive" },
-                        { label: "Bottleneck Stage", value: "Zone 4 Sub-Division" },
-                        { label: "Risk Level", value: "Elevated Delay Risk" }
-                    ],
-                    actions: [
-                        {
-                            label: "Draft 1st Escalation to Executive Engineer",
-                            type: "escalate",
-                            actionId: "escalate-twad"
-                        },
-                        {
-                            label: "Generate RTI Audit Dossier",
-                            type: "secondary",
-                            actionId: "rti-dossier"
-                        }
-                    ]
-                }
-            },
+    <!-- ========================================================
+         VIEW 2: SUBMIT COMPLAINT (Screen 2)
+         ======================================================== -->
+    <main class="app-view" id="view-submit">
+        <div class="narrow-container">
+            <div class="content-card">
+                <div class="page-header">
+                    <h1 class="page-title">Submit a Complaint</h1>
+                    <p class="page-desc">Fill in the details below to report an infrastructure or service issue.</p>
+                </div>
 
-            // Case 2: Fully Resolved & 100% SLA Compliant (Fast repair of electrical transformer)
-            "KA-2026-419082": {
-                refId: "KA-2026-419082",
-                department: "BESCOM (Bangalore Electricity Supply)",
-                subCategory: "Hazardous Transformer Sparking & Streetlight Blackout",
-                location: "Indiranagar 2nd Stage, Ward 112, Bengaluru",
-                filedDate: "Sep 08, 2026",
-                targetSla: "Day 2 (Sep 10, 2026 — 12:00 PM)",
-                statusPill: {
-                    text: "Resolved & Verified",
-                    type: "resolved"
-                },
-                stepper: {
-                    activeStepIndex: 4, // 0: Lodged, 1: Assigned, 2: Inspection, 3: Work Order, 4: Resolved (100% complete)
-                    isDelayed: false,
-                    steps: [
-                        { label: "Lodged", date: "Sep 08" },
-                        { label: "Assigned", date: "Sep 08" },
-                        { label: "Inspection", date: "Sep 08" },
-                        { label: "Repaired", date: "Sep 09" },
-                        { label: "Resolved", date: "Sep 09" }
-                    ]
-                },
-                events: [
-                    {
-                        type: "verified",
-                        dayLabel: "DAY 0",
-                        timestamp: "Sep 08, 2026 — 08:30 AM",
-                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
-                        title: "Grievance Lodged via Sahayaa 24x7 Portal",
-                        hub: "Node: BESCOM Central Customer Care Gateway",
-                        description: "Urgent safety complaint filed with photos of sparking distribution transformer. Priority 1 (Safety Critical) tag assigned.",
-                        evidence: "Source API: BESCOM_SAHAYAA_PORTAL • TxID: 0x41ab...e89d"
-                    },
-                    {
-                        type: "verified",
-                        dayLabel: "DAY 0",
-                        timestamp: "Sep 08, 2026 — 09:15 AM",
-                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
-                        title: "Dispatched to Rapid Response Gang (RRG)",
-                        hub: "Node: Indiranagar Sub-Station O&M Unit",
-                        description: "Section Officer assigned Lineman gang #4 with emergency repair van KA-04-G-8821.",
-                        evidence: "Source API: BESCOM_CREW_DISPATCH • GangID: RRG-IND-04"
-                    },
-                    {
-                        type: "verified",
-                        dayLabel: "DAY 0",
-                        timestamp: "Sep 08, 2026 — 11:40 AM",
-                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
-                        title: "Site Isolated & Damage Assessed",
-                        hub: "Officer: S. Nayak (Assistant Executive Engineer)",
-                        description: "Feeder breaker tripped for safety. Blown 11kV lightning arrester and burnt LT copper jumper identified for immediate replacement.",
-                        evidence: "Source API: BESCOM_SAFETY_LOG • Feeder: 11kV Binnamangala"
-                    },
-                    {
-                        type: "verified",
-                        dayLabel: "DAY 1",
-                        timestamp: "Sep 09, 2026 — 01:20 PM",
-                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
-                        title: "Replacement Completed & Power Restored",
-                        hub: "Node: Indiranagar Sub-Station O&M Unit",
-                        description: "New 11kV arrester installed, insulator bushed, and earthing verified at 2.1 Ohms. Feeder re-energized successfully.",
-                        evidence: "Source API: BESCOM_SCADA_FEEDER • Status: ENERGIZED_OK"
-                    },
-                    {
-                        type: "verified",
-                        dayLabel: "DAY 1",
-                        timestamp: "Sep 09, 2026 — 04:30 PM",
-                        badgeLabel: "VERIFIED GOVERNMENT EVENT",
-                        title: "Citizen Sign-off & Official Case Closure",
-                        hub: "Node: Citizen Verification IVR / SMS Gateway",
-                        description: "Citizen OTP validation completed. Formal resolution certificate generated and grievance closed in full compliance with KERC standards.",
-                        evidence: "Source API: BESCOM_CLOSURE_CERT • CertificateHash: #CERT-KA-99120"
-                    }
-                ],
-                aiAudit: {
-                    mode: "resolved",
-                    title: "KizunaX Audit Engine Assessment",
-                    confidenceScore: "98% Verified SLA",
-                    summary: "Exemplary departmental responsiveness detected. The grievance traversed from central intake to physical rectification in 32 hours, beating the regulatory 48-hour SLA deadline by 16 hours. Zero stationary anomalies or administrative gaps detected across 5 government verification checkpoints.",
-                    metrics: [
-                        { label: "Resolution Time", value: "32 Hours (Ahead of SLA)" },
-                        { label: "Stationary Gaps", value: "0 Hours (Continuous Flow)" },
-                        { label: "Regulatory SLA", value: "100% Met (KERC Compliant)" },
-                        { label: "Audit Result", value: "Authentic & Verified" }
-                    ],
-                    actions: [
-                        {
-                            label: "Download Official Resolution Certificate",
-                            type: "secondary",
-                            actionId: "download-cert"
-                        },
-                        {
-                            label: "Submit Citizen Quality Rating",
-                            type: "secondary",
-                            actionId: "rate-service"
-                        }
-                    ]
-                }
-            }
-        };
+                <form id="submit-complaint-form" onsubmit="handleFormSubmission(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="form-category">Issue Category <span class="req">*</span></label>
+                        <select class="form-control" id="form-category" required onchange="calculateAutoPriority()">
+                            <option value="Streetlight">💡 Streetlight & Public Lighting</option>
+                            <option value="Water Leak">💧 Water Supply & Pipeline Leakage</option>
+                            <option value="Garbage">🗑️ Garbage & Sanitation Clearance</option>
+                            <option value="Road Damage">🚗 Potholes & Road Damage</option>
+                            <option value="Drainage">🌊 Blocked Drainage & Sewage Overflow</option>
+                        </select>
+                    </div>
 
-        /**
-         * Renders the complete tracking view for a grievance record
-         */
-        function renderGrievance(complaint) {
-            const container = document.getElementById('tracking-container');
+                    <div class="form-group">
+                        <label class="form-label" for="form-title">Issue Title <span class="req">*</span></label>
+                        <input type="text" class="form-control" id="form-title" placeholder="e.g. Streetlight not working" value="Streetlight not working" required>
+                    </div>
 
-            // 1. Calculate Stepper fill width
-            const totalSteps = complaint.stepper.steps.length;
-            const progressPercent = totalSteps > 1
-                ? (complaint.stepper.activeStepIndex / (totalSteps - 1)) * 100
-                : 0;
+                    <div class="form-group">
+                        <label class="form-label" for="form-desc">Description <span class="req">*</span></label>
+                        <textarea class="form-control" id="form-desc" placeholder="Describe the problem in detail..." required>The streetlight near my house has not been working for the past 3 days. It's very dark at night.</textarea>
+                    </div>
 
-            // 2. Build Stepper HTML
-            const stepsHtml = complaint.stepper.steps.map((step, idx) => {
-                let stateClass = "";
-                let iconContent = idx + 1;
+                    <div class="form-group">
+                        <label class="form-label" for="form-location">Location <span class="req">*</span></label>
+                        <input type="text" class="form-control" id="form-location" placeholder="e.g. Gandhipuram, Coimbatore" value="Gandhipuram, Coimbatore" required>
+                    </div>
 
-                if (idx < complaint.stepper.activeStepIndex) {
-                    stateClass = "completed";
-                    iconContent = `
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <div class="form-group">
+                        <label class="form-label">Upload Photo (Evidence)</label>
+                        <div class="upload-dropzone" onclick="document.getElementById('form-photo-file').click()">
+                            <input type="file" id="form-photo-file" accept="image/*" style="display: none;" onchange="handlePhotoSelect(event)">
+                            <div style="font-size: 1.75rem; margin-bottom: 0.35rem;">📷</div>
+                            <div style="font-size: 0.875rem; font-weight: 700; color: var(--text-primary);">Click to upload photograph</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">PNG, JPG up to 5MB</div>
+                        </div>
+                        <div class="upload-preview-box" id="upload-preview-container">
+                            <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80" alt="Streetlight" class="upload-preview-img" id="upload-preview-img">
+                            <div style="flex: 1;">
+                                <div style="font-size: 0.85rem; font-weight: 700;" id="upload-filename">streetlight_hazard.jpg</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">2.4 MB • Photographic Evidence Attached</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="form-priority">Priority (AI Auto-Calculated)</label>
+                        <select class="form-control" id="form-priority">
+                            <option value="Medium" selected>🟡 Medium (48h Standard SLA)</option>
+                            <option value="High">🔴 High (24h Critical Response)</option>
+                            <option value="Critical">🚨 Critical Hazard (Immediate Dispatch)</option>
+                            <option value="Low">⚪ Low (72h Routine Maintenance)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="margin-top: 1rem;">
+                        <span>Submit Complaint & Generate Tracking Key</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================
+         VIEW 3: COMPLAINT SUBMITTED (Screen 3)
+         ======================================================== -->
+    <main class="app-view" id="view-submitted">
+        <div class="narrow-container">
+            <div class="content-card">
+                <div class="success-hero">
+                    <div class="success-icon-badge">
+                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
-                    `;
-                } else if (idx === complaint.stepper.activeStepIndex) {
-                    stateClass = "active";
-                    if (complaint.stepper.isDelayed) {
-                        stateClass += " delayed-step";
-                    }
-                    if (complaint.statusPill.type === "resolved") {
-                        stateClass = "completed";
-                        iconContent = `
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                        `;
-                    }
-                }
-
-                return `
-                    <div class="step ${stateClass}">
-                        <div class="step-icon">${iconContent}</div>
-                        <div class="step-label">${escapeHtml(step.label)}</div>
-                        <div class="step-date">${escapeHtml(step.date)}</div>
                     </div>
-                `;
-            }).join('');
-
-            // 3. Build Timeline Nodes conditionally based on event type
-            const eventsHtml = complaint.events.map(event => renderTimelineNode(event)).join('');
-
-            // 4. Build AI Audit Box
-            const audit = complaint.aiAudit;
-            const isResolved = audit.mode === "resolved";
-
-            const metricsHtml = audit.metrics.map(m => `
-                <div class="metric-card">
-                    <div class="metric-label">${escapeHtml(m.label)}</div>
-                    <div class="metric-value">${escapeHtml(m.value)}</div>
+                    <h2 class="success-title">Complaint Registered Successfully!</h2>
+                    <p class="success-desc">Your complaint has been submitted and routed to the municipal department.</p>
                 </div>
-            `).join('');
 
-            const actionsHtml = audit.actions.map(btn => `
-                <button type="button" class="btn-action ${btn.type}" onclick="triggerAction('${btn.actionId}', '${complaint.refId}')">
-                    ${btn.type === 'escalate' ? '⚡' : '📄'} ${escapeHtml(btn.label)}
+                <div class="keys-grid">
+                    <!-- Key 1: Internal ID -->
+                    <div class="key-box">
+                        <div class="key-label">
+                            <span>Complaint ID</span>
+                            <span style="font-size: 0.65rem; color: var(--text-muted);">Internal</span>
+                        </div>
+                        <div class="key-value" id="generated-complaint-id">CIV-2026-1042</div>
+                        <div class="key-subtext">Departmental Reference ID</div>
+                    </div>
+
+                    <!-- Key 2: Tracking Key -->
+                    <div class="key-box highlight">
+                        <div class="key-label">
+                            <span style="color: var(--brand-primary);">Tracking Key</span>
+                            <button type="button" class="copy-btn" onclick="copyTrackingKey()">Copy</button>
+                        </div>
+                        <div class="key-value" id="generated-tracking-key">TN-GOV-X7K92P4M</div>
+                        <div class="key-subtext">Share this key to track public status</div>
+                    </div>
+                </div>
+
+                <div class="alert-box">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink: 0;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <div>
+                        <strong>Important Notice:</strong> Save your tracking key. You can use it anytime to track the day-wise progress of this complaint. Personal information is protected.
+                    </div>
+                </div>
+
+                <div class="keys-actions">
+                    <button type="button" class="btn-primary" onclick="trackKey(document.getElementById('generated-tracking-key').innerText)">
+                        <span>Track Complaint Now</span>
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="switchView('home')">
+                        <span>Back to Home</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================
+         VIEW 4: TRACK COMPLAINT SEARCH (Screen 4)
+         ======================================================== -->
+    <main class="app-view" id="view-track">
+        <div class="narrow-container">
+            <div class="content-card track-search-card">
+                <div class="track-search-icon">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </div>
+                <h1 class="track-search-title">Track Your Complaint</h1>
+                <p class="track-search-desc">Enter the tracking key you received after submitting your complaint to view its verified day-by-day journal.</p>
+
+                <form class="track-search-form" onsubmit="handleTrackFormSubmit(event)">
+                    <input type="text" class="track-search-input" id="track-key-input" placeholder="e.g. TN-GOV-X7K92P4M" value="TN-GOV-X7K92P4M" required autocomplete="off">
+                    <button type="submit" class="btn-primary" style="width: auto; padding: 0.9rem 2rem;">Track</button>
+                </form>
+
+                <div class="sample-search-chips">
+                    <span style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600;">Demo Keys:</span>
+                    <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-X7K92P4M')">💡 TN-GOV-X7K92P4M (Streetlight • Delayed)</button>
+                    <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-KA99120')">✓ TN-GOV-KA99120 (Transformer • Resolved)</button>
+                </div>
+
+                <div class="alert-box" style="text-align: left; margin: 0 auto; max-width: 580px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <div style="font-size: 0.825rem;">
+                        <strong>Where to find your tracking key?</strong> It is generated when you submit a complaint and also sent to your registered SMS/email (if provided).
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted);">
+                    Don't have a key? <a onclick="switchView('submit')" style="color: var(--brand-primary); font-weight: 700; cursor: pointer;">Submit a new complaint</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================
+         VIEW 5 & 6: COMPLAINT DETAILS & DAY-WISE TIMELINE (Screen 5, 6, 9)
+         ======================================================== -->
+    <main class="app-view" id="view-details">
+        <div class="standard-container">
+            <div style="margin-bottom: 1.5rem;">
+                <button type="button" class="btn-secondary" onclick="switchView('track')" style="padding: 0.45rem 0.9rem; font-size: 0.825rem;">
+                    ← Back to Track
                 </button>
-            `).join('');
+            </div>
 
-            // 5. Assemble the complete tracking view
-            container.innerHTML = `
-                <div class="tracking-card">
+            <div class="public-view-grid">
+                <!-- Left Column: Public Complaint Details (Screen 5) -->
+                <div class="content-card">
+                    <div class="public-meta-header">
+                        <div class="meta-id-group">
+                            <span class="public-tracking-key" id="det-tracking-key">TN-GOV-X7K92P4M</span>
+                            <button type="button" class="copy-btn" onclick="copyDetailKey()">Copy</button>
+                        </div>
+                        <div class="public-internal-id" id="det-complaint-id">CIV-2026-1042</div>
+                    </div>
 
-                    <!-- Metadata Header -->
-                    <div class="meta-header">
+                    <div class="detail-row">
+                        <div class="detail-label">Issue</div>
+                        <div class="detail-value" id="det-title" style="font-size: 1.15rem;">Streetlight not working</div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Category</div>
+                        <div class="detail-value" id="det-category">Streetlight</div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Location</div>
+                        <div class="detail-value" id="det-location">Gandhipuram, Coimbatore</div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">Description</div>
+                        <div class="detail-value" id="det-desc" style="color: var(--text-secondary); font-weight: 400; font-size: 0.9rem;">
+                            The streetlight near my house has not been working for the past 3 days. It's very dark at night.
+                        </div>
+                    </div>
+
+                    <div class="detail-photo-card" id="det-photo-container">
+                        <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80" alt="Evidence" class="detail-photo-img" id="det-photo">
+                    </div>
+
+                    <div style="display: flex; gap: 1.5rem; margin-top: 1rem;">
+                        <div class="detail-row">
+                            <div class="detail-label">Priority</div>
+                            <span class="priority-badge Medium" id="det-priority">Medium</span>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Submitted By</div>
+                            <div class="detail-value" style="font-size: 0.85rem; color: var(--text-secondary);">
+                                🛡️ Citizen (Anonymous)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="status-badge-card" id="det-status-card">
                         <div>
-                            <div class="ref-tag-group">
-                                <span class="ref-id">Reference ID: ${escapeHtml(complaint.refId)}</span>
-                            </div>
-                            <div class="dept-info">
-                                <strong>${escapeHtml(complaint.department)}</strong>
-                                <span>•</span>
-                                <span>${escapeHtml(complaint.subCategory)}</span>
-                            </div>
-                            <div class="meta-subtext">
-                                <span>📍 ${escapeHtml(complaint.location)}</span>
-                                <span>📅 Lodged: ${escapeHtml(complaint.filedDate)}</span>
-                                <span>🎯 SLA Deadline: ${escapeHtml(complaint.targetSla)}</span>
-                            </div>
+                            <div style="font-size: 0.725rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Current Status</div>
+                            <div style="font-size: 1.15rem; font-weight: 800; color: #92400e;" id="det-status-text">⚠️ Delayed</div>
                         </div>
-                        <div>
-                            <span class="status-pill ${complaint.statusPill.type}">
-                                ${complaint.statusPill.type === 'resolved' ? '✓ ' : '● '}
-                                ${escapeHtml(complaint.statusPill.text)}
-                            </span>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.725rem; color: var(--text-muted);">Last Updated</div>
+                            <div style="font-size: 0.85rem; font-weight: 700;" id="det-last-updated">Day 5 - 14 Apr 2026</div>
                         </div>
                     </div>
-
-                    <!-- E-Commerce Horizontal Stepper -->
-                    <div class="stepper-section">
-                        <div class="stepper-header">
-                            <span class="stepper-title">Grievance Life Cycle Stage</span>
-                            <span class="stepper-sla-badge">Target SLA: ${escapeHtml(complaint.targetSla)}</span>
-                        </div>
-                        <div class="stepper">
-                            <div class="stepper-progress-fill" style="width: ${progressPercent}%;"></div>
-                            ${stepsHtml}
-                        </div>
-                    </div>
-
-                    <!-- Timeline Title & Legend -->
-                    <div class="timeline-section-title">
-                        <span>Official Event Stream & Audit Journal</span>
-                        <div class="timeline-legend">
-                            <span class="legend-item"><span class="legend-dot verified"></span> Verified Event</span>
-                            <span class="legend-item"><span class="legend-dot stationary"></span> Stationary</span>
-                            <span class="legend-item"><span class="legend-dot ai"></span> AI Inference</span>
-                        </div>
-                    </div>
-
-                    <!-- Vertical Event Journal Timeline -->
-                    <div class="timeline">
-                        ${eventsHtml}
-                    </div>
-
-                    <!-- AI Audit Card -->
-                    <div class="ai-audit-box ${isResolved ? 'resolved-mode' : ''}">
-                        <div class="ai-audit-header">
-                            <div class="ai-audit-title">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                                </svg>
-                                <span>${escapeHtml(audit.title)}</span>
-                            </div>
-                            <span class="ai-audit-score-pill">
-                                🛡️ ${escapeHtml(audit.confidenceScore)}
-                            </span>
-                        </div>
-                        <div class="ai-audit-desc">
-                            ${escapeHtml(audit.summary)}
-                        </div>
-                        <div class="ai-metrics-grid">
-                            ${metricsHtml}
-                        </div>
-                        <div class="citizen-action-bar">
-                            ${actionsHtml}
-                        </div>
-                    </div>
-
                 </div>
-            `;
-        }
+
+                <!-- Right Column: Day-Wise Verifiable Timeline (Screen 6 & 9) -->
+                <div class="timeline-box">
+                    <div class="timeline-title-row">
+                        <div class="timeline-title">📅 Day-Wise Timeline</div>
+                        <span style="font-size: 0.725rem; font-weight: 700; background: #e0e7ff; color: #3730a3; padding: 0.2rem 0.6rem; border-radius: 9999px;">
+                            Official Audit
+                        </span>
+                    </div>
+
+                    <!-- Dynamic Timeline Stream -->
+                    <div class="timeline-stream" id="timeline-stream-container">
+                        <!-- Populated by JavaScript -->
+                    </div>
+
+                    <div class="timeline-footnote">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span>We will keep updating this timeline as the department takes action.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================
+         VIEW 7 & 8: OFFICER DASHBOARD & ACTION CONSOLE (Screen 7, 8)
+         ======================================================== -->
+    <main class="app-view" id="view-officer">
+        <div class="officer-layout">
+            <!-- Sidebar (Screen 7 Left) -->
+            <aside class="officer-sidebar">
+                <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.5rem; padding: 0 0.5rem;">
+                    <div class="user-avatar" style="background: #1e293b;">O</div>
+                    <div>
+                        <div style="font-size: 0.875rem; font-weight: 800;">Officer R. Selvam</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">Coimbatore Corporation</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-heading">Navigation</div>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item active" onclick="showOfficerTab('dashboard')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Dashboard
+                    </li>
+                    <li class="sidebar-item" onclick="showOfficerTab('complaints')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        Complaints
+                    </li>
+                    <li class="sidebar-item" onclick="filterOfficerStatus('Pending')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                        Pending (71)
+                    </li>
+                    <li class="sidebar-item" onclick="filterOfficerStatus('In Progress')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                        In Progress (43)
+                    </li>
+                    <li class="sidebar-item" onclick="filterOfficerStatus('Resolved')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        Resolved (134)
+                    </li>
+                    <li class="sidebar-item" onclick="filterOfficerStatus('Delayed')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Delayed (18)
+                    </li>
+                </ul>
+
+                <div class="sidebar-heading">System</div>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item" onclick="switchView('home')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                        Exit to Citizen
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- Main Officer Console -->
+            <div>
+                <!-- Officer Overview (Screen 7 Right) -->
+                <div id="officer-overview-section">
+                    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h1 class="page-title">Officer Dashboard</h1>
+                            <p class="page-desc">Manage, triage, and update municipal grievances.</p>
+                        </div>
+                        <span class="user-pill" style="background: #e0f2fe; color: #0369a1;">
+                            ● Live Municipal Sync Active
+                        </span>
+                    </div>
+
+                    <!-- 6 KPIs Cards (Exact numbers from design) -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-title">Total Complaints</div>
+                            <div class="kpi-number" id="kpi-total">248</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Pending</div>
+                            <div class="kpi-number pending" id="kpi-pending">71</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">In Progress</div>
+                            <div class="kpi-number in-progress" id="kpi-progress">43</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Resolved</div>
+                            <div class="kpi-number resolved" id="kpi-resolved">134</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Delayed</div>
+                            <div class="kpi-number delayed" id="kpi-delayed">18</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-title">Escalations</div>
+                            <div class="kpi-number escalations" id="kpi-escalations">6</div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Complaints Management Table -->
+                    <div class="content-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                            <h2 style="font-size: 1.1rem; font-weight: 800;">Recent Complaints</h2>
+                            <span style="font-size: 0.8rem; color: var(--brand-primary); font-weight: 700; cursor: pointer;" onclick="renderOfficerTable('All')">View All</span>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="officer-table">
+                                <thead>
+                                    <tr>
+                                        <th>Complaint ID</th>
+                                        <th>Issue Title</th>
+                                        <th>Location</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="officer-table-body">
+                                    <!-- Dynamic rows from JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Officer Action Console Modal/Panel (Screen 8) -->
+                <div class="action-console-card" id="officer-action-panel" style="display: none; margin-top: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+                        <div>
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--brand-primary); text-transform: uppercase;">
+                                Action Console
+                            </div>
+                            <h2 style="font-size: 1.35rem; font-weight: 800;" id="action-complaint-header">Complaint #CIV-2026-1042</h2>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);" id="action-complaint-sub">
+                                Streetlight not working • Gandhipuram, Coimbatore
+                            </div>
+                        </div>
+                        <button type="button" class="btn-secondary" onclick="closeOfficerActionPanel()" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                            Close
+                        </button>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; align-items: center; background: #f8fafc; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                        <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80" id="action-thumb" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+                        <div>
+                            <div style="font-size: 0.95rem; font-weight: 700;" id="action-title">Streetlight not working</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);" id="action-location">Gandhipuram, Coimbatore</div>
+                            <span class="status-pill delayed" id="action-status-pill" style="margin-top: 0.35rem; font-size: 0.7rem; padding: 0.2rem 0.5rem;">Delayed</span>
+                        </div>
+                    </div>
+
+                    <div class="form-label">Update Status</div>
+                    <div class="action-buttons-group">
+                        <button type="button" class="officer-action-btn" id="act-btn-assign" onclick="selectAction('assign')">
+                            <span>👤 Assign to Officer</span>
+                        </button>
+                        <button type="button" class="officer-action-btn" id="act-btn-start" onclick="selectAction('start')">
+                            <span>🔧 Start Work</span>
+                        </button>
+                        <button type="button" class="officer-action-btn" id="act-btn-progress" onclick="selectAction('progress')">
+                            <span>🔄 Update Progress</span>
+                        </button>
+                        <button type="button" class="officer-action-btn" id="act-btn-resolve" onclick="selectAction('resolve')">
+                            <span>✅ Mark as Resolved</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="officer-comments">Comments / Department Notes</label>
+                        <textarea class="form-control" id="officer-comments" placeholder="Add operational notes or reason for status update..."></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button type="button" class="btn-primary" onclick="applyOfficerUpdate()">
+                            <span>Update Grievance & Publish to Timeline</span>
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="viewUpdatedTimelineFromOfficer()">
+                            <span>View Public Timeline</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================
+         VIEW 10: MY COMPLAINTS (CITIZEN VIEW) (Screen 10)
+         ======================================================== -->
+    <main class="app-view" id="view-my-complaints">
+        <div class="standard-container">
+            <div class="page-header">
+                <h1 class="page-title">My Complaints</h1>
+                <p class="page-desc">View and monitor all your registered grievances and their day-wise tracking progress.</p>
+            </div>
+
+            <!-- Filter Tabs (Screen 10 Top) -->
+            <div class="filter-tabs">
+                <button type="button" class="tab-btn active" id="tab-all" onclick="filterMyComplaints('All')">All (3)</button>
+                <button type="button" class="tab-btn" id="tab-pending" onclick="filterMyComplaints('Pending')">Pending (1)</button>
+                <button type="button" class="tab-btn" id="tab-in-progress" onclick="filterMyComplaints('In Progress')">In Progress (1)</button>
+                <button type="button" class="tab-btn" id="tab-resolved" onclick="filterMyComplaints('Resolved')">Resolved (1)</button>
+            </div>
+
+            <!-- Complaints List (Screen 10 List) -->
+            <div class="my-complaints-list" id="my-complaints-container">
+                <!-- Dynamically generated -->
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================
+         VIEW 12: LOGIN MODAL (OFFICIALS / CITIZENS) (Screen 12)
+         ======================================================== -->
+    <div class="modal-backdrop" id="login-modal" onclick="closeLoginModal(event)">
+        <div class="login-dialog" onclick="event.stopPropagation()">
+            <button type="button" class="modal-close-btn" onclick="closeLoginModal()">✕</button>
+
+            <div class="login-header">
+                <div class="brand-shield" style="margin: 0 auto 0.75rem auto;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <h2 style="font-size: 1.4rem; font-weight: 800;">CivicTrack Login</h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Select your account role to proceed</p>
+            </div>
+
+            <div class="login-role-tabs">
+                <button type="button" class="role-tab-btn" id="role-citizen" onclick="selectRole('citizen')">Citizen</button>
+                <button type="button" class="role-tab-btn active" id="role-officer" onclick="selectRole('officer')">Officer</button>
+                <button type="button" class="role-tab-btn" id="role-admin" onclick="selectRole('admin')">Admin</button>
+            </div>
+
+            <form onsubmit="handleLoginSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">Email / Official Username</label>
+                    <input type="text" class="form-control" id="login-email" value="officer@gov.in" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Password</label>
+                    <input type="password" class="form-control" id="login-password" value="••••••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-primary" style="margin-top: 0.5rem;">
+                    <span>Log In to CivicTrack</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast-notify" id="toast-notify">
+        <span id="toast-icon">✓</span>
+        <span id="toast-message">Notification message</span>
+    </div>
+
+    <!-- ========================================================
+         APPLICATION LOGIC & IN-MEMORY REACTIVE DATABASE
+         ======================================================== -->
+    <script>
+        /**
+         * IN-MEMORY DATABASE WITH FULL SAMPLE COMPLAINTS
+         * Reflects exact data from CivicTrack screens.
+         */
+        const CIVICTRACK_DB = {
+            complaints: [
+                // Case 1: The flagship Streetlight complaint (CIV-2026-1042 / TN-GOV-X7K92P4M)
+                {
+                    id: "CIV-2026-1042",
+                    trackingKey: "TN-GOV-X7K92P4M",
+                    category: "Streetlight",
+                    categoryIcon: "💡",
+                    title: "Streetlight not working",
+                    description: "The streetlight near my house has not been working for the past 3 days. It's very dark at night.",
+                    location: "Gandhipuram, Coimbatore",
+                    photoUrl: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80",
+                    priority: "Medium",
+                    status: "Delayed", // Delayed, In Progress, Pending, Resolved
+                    dayLabel: "Day 5",
+                    lastUpdated: "Day 5 - 14 Apr 2026",
+                    timeline: [
+                        {
+                            day: "Day 0",
+                            date: "Apr 10, 2026",
+                            statusType: "submitted",
+                            tagType: "tag-verified",
+                            tagText: "Verified Event",
+                            title: "Complaint Submitted",
+                            desc: "Complaint successfully registered in municipal system."
+                        },
+                        {
+                            day: "Day 1",
+                            date: "Apr 11, 2026",
+                            statusType: "forwarded",
+                            tagType: "tag-verified",
+                            tagText: "Verified Event",
+                            title: "Forwarded to Department",
+                            desc: "Sent to Electrical Department for scheduling and allocation."
+                        },
+                        {
+                            day: "Day 2",
+                            date: "Apr 12, 2026",
+                            statusType: "stationary",
+                            tagType: "tag-stationary",
+                            tagText: "No Event Logged",
+                            title: "No Response Recorded",
+                            desc: "No action recorded in our system."
+                        },
+                        {
+                            day: "Day 3",
+                            date: "Apr 13, 2026",
+                            statusType: "stationary",
+                            tagType: "tag-stationary",
+                            tagText: "No Event Logged",
+                            title: "No Response Recorded",
+                            desc: "No action recorded in our system."
+                        },
+                        {
+                            day: "Day 5",
+                            date: "Apr 15, 2026",
+                            statusType: "delayed",
+                            tagType: "tag-ai-inference",
+                            tagText: "AI Assessment",
+                            title: "Delayed",
+                            desc: "Expected response has not been recorded within standard SLA."
+                        },
+                        {
+                            day: "Day 7",
+                            date: "Apr 17, 2026",
+                            statusType: "escalated",
+                            tagType: "tag-escalated",
+                            tagText: "Escalation Flag",
+                            title: "Escalation Recommended",
+                            desc: "Complaint requires attention from higher-level officer."
+                        }
+                    ]
+                },
+                // Case 2: Water Leak (In Progress)
+                {
+                    id: "CIV-2026-1040",
+                    trackingKey: "TN-GOV-W992014",
+                    category: "Water Leak",
+                    categoryIcon: "💧",
+                    title: "Main Line Valve Water Leakage",
+                    description: "Significant drinking water leaking on 4th cross road, flooding sidewalk.",
+                    location: "Peelamedu, Coimbatore",
+                    photoUrl: "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=600&auto=format&fit=crop&q=80",
+                    priority: "High",
+                    status: "In Progress",
+                    dayLabel: "Day 3",
+                    lastUpdated: "Day 3 - 12 Apr 2026",
+                    timeline: [
+                        {
+                            day: "Day 0",
+                            date: "Apr 09, 2026",
+                            statusType: "submitted",
+                            tagType: "tag-verified",
+                            tagText: "Verified Event",
+                            title: "Complaint Registered",
+                            desc: "Water leakage intake verified and reference generated."
+                        },
+                        {
+                            day: "Day 1",
+                            date: "Apr 10, 2026",
+                            statusType: "forwarded",
+                            tagType: "tag-verified",
+                            tagText: "Verified Event",
+                            title: "Dispatched to TWAD Team",
+                            desc: "Maintenance crew allocated for pressure inspection."
+                        },
+                        {
+                            day: "Day 3",
+                            date: "Apr 12, 2026",
+                            statusType: "work-started",
+                            tagType: "tag-verified",
+                            tagText: "Verified Event",
+                            title: "Excavation and Valve Work Started",
+                            desc: "Team is actively repairing the cracked underground pipe."
+                        }
+                    ]
+                },
+                // Case 3: Transformer Sparking (Fully Resolved)
+                {
+                    id: "CIV-2026-1038",
+                    trackingKey: "TN-GOV-KA99120",
+                    category: "Streetlight",
+                    categoryIcon: "⚡",
+                    title: "Transformer Sparking & Streetlight Blackout",
+                    description: "High tension line sparking and complete blackout of streetlights on 100ft road.",
+                    location: "Ukkadam, Coimbatore",
+                    photoUrl: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&auto=format&fit=crop&q=80",
+                    priority: "Critical",
+                    status: "Resolved",
+                    dayLabel: "Day 10",
+                    lastUpdated: "Day 10 - 08 Apr 2026",
+                    timeline: [
+                        {
+                            day: "Day 0",
+                            date: "Mar 29, 2026",
+                            statusType: "submitted",
+                            tagType: "tag-verified",
+                            tagText: "Verified Event",
+                            title: "Emergency Safety Complaint Logged",
+                            desc: "Priority 1 ticket created for transformer short circuit."
+                        },
+                        {
+                            day: "Day 1",
+                            date: "Mar 30, 2026",
+                            statusType: "work-started",
+                            tagType: "tag-verified",
+                            tagText: "Verified Event",
+                            title: "Rapid Response Gang Deployed",
+                            desc: "Power isolated and faulty jumper cable replaced."
+                        },
+                        {
+                            day: "Day 10",
+                            date: "Apr 08, 2026",
+                            statusType: "resolved",
+                            tagType: "tag-verified",
+                            tagText: "Verified Event",
+                            title: "Resolved & Citizen Sign-Off Verified",
+                            desc: "Streetlights operational, voltage levels certified, case closed."
+                        }
+                    ]
+                },
+                // Case 4: Garbage Overflow (Pending)
+                {
+                    id: "CIV-2026-1041",
+                    trackingKey: "TN-GOV-G771899",
+                    category: "Garbage",
+                    categoryIcon: "🗑️",
+                    title: "Garbage Dump Overflow on School Road",
+                    description: "Municipal waste bin overflowing for 4 days, stray dogs and foul smell.",
+                    location: "RS Puram, Coimbatore",
+                    photoUrl: "https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80",
+                    priority: "Medium",
+                    status: "Pending",
+                    dayLabel: "Day 1",
+                    lastUpdated: "Day 1 - 13 Apr 2026",
+                    timeline: [
+                        {
+                            day: "Day 0",
+                            date: "Apr 12, 2026",
+                            statusType: "submitted",
+                            tagType: "tag-verified",
+                            tagText: "Verified Event",
+                            title: "Sanitation Grievance Lodged",
+                            desc: "Complaint assigned to Ward 24 Sanitation Inspector."
+                        }
+                    ]
+                }
+            ],
+            kpis: {
+                total: 248,
+                pending: 71,
+                inProgress: 43,
+                resolved: 134,
+                delayed: 18,
+                escalations: 6
+            },
+            currentActiveActionId: null,
+            selectedActionType: null
+        };
+
+        // Navigation state
+        let currentView = 'home';
 
         /**
-         * Dynamic Timeline Node Generator:
-         * Strictly differentiates Verified Gov Events, Stationary Gaps, and AI Inferences.
+         * Switches the active application view
          */
-        function renderTimelineNode(event) {
-            if (event.type === 'verified') {
-                return `
-                    <div class="timeline-event verified">
-                        <div class="event-meta">
-                            <span class="day-tag">${escapeHtml(event.dayLabel)}</span>
-                            <span class="event-timestamp">${escapeHtml(event.timestamp)}</span>
-                            <span class="verified-badge">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                </svg>
-                                ${escapeHtml(event.badgeLabel)}
-                            </span>
-                        </div>
-                        <div class="event-title">${escapeHtml(event.title)}</div>
-                        <div class="event-hub">${escapeHtml(event.hub)}</div>
-                        <div class="event-desc">${escapeHtml(event.description)}</div>
-                        <div class="event-evidence-footer">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                            </svg>
-                            <span>${escapeHtml(event.evidence)}</span>
-                        </div>
-                    </div>
-                `;
-            } else if (event.type === 'stationary') {
-                return `
-                    <div class="timeline-event stationary">
-                        <div class="event-meta">
-                            <span class="day-tag">${escapeHtml(event.dayLabel)}</span>
-                            <span class="event-timestamp">${escapeHtml(event.timestamp)}</span>
-                            <span class="stationary-badge">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="10" y1="15" x2="10" y2="9"></line>
-                                    <line x1="14" y1="15" x2="14" y2="9"></line>
-                                </svg>
-                                ${escapeHtml(event.badgeLabel)}
-                            </span>
-                        </div>
-                        <div class="event-title" style="color: var(--text-muted);">${escapeHtml(event.title)}</div>
-                        <div class="event-hub" style="color: var(--text-muted);">${escapeHtml(event.hub)}</div>
-                        <div class="event-detail-box stationary-box">
-                            <div class="event-desc" style="color: var(--text-secondary);">${escapeHtml(event.description)}</div>
-                            <div class="event-evidence-footer">
-                                <span>ℹ️ ${escapeHtml(event.evidence)}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else if (event.type === 'flagged') {
-                return `
-                    <div class="timeline-event flagged">
-                        <div class="event-meta">
-                            <span class="day-tag" style="background: #fef3c7; color: #92400e;">${escapeHtml(event.dayLabel)}</span>
-                            <span class="event-timestamp">${escapeHtml(event.timestamp)}</span>
-                            <span class="ai-badge">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
-                                </svg>
-                                ${escapeHtml(event.badgeLabel)}
-                            </span>
-                        </div>
-                        <div class="event-title" style="color: var(--status-yellow); font-weight: 800;">${escapeHtml(event.title)}</div>
-                        <div class="event-hub" style="color: var(--status-yellow);">${escapeHtml(event.hub)}</div>
-                        <div class="event-detail-box flagged-box">
-                            <div class="event-desc">${escapeHtml(event.description)}</div>
-                            <div class="audit-metric-row">
-                                <span class="audit-metric">⚡ ${escapeHtml(event.evidence)}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
+        function switchView(viewId) {
+            currentView = viewId;
+            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+            const targetView = document.getElementById(`view-${viewId}`);
+            if (targetView) targetView.classList.add('active');
+
+            const activeNavBtn = document.getElementById(`nav-${viewId}`);
+            if (activeNavBtn) activeNavBtn.classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (viewId === 'officer') {
+                renderOfficerTable();
+            } else if (viewId === 'my-complaints') {
+                renderMyComplaints('All');
             }
-            return '';
         }
 
         /**
-         * Renders a clean "Not Found" state if the entered ID doesn't exist
+         * Renders the day-wise timeline for a complaint
          */
-        function renderNotFound(refId) {
-            const container = document.getElementById('tracking-container');
-            container.innerHTML = `
-                <div class="tracking-card">
-                    <div class="not-found-state">
-                        <div class="not-found-icon">🔍</div>
-                        <div class="not-found-title">Grievance Record Not Found</div>
-                        <div class="not-found-desc">
-                            No government database record or audit trace found matching reference identifier 
-                            <strong style="color: var(--brand-blue); font-family: 'JetBrains Mono', monospace;">"${escapeHtml(refId)}"</strong>.
-                            Please double-check your receipt number or try one of the verified sample test records below.
-                        </div>
-                        <div style="display: inline-flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
-                            <button type="button" class="btn-action secondary" onclick="switchSample('TN-2026-839274')">
-                                ⚡ Load Active Case (TN-2026-839274)
-                            </button>
-                            <button type="button" class="btn-action secondary" onclick="switchSample('KA-2026-419082')">
-                                ✓ Load Resolved Case (KA-2026-419082)
-                            </button>
+        function renderTimeline(timelineArray) {
+            const container = document.getElementById('timeline-stream-container');
+            container.innerHTML = timelineArray.map(item => `
+                <div class="timeline-node ${item.statusType}">
+                    <div class="timeline-meta">
+                        <span class="timeline-day-badge">${escapeHtml(item.day)}</span>
+                        <span class="timeline-date">${escapeHtml(item.date)}</span>
+                        <span class="timeline-status-tag ${item.tagType}">${escapeHtml(item.tagText)}</span>
+                    </div>
+                    <div class="timeline-event-name">${escapeHtml(item.title)}</div>
+                    <div class="timeline-desc">${escapeHtml(item.desc)}</div>
+                </div>
+            `).join('');
+        }
+
+        /**
+         * Displays the public details of a complaint (Screen 5 & 6)
+         */
+        function showComplaintDetails(complaint) {
+            document.getElementById('det-tracking-key').innerText = complaint.trackingKey;
+            document.getElementById('det-complaint-id').innerText = complaint.id;
+            document.getElementById('det-title').innerText = complaint.title;
+            document.getElementById('det-category').innerText = complaint.category;
+            document.getElementById('det-location').innerText = complaint.location;
+            document.getElementById('det-desc').innerText = complaint.description;
+            document.getElementById('det-priority').innerText = complaint.priority;
+            document.getElementById('det-priority').className = `priority-badge ${complaint.priority}`;
+            document.getElementById('det-photo').src = complaint.photoUrl;
+
+            // Status Card
+            const statusCard = document.getElementById('det-status-card');
+            const statusText = document.getElementById('det-status-text');
+            document.getElementById('det-last-updated').innerText = complaint.lastUpdated;
+
+            if (complaint.status === 'Resolved') {
+                statusCard.className = 'status-badge-card resolved';
+                statusText.style.color = 'var(--brand-green)';
+                statusText.innerText = '✓ Resolved';
+            } else if (complaint.status === 'In Progress') {
+                statusCard.className = 'status-badge-card in-progress';
+                statusText.style.color = 'var(--brand-primary)';
+                statusText.innerText = '● In Progress';
+            } else if (complaint.status === 'Delayed') {
+                statusCard.className = 'status-badge-card';
+                statusText.style.color = '#92400e';
+                statusText.innerText = '⚠️ Delayed';
+            } else {
+                statusCard.className = 'status-badge-card';
+                statusText.style.color = 'var(--text-secondary)';
+                statusText.innerText = '⏳ Pending Review';
+            }
+
+            renderTimeline(complaint.timeline);
+            switchView('details');
+        }
+
+        /**
+         * Track a complaint by tracking key or ID
+         */
+        function trackKey(rawKey) {
+            const cleanKey = (rawKey || '').trim().toUpperCase();
+            if (!cleanKey) return;
+
+            const record = CIVICTRACK_DB.complaints.find(c => 
+                c.trackingKey.toUpperCase() === cleanKey || 
+                c.id.toUpperCase() === cleanKey
+            );
+
+            if (record) {
+                showComplaintDetails(record);
+            } else {
+                showToast('Key not found. Try TN-GOV-X7K92P4M', '⚠️');
+            }
+        }
+
+        function handleTrackFormSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('track-key-input').value;
+            trackKey(input);
+        }
+
+        /**
+         * Form submission handler for new complaints (Screen 2 -> Screen 3)
+         */
+        function handleFormSubmission(e) {
+            e.preventDefault();
+            const category = document.getElementById('form-category').value;
+            const title = document.getElementById('form-title').value;
+            const desc = document.getElementById('form-desc').value;
+            const location = document.getElementById('form-location').value;
+            const priority = document.getElementById('form-priority').value;
+
+            // Generate unique internal ID & public tracking key
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            const newComplaintId = `CIV-2026-${randomNum}`;
+            const randomHex = Math.random().toString(36).substring(2, 8).toUpperCase();
+            const newTrackingKey = `TN-GOV-X${randomHex}`;
+
+            const newComplaint = {
+                id: newComplaintId,
+                trackingKey: newTrackingKey,
+                category: category,
+                categoryIcon: getCategoryIcon(category),
+                title: title,
+                description: desc,
+                location: location,
+                photoUrl: document.getElementById('upload-preview-img').src,
+                priority: priority,
+                status: "Pending",
+                dayLabel: "Day 0",
+                lastUpdated: "Day 0 - Just Now",
+                timeline: [
+                    {
+                        day: "Day 0",
+                        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+                        statusType: "submitted",
+                        tagType: "tag-verified",
+                        tagText: "Verified Event",
+                        title: "Complaint Submitted & Registered",
+                        desc: "Citizen complaint accepted and validated in CivicTrack municipal registry."
+                    }
+                ]
+            };
+
+            // Add to database
+            CIVICTRACK_DB.complaints.unshift(newComplaint);
+            CIVICTRACK_DB.kpis.total += 1;
+            CIVICTRACK_DB.kpis.pending += 1;
+            updateKpiCounters();
+
+            // Populate Screen 3
+            document.getElementById('generated-complaint-id').innerText = newComplaintId;
+            document.getElementById('generated-tracking-key').innerText = newTrackingKey;
+
+            switchView('submitted');
+            showToast('Complaint successfully registered!', '✅');
+        }
+
+        /**
+         * Renders the officer complaints management table (Screen 7)
+         */
+        function renderOfficerTable(filterStatus = 'All') {
+            const tbody = document.getElementById('officer-table-body');
+            let list = CIVICTRACK_DB.complaints;
+
+            if (filterStatus !== 'All') {
+                list = list.filter(c => c.status === filterStatus);
+            }
+
+            tbody.innerHTML = list.map(c => `
+                <tr>
+                    <td><strong style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">${escapeHtml(c.id)}</strong></td>
+                    <td>
+                        <div style="font-weight: 700; color: var(--text-primary);">${escapeHtml(c.title)}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(c.category)}</div>
+                    </td>
+                    <td>${escapeHtml(c.location)}</td>
+                    <td><span class="priority-badge ${c.priority}">${c.priority}</span></td>
+                    <td><span class="status-pill ${getStatusPillClass(c.status)}">${escapeHtml(c.status)}</span></td>
+                    <td>
+                        <button type="button" class="btn-table-action" onclick="openOfficerActionConsole('${c.id}')">
+                            Update
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterOfficerStatus(status) {
+            renderOfficerTable(status);
+            showToast(`Filtering officer complaints: ${status}`, '🔍');
+        }
+
+        function showOfficerTab(tab) {
+            renderOfficerTable('All');
+        }
+
+        /**
+         * Opens the action console for an officer (Screen 8)
+         */
+        function openOfficerActionConsole(complaintId) {
+            const complaint = CIVICTRACK_DB.complaints.find(c => c.id === complaintId);
+            if (!complaint) return;
+
+            CIVICTRACK_DB.currentActiveActionId = complaintId;
+            CIVICTRACK_DB.selectedActionType = null;
+
+            // Reset action buttons
+            document.querySelectorAll('.officer-action-btn').forEach(btn => btn.classList.remove('selected'));
+
+            document.getElementById('action-complaint-header').innerText = `Complaint #${complaint.id}`;
+            document.getElementById('action-complaint-sub').innerText = `${complaint.title} • ${complaint.location}`;
+            document.getElementById('action-thumb').src = complaint.photoUrl;
+            document.getElementById('action-title').innerText = complaint.title;
+            document.getElementById('action-location').innerText = complaint.location;
+            document.getElementById('action-status-pill').innerText = complaint.status;
+            document.getElementById('action-status-pill').className = `status-pill ${getStatusPillClass(complaint.status)}`;
+            document.getElementById('officer-comments').value = "";
+
+            const panel = document.getElementById('officer-action-panel');
+            panel.style.display = 'block';
+            panel.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function closeOfficerActionPanel() {
+            document.getElementById('officer-action-panel').style.display = 'none';
+        }
+
+        function selectAction(actionType) {
+            CIVICTRACK_DB.selectedActionType = actionType;
+            document.querySelectorAll('.officer-action-btn').forEach(btn => btn.classList.remove('selected'));
+            const btn = document.getElementById(`act-btn-${actionType}`);
+            if (btn) btn.classList.add('selected');
+        }
+
+        /**
+         * Applies the officer update, modifies the database, and adds to the timeline (Screen 8 -> Screen 9)
+         */
+        function applyOfficerUpdate() {
+            const complaintId = CIVICTRACK_DB.currentActiveActionId;
+            const actionType = CIVICTRACK_DB.selectedActionType;
+            const comments = document.getElementById('officer-comments').value.trim();
+
+            if (!actionType) {
+                showToast('Please select an action (Assign, Start Work, etc.)', '⚠️');
+                return;
+            }
+
+            const complaint = CIVICTRACK_DB.complaints.find(c => c.id === complaintId);
+            if (!complaint) return;
+
+            const today = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+
+            if (actionType === 'start') {
+                complaint.status = 'In Progress';
+                complaint.timeline.push({
+                    day: "Day 8",
+                    date: today,
+                    statusType: "work-started",
+                    tagType: "tag-verified",
+                    tagText: "Verified Event",
+                    title: "Work Started",
+                    desc: comments || "Officer assigned and physical repair work has begun on site."
+                });
+                CIVICTRACK_DB.kpis.inProgress += 1;
+                if (CIVICTRACK_DB.kpis.delayed > 0) CIVICTRACK_DB.kpis.delayed -= 1;
+                showToast(`Work Started logged for ${complaint.id}`, '🔧');
+            } else if (actionType === 'resolve') {
+                complaint.status = 'Resolved';
+                complaint.timeline.push({
+                    day: "Day 10",
+                    date: today,
+                    statusType: "resolved",
+                    tagType: "tag-verified",
+                    tagText: "Verified Event",
+                    title: "Resolved",
+                    desc: comments || "Issue has been verified, tested, and resolved."
+                });
+                CIVICTRACK_DB.kpis.resolved += 1;
+                if (CIVICTRACK_DB.kpis.inProgress > 0) CIVICTRACK_DB.kpis.inProgress -= 1;
+                showToast(`Complaint ${complaint.id} marked as RESOLVED!`, '✅');
+            } else if (actionType === 'assign') {
+                complaint.timeline.push({
+                    day: "Day 7",
+                    date: today,
+                    statusType: "forwarded",
+                    tagType: "tag-verified",
+                    tagText: "Verified Event",
+                    title: "Assigned to Field Unit",
+                    desc: comments || "Allocated to Junior Engineer R. Selvam."
+                });
+                showToast(`Officer assigned to ${complaint.id}`, '👤');
+            } else if (actionType === 'progress') {
+                complaint.timeline.push({
+                    day: "Day 6",
+                    date: today,
+                    statusType: "work-started",
+                    tagType: "tag-verified",
+                    tagText: "Verified Event",
+                    title: "Progress Milestone Updated",
+                    desc: comments || "Materials requisitioned from municipal store."
+                });
+                showToast(`Progress update added to ${complaint.id}`, '🔄');
+            }
+
+            complaint.lastUpdated = `Just Now (${today})`;
+            updateKpiCounters();
+            renderOfficerTable();
+            closeOfficerActionPanel();
+        }
+
+        function viewUpdatedTimelineFromOfficer() {
+            const complaint = CIVICTRACK_DB.complaints.find(c => c.id === CIVICTRACK_DB.currentActiveActionId);
+            if (complaint) {
+                showComplaintDetails(complaint);
+            }
+        }
+
+        /**
+         * Renders the citizen "My Complaints" list (Screen 10)
+         */
+        function renderMyComplaints(filter = 'All') {
+            const container = document.getElementById('my-complaints-container');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const activeTab = document.getElementById(`tab-${filter.toLowerCase().replace(' ', '-')}`);
+            if (activeTab) activeTab.classList.add('active');
+
+            let list = CIVICTRACK_DB.complaints;
+            if (filter !== 'All') {
+                list = list.filter(c => c.status === filter);
+            }
+
+            container.innerHTML = list.map(c => `
+                <div class="complaint-card-row" onclick="trackKey('${c.trackingKey}')">
+                    <div class="complaint-card-left">
+                        <div class="category-icon-bubble">${c.categoryIcon || '📋'}</div>
+                        <div>
+                            <div class="complaint-card-title">${escapeHtml(c.title)}</div>
+                            <div class="complaint-card-meta">
+                                <span>📍 ${escapeHtml(c.location)}</span>
+                                <span>•</span>
+                                <span style="font-family: 'JetBrains Mono', monospace;">${escapeHtml(c.id)}</span>
+                            </div>
                         </div>
                     </div>
+                    <div class="complaint-card-right">
+                        <span class="status-pill ${getStatusPillClass(c.status)}">${escapeHtml(c.status)}</span>
+                        <span class="day-counter-pill">${escapeHtml(c.dayLabel || 'Day 0')}</span>
+                        <span style="color: var(--text-muted); font-size: 1.1rem;">›</span>
+                    </div>
                 </div>
-            `;
+            `).join('');
         }
 
-        /**
-         * Helper to sanitize text preventing XSS
-         */
+        function filterMyComplaints(filter) {
+            renderMyComplaints(filter);
+        }
+
+        function updateKpiCounters() {
+            document.getElementById('kpi-total').innerText = CIVICTRACK_DB.kpis.total;
+            document.getElementById('kpi-pending').innerText = CIVICTRACK_DB.kpis.pending;
+            document.getElementById('kpi-progress').innerText = CIVICTRACK_DB.kpis.inProgress;
+            document.getElementById('kpi-resolved').innerText = CIVICTRACK_DB.kpis.resolved;
+            document.getElementById('kpi-delayed').innerText = CIVICTRACK_DB.kpis.delayed;
+            document.getElementById('kpi-escalations').innerText = CIVICTRACK_DB.kpis.escalations;
+        }
+
+        function getStatusPillClass(status) {
+            if (status === 'Resolved') return 'resolved';
+            if (status === 'In Progress') return 'in-progress';
+            if (status === 'Delayed') return 'delayed';
+            return 'pending';
+        }
+
+        function getCategoryIcon(cat) {
+            switch (cat) {
+                case 'Streetlight': return '💡';
+                case 'Water Leak': return '💧';
+                case 'Garbage': return '🗑️';
+                case 'Road Damage': return '🚗';
+                case 'Drainage': return '🌊';
+                default: return '📋';
+            }
+        }
+
+        function calculateAutoPriority() {
+            const cat = document.getElementById('form-category').value;
+            const prioritySelect = document.getElementById('form-priority');
+            if (cat === 'Water Leak' || cat === 'Drainage') {
+                prioritySelect.value = 'High';
+            } else if (cat === 'Streetlight') {
+                prioritySelect.value = 'Medium';
+            } else if (cat === 'Road Damage') {
+                prioritySelect.value = 'Medium';
+            } else {
+                prioritySelect.value = 'Low';
+            }
+        }
+
+        function handlePhotoSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('upload-preview-img').src = e.target.result;
+                    document.getElementById('upload-filename').innerText = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function copyTrackingKey() {
+            const key = document.getElementById('generated-tracking-key').innerText;
+            navigator.clipboard.writeText(key).then(() => {
+                showToast(`Tracking Key ${key} copied!`, '📋');
+            });
+        }
+
+        function copyDetailKey() {
+            const key = document.getElementById('det-tracking-key').innerText;
+            navigator.clipboard.writeText(key).then(() => {
+                showToast(`Tracking Key ${key} copied!`, '📋');
+            });
+        }
+
+        function showToast(msg, icon = '✓') {
+            const toast = document.getElementById('toast-notify');
+            document.getElementById('toast-icon').innerText = icon;
+            document.getElementById('toast-message').innerText = msg;
+            toast.style.display = 'flex';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        // Login Modal Logic
+        function openLoginModal() {
+            document.getElementById('login-modal').style.display = 'flex';
+        }
+
+        function closeLoginModal(e) {
+            if (!e || e.target === document.getElementById('login-modal')) {
+                document.getElementById('login-modal').style.display = 'none';
+            }
+        }
+
+        function selectRole(role) {
+            document.querySelectorAll('.role-tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`role-${role}`).classList.add('active');
+
+            const emailInput = document.getElementById('login-email');
+            if (role === 'officer') {
+                emailInput.value = 'officer@gov.in';
+            } else if (role === 'admin') {
+                emailInput.value = 'admin@civictrack.gov.in';
+            } else {
+                emailInput.value = 'citizen@gmail.com';
+            }
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const activeRoleBtn = document.querySelector('.role-tab-btn.active');
+            const role = activeRoleBtn ? activeRoleBtn.innerText : 'Citizen';
+
+            document.getElementById('nav-user-name').innerText = `${role} View`;
+            document.getElementById('nav-user-initial').innerText = role.charAt(0);
+            closeLoginModal();
+            showToast(`Logged in as ${role}`, '👤');
+
+            if (role === 'Officer') {
+                switchView('officer');
+            } else {
+                switchView('home');
+            }
+        }
+
         function escapeHtml(text) {
             if (!text) return '';
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
             return String(text).replace(/[&<>"']/g, m => map[m]);
         }
 
-        /**
-         * Handles search query execution
-         */
-        function trackGrievance(rawId) {
-            const cleanId = (rawId || '').trim().toUpperCase();
-            if (!cleanId) return;
-
-            // Update search input field to show normalized query
-            document.getElementById('search-input').value = cleanId;
-
-            // Update sample chip active state
-            document.querySelectorAll('.sample-chip').forEach(chip => {
-                chip.classList.remove('active');
-            });
-            if (cleanId === 'TN-2026-839274') {
-                const c1 = document.getElementById('chip-sample-1');
-                if (c1) c1.classList.add('active');
-            } else if (cleanId === 'KA-2026-419082') {
-                const c2 = document.getElementById('chip-sample-2');
-                if (c2) c2.classList.add('active');
-            }
-
-            // Query database
-            const record = GRIEVANCE_DATABASE[cleanId];
-            if (record) {
-                renderGrievance(record);
-            } else {
-                renderNotFound(cleanId);
-            }
-        }
-
-        /**
-         * Quick switcher for sample test cases
-         */
-        function switchSample(sampleId) {
-            document.getElementById('search-input').value = sampleId;
-            trackGrievance(sampleId);
-        }
-
-        /**
-         * Action modal simulations (Escalation / RTI Query / Certificate)
-         */
-        function triggerAction(actionId, refId) {
-            const modal = document.getElementById('action-modal');
-            const titleEl = document.getElementById('modal-title');
-            const bodyEl = document.getElementById('modal-body');
-
-            if (actionId === 'escalate-twad') {
-                titleEl.innerHTML = '⚡ Escalation Notice Generated';
-                bodyEl.innerHTML = `
-                    <p>An official SLA Inactivity Notice has been drafted targeting the <strong>Superintending Engineer (TWAD Board)</strong> based on KizunaX Rule #24 (28h stationary duration):</p>
-                    <div class="modal-code-block">MEMORANDUM OF DELAY ESCALATION
-Ref ID: ${refId}
-Target Office: Zone 4 Sub-Division Office, Coimbatore
-Status: Stationary for >24h post-inspection
-Grounds: Non-compliance with State Citizen Charter SLA (Sec 4.2)
-Demand: Immediate work order issuance within 12 business hours.</div>
-                    <p style="font-size: 0.8rem; color: var(--text-muted);">This dossier is ready to be dispatched via CM Helpline Grievance Escalation API.</p>
-                `;
-            } else if (actionId === 'rti-dossier') {
-                titleEl.innerHTML = '📄 RTI Citizen Audit Dossier';
-                bodyEl.innerHTML = `
-                    <p>Evidence package assembled with cryptographic timestamps for submission under Right to Information Act (Section 6(1)):</p>
-                    <div class="modal-code-block">RTI QUERY EVIDENCE LOG
-1. Date of Intake: 07-09-2026 09:15 AM (Verified)
-2. Last Official Update: 08-09-2026 10:45 AM (Verified)
-3. Stationary Inactive Gap: 08-09-2026 10:45 AM to Present (No Entries Logged)
-4. Officer Allocated: R. Selvam, Junior Engineer
-Query: Provide daily register logs explaining 28h lack of action.</div>
-                `;
-            } else if (actionId === 'download-cert') {
-                titleEl.innerHTML = '✓ Official Resolution Certificate';
-                bodyEl.innerHTML = `
-                    <p>Digital resolution certificate verified by BESCOM Sahayaa Gateway:</p>
-                    <div class="modal-code-block">GOVERNMENT OF KARNATAKA - BESCOM
-Certificate Ref: #CERT-KA-99120
-Grievance ID: ${refId}
-Department: Indiranagar Sub-Station O&M Unit
-Resolution Timestamp: Sep 09, 2026 — 04:30 PM
-Status: Verified & Closed (OTP Authenticated by Citizen)</div>
-                    <p style="color: var(--status-green); font-weight: 600; font-size: 0.85rem;">Cryptographic hash authenticated against State Ledger.</p>
-                `;
-            } else {
-                titleEl.innerHTML = 'Citizen Quality Feedback';
-                bodyEl.innerHTML = `
-                    <p>Thank you for participating in the KizunaX Civic Integrity Program. Your feedback rating for grievance <strong>${refId}</strong> has been logged to the public accountability index.</p>
-                `;
-            }
-
-            modal.style.display = 'flex';
-        }
-
-        function closeActionModal() {
-            document.getElementById('action-modal').style.display = 'none';
-        }
-
-        // Search Form Submission Handler
-        document.getElementById('search-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const inputVal = document.getElementById('search-input').value;
-            trackGrievance(inputVal);
-        });
-
-        // Initialize default view on load (Active Delayed case)
+        // Initialize on DOM load
         window.addEventListener('DOMContentLoaded', () => {
-            trackGrievance('TN-2026-839274');
+            renderOfficerTable();
+            renderMyComplaints();
         });
     </script>
 </body>
