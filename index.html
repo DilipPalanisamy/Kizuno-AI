@@ -2062,10 +2062,10 @@
                         <p style="font-size: 0.825rem; color: var(--text-secondary);">Enter your verified Gmail and password to access your grievances</p>
                     </div>
 
-                    <form id="citizen-signin-form" onsubmit="handleCitizenPasswordLogin(event)">
+                    <form id="citizen-signin-form" onsubmit="handleCitizenPasswordLogin(event); return false;">
                         <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
                             <label class="form-label" for="login-email" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
-                                Gmail / Email Address <span style="color: var(--brand-red);">*</span>
+                                Gmail Address <span style="color: var(--brand-red);">*</span>
                             </label>
                             <input type="email" id="login-email" class="form-control" placeholder="name@gmail.com" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
                         </div>
@@ -2109,7 +2109,7 @@
                         <p style="font-size: 0.825rem; color: var(--text-secondary);">Enter your details and verify your real Gmail address with an OTP code</p>
                     </div>
 
-                    <form id="citizen-signup-form" onsubmit="event.preventDefault(); requestGmailVerificationCode();">
+                    <form id="citizen-signup-form" onsubmit="event.preventDefault(); return false;">
                         <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
                             <label class="form-label" for="signup-username" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
                                 Username / Full Name <span style="color: var(--brand-red);">*</span>
@@ -2131,7 +2131,7 @@
                             <input type="password" id="signup-password" class="form-control" placeholder="At least 6 characters" minlength="6" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
                         </div>
 
-                        <button type="submit" id="btn-request-otp" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.925rem; font-weight: 700; border-radius: var(--radius-md);">
+                        <button type="button" id="btn-request-otp" onclick="requestGmailVerificationCode(event)" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.925rem; font-weight: 700; border-radius: var(--radius-md);">
                             Send Gmail Verification Code
                         </button>
                     </form>
@@ -2146,14 +2146,16 @@
                             A 6-digit code has been sent to your Gmail address.
                         </p>
 
+                        <div id="otp-dev-hint" style="display: none; background: #ffffff; border: 1px dashed #93c5fd; border-radius: 6px; padding: 0.6rem; margin-bottom: 0.85rem; font-size: 0.85rem; color: #1e40af; text-align: center;"></div>
+
                         <input type="text" maxlength="6" id="signup-otp-code" class="form-control" placeholder="••••••" style="text-align: center; font-size: 1.5rem; font-weight: 800; letter-spacing: 0.35em; font-family: 'JetBrains Mono', monospace; padding: 0.65rem 1rem; margin-bottom: 1rem; background: #ffffff;">
 
-                        <button type="button" class="btn-primary" onclick="completeCitizenRegistration()" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 800; background: var(--brand-green); border-color: var(--brand-green);">
+                        <button type="button" class="btn-primary" onclick="completeCitizenRegistration(event)" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 800; background: var(--brand-green); border-color: var(--brand-green);">
                             ✓ Verify Gmail & Create Account
                         </button>
 
                         <div style="margin-top: 0.75rem;">
-                            <button type="button" onclick="requestGmailVerificationCode(true)" style="background: none; border: none; font-size: 0.775rem; color: var(--brand-primary); font-weight: 700; cursor: pointer; text-decoration: underline;">
+                            <button type="button" onclick="requestGmailVerificationCode(event, true)" style="background: none; border: none; font-size: 0.775rem; color: var(--brand-primary); font-weight: 700; cursor: pointer; text-decoration: underline;">
                                 🔄 Resend Verification Code
                             </button>
                         </div>
@@ -2847,6 +2849,15 @@
          ======================================================== -->
     <script>
         /**
+         * REAL PYTHON REST API & SQL CLIENT BRIDGE
+         */
+        const API_BASE = (window.location.origin.includes(':8000') || window.location.port === '8000')
+            ? `${window.location.origin}/api`
+            : 'http://127.0.0.1:8000/api';
+
+        let isBackendConnected = false;
+
+        /**
          * IN-MEMORY DATABASE WITH FULL SAMPLE COMPLAINTS
          * Reflects exact data from Kizuno-AI screens.
          */
@@ -3278,28 +3289,41 @@
             }
         }
 
-        async function requestGmailVerificationCode(isResend = false) {
+        async function requestGmailVerificationCode(eOrResend = false, isResend = false) {
+            let resend = isResend;
+            if (typeof eOrResend === 'boolean') {
+                resend = eOrResend;
+            } else if (eOrResend && eOrResend.preventDefault) {
+                eOrResend.preventDefault();
+            }
+
             const username = document.getElementById('signup-username').value.trim();
             const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value;
 
             if (!username) {
                 showToast('Please enter your full name / username', '⚠️');
-                return;
+                const u = document.getElementById('signup-username');
+                if (u) u.focus();
+                return false;
             }
             if (!email || !email.includes('@')) {
                 showToast('Please enter a valid Gmail address', '⚠️');
-                return;
+                const em = document.getElementById('signup-email');
+                if (em) em.focus();
+                return false;
             }
             if (!password || password.length < 6) {
                 showToast('Password must be at least 6 characters', '⚠️');
-                return;
+                const p = document.getElementById('signup-password');
+                if (p) p.focus();
+                return false;
             }
 
             const btn = document.getElementById('btn-request-otp');
             if (btn) {
                 btn.disabled = true;
-                btn.innerText = isResend ? 'Resending Code...' : 'Sending Verification Code...';
+                btn.innerText = resend ? 'Resending Code...' : 'Sending Verification Code...';
             }
 
             try {
@@ -3316,17 +3340,22 @@
                     if (otpSection) otpSection.style.display = 'block';
                     if (statusText) statusText.innerText = `A 6-digit code has been dispatched to ${email}. Check your Gmail!`;
 
-                    // If SMTP is simulated locally, provide the code directly for convenience
+                    const codeInput = document.getElementById('signup-otp-code');
+                    if (codeInput) {
+                        codeInput.value = '';
+                        codeInput.focus();
+                    }
+
                     if (data.devCode) {
-                        const codeInput = document.getElementById('signup-otp-code');
-                        if (codeInput) codeInput.value = data.devCode;
-                        showToast(`Verification code: ${data.devCode} (Stored in SQL)`, '✉️');
+                        const hintBox = document.getElementById('otp-dev-hint');
+                        if (hintBox) {
+                            hintBox.style.display = 'block';
+                            hintBox.innerHTML = `Verification Code: <strong style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; letter-spacing: 2px;">${data.devCode}</strong>`;
+                        }
+                        showToast(`Verification code: ${data.devCode}`, '✉️');
                     } else {
                         showToast(`Verification code sent to ${email}`, '✉️');
                     }
-
-                    const otpInput = document.getElementById('signup-otp-code');
-                    if (otpInput) otpInput.focus();
                 } else {
                     showToast(data.detail || 'Failed to send verification code', '⚠️');
                 }
@@ -3334,16 +3363,18 @@
                 console.error("Verification dispatch error:", err);
                 const otpSection = document.getElementById('signup-otp-section');
                 if (otpSection) otpSection.style.display = 'block';
-                showToast('Verification code active: Check logs or enter code', 'ℹ️');
+                showToast('Verification service active: Enter 6-digit code', 'ℹ️');
             } finally {
                 if (btn) {
                     btn.disabled = false;
                     btn.innerText = 'Send Gmail Verification Code';
                 }
             }
+            return false;
         }
 
-        async function completeCitizenRegistration() {
+        async function completeCitizenRegistration(e) {
+            if (e && e.preventDefault) e.preventDefault();
             const username = document.getElementById('signup-username').value.trim();
             const email = document.getElementById('signup-email').value.trim();
             const password = document.getElementById('signup-password').value;
@@ -3351,7 +3382,9 @@
 
             if (!code || code.length !== 6) {
                 showToast('Please enter the 6-digit verification code sent to your Gmail', '⚠️');
-                return;
+                const c = document.getElementById('signup-otp-code');
+                if (c) c.focus();
+                return false;
             }
 
             try {
@@ -3379,6 +3412,7 @@
                 console.error("Registration error:", err);
                 showToast('Connection error during registration', '⚠️');
             }
+            return false;
         }
 
         function simulateGoogleLogin(name, email, role) {
@@ -3921,14 +3955,7 @@
         }
 
 
-        /**
-         * REAL PYTHON REST API & SQL CLIENT BRIDGE
-         */
-        const API_BASE = (window.location.origin.includes(':8000') || window.location.port === '8000')
-            ? `${window.location.origin}/api`
-            : 'http://127.0.0.1:8000/api';
 
-        let isBackendConnected = false;
 
         async function checkBackendHealth() {
             const pill = document.getElementById('backend-status-pill');
