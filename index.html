@@ -1949,6 +1949,31 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
+    
+        /* Dedicated Full-Screen Login / Sign-Up View (No Navbar) */
+        #view-login {
+            min-height: 100vh;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1rem;
+            background: radial-gradient(circle at 50% 20%, #ffffff 0%, #f1f5f9 100%);
+        }
+
+        #view-login.active {
+            display: flex;
+        }
+
+        .login-card-standalone {
+            width: 100%;
+            max-width: 460px;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
+            padding: 2.75rem 2.25rem;
+        }
+
     </style>
     <!-- Official Google Identity Services SDK -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1957,7 +1982,7 @@
 <body>
 
     <!-- TOP APPLICATION NAVBAR -->
-    <nav class="app-nav">
+    <nav class="app-nav" id="main-app-nav" style="display: none;">
         <div class="nav-container">
             <a class="brand-logo" onclick="switchView('home')">
                 <div class="brand-shield">
@@ -1986,9 +2011,12 @@
                     <span class="backend-dot"></span>
                     <span id="backend-status-text">Kizuno-AI Engine & SQLite Active (6 in SQL)</span>
                 </div>
-                <div class="user-pill" onclick="openLoginModal()" style="cursor: pointer;">
+                <div class="user-pill" id="nav-user-pill" style="cursor: pointer;">
                     <div class="user-avatar" id="nav-user-initial">C</div>
                     <span id="nav-user-name">Citizen View</span>
+                    <button type="button" onclick="event.stopPropagation(); userSignOut();" style="background: rgba(0,0,0,0.06); border: 1px solid var(--border-light); padding: 0.2rem 0.55rem; border-radius: 9999px; font-size: 0.725rem; font-weight: 700; cursor: pointer; color: var(--text-secondary); margin-left: 0.35rem;" title="Sign out of account">
+                        Sign Out
+                    </button>
                 </div>
             </div>
         </div>
@@ -2000,79 +2028,81 @@
         <!-- ========================================================
          VIEW 0: LOGIN & AUTHENTICATION LANDING SCREEN (START PAGE)
          ======================================================== -->
-    <main class="app-view active" id="view-login">
-        <div class="narrow-container" style="max-width: 480px; margin: 2rem auto;">
-            <div class="content-card" style="padding: 2.5rem 2rem; box-shadow: var(--shadow-md); border-radius: var(--radius-lg); border: 1px solid var(--border-light);">
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <div class="brand-shield" style="margin: 0 auto 1rem auto; width: 48px; height: 48px; border-radius: 12px;">
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
+        <main class="app-view active" id="view-login">
+        <div class="login-card-standalone">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div class="brand-shield" style="margin: 0 auto 1rem auto; width: 50px; height: 50px; border-radius: 12px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <h1 style="font-size: 1.65rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem; letter-spacing: -0.02em;">Kizuno-AI Redressal Portal</h1>
+                <p style="font-size: 0.885rem; color: var(--text-secondary);">Evidence-Based Grievance & Day-Wise Audit Engine</p>
+            </div>
+
+            <!-- Role Tabs -->
+            <div class="login-role-tabs" style="margin-bottom: 1.75rem;">
+                <button type="button" class="role-tab-btn active" id="page-role-citizen" onclick="selectPageRole('citizen')">Citizen</button>
+                <button type="button" class="role-tab-btn" id="page-role-officer" onclick="selectPageRole('officer')">Officer</button>
+                <button type="button" class="role-tab-btn" id="page-role-admin" onclick="selectPageRole('admin')">Admin</button>
+            </div>
+
+            <!-- Citizen Tab: Exactly ONE Google Button + Demo Option -->
+            <div id="page-tab-citizen-content">
+                <div style="text-align: center; padding: 0.5rem 0 1rem 0;">
+                    <p style="font-size: 0.885rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        Sign in with your verified Google Account:
+                    </p>
+                    
+                    <!-- Single Official Google Sign-In Button Container -->
+                    <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+                        <div id="google-login-btn-page"></div>
                     </div>
-                    <h1 style="font-size: 1.65rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">Kizuno-AI Redressal Portal</h1>
-                    <p style="font-size: 0.885rem; color: var(--text-secondary);">Sign in to access your grievance dashboard & live audit stream</p>
+
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1.5rem 0 1.25rem 0;">
+                        <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
+                        <span style="font-size: 0.725rem; color: var(--text-muted); text-transform: uppercase;">Or Quick Demo Access</span>
+                        <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
+                    </div>
+
+                    <button type="button" class="btn-secondary" onclick="simulateGoogleLogin('Citizen Kumar', 'kumar.citizen@gmail.com', 'citizen')" style="width: 100%; max-width: 280px; margin: 0 auto; justify-content: center; padding: 0.75rem 1.25rem; font-size: 0.85rem; border-radius: 100px;">
+                        <span>👤 Quick Demo Access (Citizen Kumar)</span>
+                    </button>
                 </div>
+            </div>
 
-                <!-- Role Switcher Tabs -->
-                <div class="login-role-tabs" style="margin-bottom: 1.5rem;">
-                    <button type="button" class="role-tab-btn active" id="page-role-citizen" onclick="selectPageRole('citizen')">Citizen</button>
-                    <button type="button" class="role-tab-btn" id="page-role-officer" onclick="selectPageRole('officer')">Officer</button>
-                    <button type="button" class="role-tab-btn" id="page-role-admin" onclick="selectPageRole('admin')">Admin</button>
-                </div>
+            <!-- Officer Tab: PIN Entry -->
+            <div id="page-tab-officer-content" style="display: none;">
+                <div style="text-align: center; padding: 0.5rem 0 1rem 0;">
+                    <p style="font-size: 0.885rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                        Enter 4-Digit Municipal Officer Authorization PIN:
+                    </p>
+                    <div class="pin-boxes">
+                        <input type="password" maxlength="1" class="pin-digit" id="pp1" onkeyup="handlePagePinKey(this, 1, event)">
+                        <input type="password" maxlength="1" class="pin-digit" id="pp2" onkeyup="handlePagePinKey(this, 2, event)">
+                        <input type="password" maxlength="1" class="pin-digit" id="pp3" onkeyup="handlePagePinKey(this, 3, event)">
+                        <input type="password" maxlength="1" class="pin-digit" id="pp4" onkeyup="handlePagePinKey(this, 4, event)">
+                    </div>
 
-                <!-- Citizen Tab: Exactly ONE Google Button + Instant Demo -->
-                                <!-- Citizen Tab: Exactly ONE Official Google Button + Demo Option -->
-                <div id="page-tab-citizen-content">
-                    <div style="text-align: center; padding: 1rem 0;">
-                        <p style="font-size: 0.885rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-                            Sign in securely with your verified Google Account:
-                        </p>
-                        
-                        <!-- The SINGLE Official Google Sign-In Button Container -->
-                        <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
-                            <div id="google-login-btn-page"></div>
-                        </div>
-
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1.5rem 0 1rem 0;">
-                            <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
-                            <span style="font-size: 0.725rem; color: var(--text-muted); text-transform: uppercase;">Or Quick Demo Bypass</span>
-                            <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
-                        </div>
-
-                        <button type="button" class="btn-secondary" onclick="simulateGoogleLogin('Citizen Kumar', 'kumar.citizen@gmail.com', 'citizen')" style="width: 100%; max-width: 280px; margin: 0 auto; justify-content: center; padding: 0.75rem 1.25rem; font-size: 0.85rem; border-radius: 100px;">
-                            <span>👤 Quick Demo Access (Citizen Kumar)</span>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem; justify-content: center;">
+                        <button type="button" class="btn-primary" onclick="submitPageOfficerPin()" style="flex: 1; justify-content: center; padding: 0.8rem;">
+                            Verify & Enter Console
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="fillPageOfficerDemoPin()" style="padding: 0.8rem 1rem;" title="Fill demo PIN (1234)">
+                            Demo PIN
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <!-- Officer Tab: PIN Entry -->
-                <div id="page-tab-officer-content" style="display: none;">
-                    <div style="text-align: center;">
-                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
-                            Enter 4-Digit Municipal Officer Authorization PIN:
-                        </p>
-                        <div class="pin-boxes">
-                            <input type="password" maxlength="1" class="pin-digit" id="pp1" onkeyup="handlePagePinKey(this, 1, event)">
-                            <input type="password" maxlength="1" class="pin-digit" id="pp2" onkeyup="handlePagePinKey(this, 2, event)">
-                            <input type="password" maxlength="1" class="pin-digit" id="pp3" onkeyup="handlePagePinKey(this, 3, event)">
-                            <input type="password" maxlength="1" class="pin-digit" id="pp4" onkeyup="handlePagePinKey(this, 4, event)">
-                        </div>
-
-                        <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
-                            <button type="button" class="btn-primary" onclick="submitPageOfficerPin()" style="flex: 1; justify-content: center; padding: 0.8rem;">
-                                Verify & Enter Console
-                            </button>
-                            <button type="button" class="btn-secondary" onclick="fillPageOfficerDemoPin()" style="padding: 0.8rem 1rem;" title="Fill demo PIN (1234)">
-                                Demo PIN
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Guest link -->
-                <div style="text-align: center; margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-light);">
-                    <button type="button" onclick="switchView('home')" style="background: none; border: none; color: var(--brand-primary); font-weight: 600; font-size: 0.85rem; cursor: pointer;">
-                        🌐 Or Explore Public Grievance Portal as Guest →
+            <!-- Admin Tab -->
+            <div id="page-tab-admin-content" style="display: none;">
+                <div style="text-align: center; padding: 0.5rem 0 1rem 0;">
+                    <p style="font-size: 0.885rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                        Municipal System Administration
+                    </p>
+                    <button type="button" class="btn-primary" onclick="simulateGoogleLogin('Super Admin', 'admin@kizuno.gov.in', 'officer')" style="width: 100%; justify-content: center; padding: 0.8rem;">
+                        Enter Administrative Console
                     </button>
                 </div>
             </div>
@@ -2868,6 +2898,16 @@
             document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
 
+            // Navbar visibility: HIDDEN on login page, VISIBLE on all other pages
+            const navBar = document.getElementById('main-app-nav') || document.querySelector('.app-nav');
+            if (navBar) {
+                if (viewId === 'login') {
+                    navBar.style.display = 'none';
+                } else {
+                    navBar.style.display = 'block';
+                }
+            }
+
             const targetView = document.getElementById(`view-${viewId}`);
             if (targetView) targetView.classList.add('active');
 
@@ -3100,16 +3140,23 @@
             const citizenTab = document.getElementById('page-tab-citizen-content');
             const officerTab = document.getElementById('page-tab-officer-content');
 
+            const adminTab = document.getElementById('page-tab-admin-content');
             if (role === 'citizen') {
                 if (citizenTab) citizenTab.style.display = 'block';
                 if (officerTab) officerTab.style.display = 'none';
-            } else {
+                if (adminTab) adminTab.style.display = 'none';
+            } else if (role === 'officer') {
                 if (citizenTab) citizenTab.style.display = 'none';
                 if (officerTab) officerTab.style.display = 'block';
+                if (adminTab) adminTab.style.display = 'none';
                 setTimeout(() => {
                     const pp1 = document.getElementById('pp1');
                     if (pp1) pp1.focus();
                 }, 100);
+            } else {
+                if (citizenTab) citizenTab.style.display = 'none';
+                if (officerTab) officerTab.style.display = 'none';
+                if (adminTab) adminTab.style.display = 'block';
             }
         }
 
