@@ -1,7 +1,16 @@
 # 📱 CivicTrack (Kizuna-AI) — Citizen Complaint Tracking & Accountability System
 
 > **"Submit your complaint and follow its entire journey until resolution."**  
-> An evidence-based civic grievance platform connecting citizens with municipal departments through day-wise audit journals, bi-directional officer workflows, and automated delay detection.
+> An evidence-based civic grievance platform connecting citizens with municipal departments through day-wise audit journals, bi-directional officer workflows, automated delay detection, a **Python FastAPI backend**, and a **real SQL database (SQLite)**.
+
+---
+
+## 🏗️ Technology Stack
+
+- **Backend**: Python 3.12, **FastAPI**, **Uvicorn**
+- **Database (SQL)**: **SQLite** with **SQLAlchemy ORM** (`civictrack.db`)
+- **Frontend**: Responsive Single-Page Application (HTML5, Vanilla CSS, Modern JavaScript)
+- **API Architecture**: RESTful endpoints with JSON payloads and real-time SQL state synchronization
 
 ---
 
@@ -17,37 +26,62 @@
    - 🟡 **AI Inactivity / Delay Detection**: Automatic detection of inactivity exceeding standard SLAs (>48 hours).
    - 🔴 **Multi-Tier Escalation Flag**: Surfaces automated recommendations for higher-level officer review.
 6. **Officer / Government Dashboard**:
-   - Real-time municipal KPIs: Total Complaints (248), Pending (71), In Progress (43), Resolved (134), Delayed (18), Escalations (6).
+   - Real-time municipal KPIs: Total Complaints (248), Pending (71), In Progress (43), Resolved (134), Delayed (18), Escalations (6) — computed via SQL `COUNT(*)`.
    - Interactive complaints management table with status filtering.
 7. **Officer Action Console**:
    - Operational tools for municipal engineers (`Assign to Officer`, `Start Work`, `Update Progress`, `Mark as Resolved`).
-   - Adding notes or updates instantly modifies the complaint state and appends new verified milestones (e.g. Day 8 "Work Started", Day 10 "Resolved") to the citizen's public timeline in real time!
+   - Adding notes or updates directly inserts into SQL and appends new verified milestones (e.g. Day 8 "Work Started", Day 10 "Resolved") to the citizen's public timeline in real time!
 8. **My Complaints (Citizen View)**: Filter tabs (`All`, `Pending`, `In Progress`, `Resolved`) with status pills and active day counters.
 9. **Role-Based Authentication**: Modal supporting Citizen, Municipal Officer (`officer@gov.in`), and Admin perspectives.
 
 ---
 
-## 📂 Project Architecture
+## 📂 Project Structure
 
-- [`index.html`](file:///c:/Users/DILIP/OneDrive/Desktop/kizuno-AI/index.html): Complete standalone, responsive single-page web application embodying all 12 mockup screens with zero external runtime build dependencies.
-- [`PROJECT_CONCEPT.md`](file:///c:/Users/DILIP/OneDrive/Desktop/kizuno-AI/PROJECT_CONCEPT.md): Comprehensive project design document covering the real-world problem, three-tier verification hierarchy, relational database schema, SLA matrices, and CPGRAMS/state gateway integration strategy.
+```
+├── civictrack.db        # Real SQL Database (SQLite) storing complaints & timeline events
+├── database.py          # SQLAlchemy models (Complaint, TimelineEvent, Officer) & Seeder
+├── server.py            # FastAPI REST API endpoints & static frontend server
+├── run.py               # One-command launcher (starts server & opens browser)
+├── index.html           # 12-Screen responsive frontend application
+├── PROJECT_CONCEPT.md   # Academic & architectural specification dossier
+└── README.md            # Project overview & execution guide
+```
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Running with Python & SQL)
 
-Open `index.html` directly in any modern web browser (Edge, Chrome, Safari, Firefox). No server or npm build required.
-
+### Option 1: One-Command Launcher (Recommended)
 ```bash
-# Clone the repository
-git clone https://github.com/DilipPalanisamy/Kisuna-AI.git
-
-# Navigate to project directory
-cd Kisuna-AI
-
-# Launch in default browser (Windows)
-start index.html
+python run.py
 ```
+This automatically initializes the SQLite database (`civictrack.db`), starts the FastAPI server on `http://127.0.0.1:8000`, and opens your web browser.
+
+### Option 2: Run Server Directly
+```bash
+# Start FastAPI backend
+python server.py
+```
+Open **http://127.0.0.1:8000** in your browser.
+
+### Option 3: Standalone Client Mode
+You can also double-click `index.html` to run in browser standalone mode. The frontend will automatically detect the Python backend on `http://127.0.0.1:8000` when running, or provide an offline fallback if the server is stopped.
+
+---
+
+## 📡 REST API Documentation
+
+| Endpoint | Method | Description |
+| :--- | :--- | :--- |
+| `/api/health` | `GET` | Validates API & SQLite database health and table record counts |
+| `/api/kpis` | `GET` | Live SQL `COUNT(*)` KPI metrics (Pending, In Progress, Resolved, Delayed, Escalations) |
+| `/api/complaints` | `GET` | Queries complaints from SQL with optional `?status=` or `?category=` filters |
+| `/api/complaints/{key_or_id}` | `GET` | Retrieves full grievance and foreign-key joined day-wise timeline records |
+| `/api/complaints` | `POST` | Registers a new citizen complaint and inserts Day 0 milestone into SQL |
+| `/api/officer/update` | `POST` | Updates complaint status and appends verified audit event into SQL |
+
+Interactive OpenAPI documentation is available at **http://127.0.0.1:8000/docs**.
 
 ---
 

@@ -218,10 +218,22 @@ CivicTrack is engineered to interface directly with existing e-Governance platfo
 
 ## 8. Summary: What Sets CivicTrack Apart
 
-| Traditional Complaint Portals | CivicTrack (Kizuna-AI) |
-| :--- | :--- |
-| Single opaque label: `Pending` | Full day-wise audit journal from submission to resolution |
-| Fake progress bars based on elapsed calendar days | Zero synthetic events; real facts vs explicit stationary gaps |
-| Citizens left wondering if action was taken | Automatic delay detection with visible escalation warnings |
-| Department actions hidden in closed government intranet | Bi-directional accountability visible to the public |
 | Citizen privacy compromised if tracking is shared | Dual-Key architecture decoupling public tracking from PII |
+
+---
+
+## 9. Real Python & SQL Database Implementation
+
+CivicTrack is implemented with a production-ready Python backend and an ACID-compliant SQL database:
+
+- **Backend Framework**: Python 3.12 with **FastAPI** and **Uvicorn** (`server.py`).
+- **SQL Database**: **SQLite** managed via **SQLAlchemy ORM** (`civictrack.db`), ensuring zero-configuration deployment while executing genuine SQL operations (`SELECT`, `INSERT`, `UPDATE`, `JOIN`).
+- **REST Endpoints**:
+  - `GET /api/health`: Health status and SQL table record counts.
+  - `GET /api/kpis`: Computes municipal KPIs dynamically with SQL `COUNT(*)`.
+  - `GET /api/complaints`: Queries complaints with SQL status/category filtering.
+  - `GET /api/complaints/{key_or_id}`: Retrieves full complaint with foreign-key joined day-wise timeline records.
+  - `POST /api/complaints`: Inserts new citizen grievance, generates unique keys, and writes Day 0 verified milestone into SQL.
+  - `POST /api/officer/update`: Applies officer action, writes verified audit event into SQL `timeline_events`, and updates complaint status.
+- **Frontend Integration**: Asynchronous API client in `index.html` with real-time health polling and live SQL synchronization.
+

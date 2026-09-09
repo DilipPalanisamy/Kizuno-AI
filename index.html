@@ -194,6 +194,49 @@
             font-weight: 700;
         }
 
+        .backend-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid var(--border-light);
+            background: #f8fafc;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .backend-pill.online {
+            background: #f0fdf4;
+            color: #15803d;
+            border-color: #bbf7d0;
+        }
+
+        .backend-pill.offline {
+            background: #fffbeb;
+            color: #b45309;
+            border-color: #fde68a;
+        }
+
+        .backend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            display: inline-block;
+        }
+
+        .backend-pill.online .backend-dot {
+            background: #16a34a;
+            box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.25);
+        }
+
+        .backend-pill.offline .backend-dot {
+            background: #d97706;
+        }
+
         /* View Container */
         .app-view {
             display: none;
@@ -1378,9 +1421,15 @@
                 </button>
             </div>
 
-            <div class="user-pill" onclick="openLoginModal()" style="cursor: pointer;">
-                <div class="user-avatar" id="nav-user-initial">C</div>
-                <span id="nav-user-name">Citizen View</span>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div id="backend-status-pill" class="backend-pill" title="Python FastAPI Backend Status">
+                    <span class="backend-dot"></span>
+                    <span id="backend-status-text">Connecting to SQL Backend...</span>
+                </div>
+                <div class="user-pill" onclick="openLoginModal()" style="cursor: pointer;">
+                    <div class="user-avatar" id="nav-user-initial">C</div>
+                    <span id="nav-user-name">Citizen View</span>
+                </div>
             </div>
         </div>
     </nav>
@@ -2287,11 +2336,75 @@
         }
 
         /**
-         * Track a complaint by tracking key or ID
+         * REAL PYTHON REST API & SQL CLIENT BRIDGE
          */
-        function trackKey(rawKey) {
+        const API_BASE = (window.location.origin.includes(':8000') || window.location.port === '8000')
+            ? `${window.location.origin}/api`
+            : 'http://127.0.0.1:8000/api';
+
+        let isBackendConnected = false;
+
+        async function checkBackendHealth() {
+            const pill = document.getElementById('backend-status-pill');
+            const text = document.getElementById('backend-status-text');
+            try {
+                const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(2500) });
+                if (res.ok) {
+                    const data = await res.json();
+                    isBackendConnected = true;
+                    if (pill) pill.className = 'backend-pill online';
+                    if (text) text.innerText = `Python API & SQLite Active (${data.activeComplaintsInSQL} in SQL)`;
+                    await syncFromSQL();
+                    return;
+                }
+            } catch (err) {
+                console.log('Running in local offline fallback mode (Run python server.py for real SQL)');
+            }
+            isBackendConnected = false;
+            if (pill) pill.className = 'backend-pill offline';
+            if (text) text.innerText = 'Offline Mode (Run python server.py for SQL)';
+        }
+
+        async function syncFromSQL() {
+            try {
+                const [complaintsRes, kpisRes] = await Promise.all([
+                    fetch(`${API_BASE}/complaints`),
+                    fetch(`${API_BASE}/kpis`)
+                ]);
+                if (complaintsRes.ok) {
+                    CIVICTRACK_DB.complaints = await complaintsRes.json();
+                    renderOfficerTable();
+                    renderMyComplaints();
+                }
+                if (kpisRes.ok) {
+                    CIVICTRACK_DB.kpis = await kpisRes.json();
+                    updateKpiCounters();
+                }
+            } catch (e) {
+                console.error('SQL Sync error:', e);
+            }
+        }
+
+        /**
+         * Track a complaint by tracking key or ID (Reads directly from SQL)
+         */
+        async function trackKey(rawKey) {
             const cleanKey = (rawKey || '').trim().toUpperCase();
             if (!cleanKey) return;
+
+            if (isBackendConnected) {
+                try {
+                    const res = await fetch(`${API_BASE}/complaints/${encodeURIComponent(cleanKey)}`);
+                    if (res.ok) {
+                        const complaint = await res.json();
+                        showComplaintDetails(complaint);
+                        showToast(`Loaded live from SQL Database! (${complaint.id})`, '💾');
+                        return;
+                    }
+                } catch (e) {
+                    console.error('API track error:', e);
+                }
+            }
 
             const record = CIVICTRACK_DB.complaints.find(c => 
                 c.trackingKey.toUpperCase() === cleanKey || 
@@ -2301,7 +2414,7 @@
             if (record) {
                 showComplaintDetails(record);
             } else {
-                showToast('Key not found. Try TN-GOV-X7K92P4M', '⚠️');
+                showToast('Key not found in SQL database. Try TN-GOV-X7K92P4M', '⚠️');
             }
         }
 
@@ -2312,17 +2425,48 @@
         }
 
         /**
-         * Form submission handler for new complaints (Screen 2 -> Screen 3)
+         * Form submission handler for new complaints (Saves directly to SQL)
          */
-        function handleFormSubmission(e) {
+        async function handleFormSubmission(e) {
             e.preventDefault();
             const category = document.getElementById('form-category').value;
             const title = document.getElementById('form-title').value;
             const desc = document.getElementById('form-desc').value;
             const location = document.getElementById('form-location').value;
             const priority = document.getElementById('form-priority').value;
+            const photoUrl = document.getElementById('upload-preview-img').src;
 
-            // Generate unique internal ID & public tracking key
+            if (isBackendConnected) {
+                try {
+                    const payload = {
+                        category,
+                        title,
+                        description: desc,
+                        location,
+                        photo_url: photoUrl,
+                        priority
+                    };
+                    const res = await fetch(`${API_BASE}/complaints`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) {
+                        const created = await res.json();
+                        CIVICTRACK_DB.complaints.unshift(created);
+                        document.getElementById('generated-complaint-id').innerText = created.id;
+                        document.getElementById('generated-tracking-key').innerText = created.trackingKey;
+                        await syncFromSQL();
+                        switchView('submitted');
+                        showToast(`Stored in SQLite DB! (${created.id})`, '💾');
+                        return;
+                    }
+                } catch (err) {
+                    console.error('Backend submission error:', err);
+                }
+            }
+
+            // Fallback client submission
             const randomNum = Math.floor(1000 + Math.random() * 9000);
             const newComplaintId = `CIV-2026-${randomNum}`;
             const randomHex = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -2336,7 +2480,7 @@
                 title: title,
                 description: desc,
                 location: location,
-                photoUrl: document.getElementById('upload-preview-img').src,
+                photoUrl: photoUrl,
                 priority: priority,
                 status: "Pending",
                 dayLabel: "Day 0",
@@ -2354,18 +2498,16 @@
                 ]
             };
 
-            // Add to database
             CIVICTRACK_DB.complaints.unshift(newComplaint);
             CIVICTRACK_DB.kpis.total += 1;
             CIVICTRACK_DB.kpis.pending += 1;
             updateKpiCounters();
 
-            // Populate Screen 3
             document.getElementById('generated-complaint-id').innerText = newComplaintId;
             document.getElementById('generated-tracking-key').innerText = newTrackingKey;
 
             switchView('submitted');
-            showToast('Complaint successfully registered!', '✅');
+            showToast('Complaint registered locally', '✅');
         }
 
         /**
@@ -2417,12 +2559,11 @@
             CIVICTRACK_DB.currentActiveActionId = complaintId;
             CIVICTRACK_DB.selectedActionType = null;
 
-            // Reset action buttons
             document.querySelectorAll('.officer-action-btn').forEach(btn => btn.classList.remove('selected'));
 
             document.getElementById('action-complaint-header').innerText = `Complaint #${complaint.id}`;
             document.getElementById('action-complaint-sub').innerText = `${complaint.title} • ${complaint.location}`;
-            document.getElementById('action-thumb').src = complaint.photoUrl;
+            document.getElementById('action-thumb').src = complaint.photoUrl || "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80";
             document.getElementById('action-title').innerText = complaint.title;
             document.getElementById('action-location').innerText = complaint.location;
             document.getElementById('action-status-pill').innerText = complaint.status;
@@ -2446,9 +2587,9 @@
         }
 
         /**
-         * Applies the officer update, modifies the database, and adds to the timeline (Screen 8 -> Screen 9)
+         * Applies the officer update (Saves directly to SQL database)
          */
-        function applyOfficerUpdate() {
+        async function applyOfficerUpdate() {
             const complaintId = CIVICTRACK_DB.currentActiveActionId;
             const actionType = CIVICTRACK_DB.selectedActionType;
             const comments = document.getElementById('officer-comments').value.trim();
@@ -2458,6 +2599,31 @@
                 return;
             }
 
+            if (isBackendConnected) {
+                try {
+                    const res = await fetch(`${API_BASE}/officer/update`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            complaint_id: complaintId,
+                            action_type: actionType,
+                            comments: comments,
+                            officer_name: "Officer R. Selvam"
+                        })
+                    });
+                    if (res.ok) {
+                        const result = await res.json();
+                        showToast(`SQL Updated: ${result.message}`, '💾');
+                        await syncFromSQL();
+                        closeOfficerActionPanel();
+                        return;
+                    }
+                } catch (err) {
+                    console.error('Officer update API error:', err);
+                }
+            }
+
+            // Client fallback
             const complaint = CIVICTRACK_DB.complaints.find(c => c.id === complaintId);
             if (!complaint) return;
 
@@ -2694,7 +2860,8 @@
         }
 
         // Initialize on DOM load
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
+            await checkBackendHealth();
             renderOfficerTable();
             renderMyComplaints();
         });
