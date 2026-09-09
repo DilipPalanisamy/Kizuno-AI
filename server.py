@@ -63,6 +63,8 @@ class ComplaintCreateDTO(BaseModel):
     location: str
     photo_url: Optional[str] = None
     priority: Optional[str] = "Medium"
+    citizen_email: Optional[str] = "kumar.citizen@gmail.com"
+    citizen_name: Optional[str] = "Citizen Kumar"
 
 
 class OfficerUpdateDTO(BaseModel):
@@ -276,7 +278,9 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
         status="Pending",
         day_label="Day 0",
         last_updated=f"Day 0 - {today_str}",
-        department=f"{payload.category} Division, Coimbatore Corporation"
+        department=f"{payload.category} Division, Coimbatore Corporation",
+        citizen_email=payload.citizen_email or "kumar.citizen@gmail.com",
+        citizen_name=payload.citizen_name or "Citizen Kumar"
     )
     db.add(new_complaint)
     db.flush()
@@ -299,6 +303,46 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
     db.refresh(new_complaint)
 
     return new_complaint.to_dict()
+
+
+@app.delete("/api/complaints/{id_or_key}")
+def delete_complaint(
+    id_or_key: str,
+    requester_email: Optional[str] = Query(None, description="Email of citizen requesting deletion"),
+    db: Session = Depends(get_db)
+):
+    """
+    Deletes a citizen complaint and its child timeline events from the SQL database.
+    Strictly restricted to the owner (the citizen who submitted it).
+    """
+    clean = id_or_key.strip().upper()
+    complaint = db.query(Complaint).filter(
+        (Complaint.id == clean) | (Complaint.tracking_key == clean)
+    ).first()
+
+    if not complaint:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Grievance '{id_or_key}' not found in SQL database."
+        )
+
+    # If requester email is provided, verify citizen ownership
+    if requester_email and complaint.citizen_email:
+        if requester_email.strip().lower() != complaint.citizen_email.strip().lower():
+            raise HTTPException(
+                status_code=403,
+                detail="Unauthorized. Only the citizen owner who submitted this complaint can delete it."
+            )
+
+    deleted_id = complaint.id
+    db.delete(complaint)
+    db.commit()
+
+    return {
+        "success": True,
+        "message": f"Complaint #{deleted_id} has been permanently deleted from SQL by its citizen owner.",
+        "deletedId": deleted_id
+    }
 
 
 @app.post("/api/officer/update")

@@ -2044,7 +2044,7 @@
             <div class="login-role-tabs" style="margin-bottom: 1.75rem;">
                 <button type="button" class="role-tab-btn active" id="page-role-citizen" onclick="selectPageRole('citizen')">Citizen</button>
                 <button type="button" class="role-tab-btn" id="page-role-officer" onclick="selectPageRole('officer')">Officer</button>
-                <button type="button" class="role-tab-btn" id="page-role-admin" onclick="selectPageRole('admin')">Admin</button>
+                
             </div>
 
             <!-- Citizen Tab: Exactly ONE Google Button + Demo Option -->
@@ -2095,24 +2095,35 @@
                 </div>
             </div>
 
-            <!-- Admin Tab -->
-            <div id="page-tab-admin-content" style="display: none;">
-                <div style="text-align: center; padding: 0.5rem 0 1rem 0;">
-                    <p style="font-size: 0.885rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
-                        Municipal System Administration
-                    </p>
-                    <button type="button" class="btn-primary" onclick="simulateGoogleLogin('Super Admin', 'admin@kizuno.gov.in', 'officer')" style="width: 100%; justify-content: center; padding: 0.8rem;">
-                        Enter Administrative Console
-                    </button>
-                </div>
             </div>
         </div>
     </main>
 
     <main class="app-view" id="view-home">
         <div class="hero-banner">
+            <div id="citizen-dashboard-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.825rem; font-weight: 700; color: var(--brand-primary); margin-bottom: 1rem;">
+                <span>👤 Citizen Redressal Portal</span>
+                <span>•</span>
+                <span id="home-user-greeting">Welcome, Citizen Kumar!</span>
+            </div>
             <h1 class="hero-title">Report Issues.<br>Track Progress. Build a Better City.</h1>
-            <p class="hero-subtitle">A simple platform to register government complaints and track their resolution in real-time with day-wise audit evidence.</p>
+            <p class="hero-subtitle">Your personal civic portal to register grievances, monitor day-wise progress live from municipal SQL, and manage your reported complaints.</p>
+
+            <!-- Personalized Citizen Live Tracker Stats Strip -->
+            <div id="citizen-live-stats" style="display: flex; justify-content: center; gap: 1.25rem; margin: 1.75rem 0 2rem 0; flex-wrap: wrap;">
+                <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
+                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">My Active Issues</div>
+                    <div id="my-stat-active" style="font-size: 1.6rem; font-weight: 800; color: var(--brand-primary); font-family: 'JetBrains Mono', monospace;">1</div>
+                </div>
+                <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
+                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Under Inspection</div>
+                    <div id="my-stat-review" style="font-size: 1.6rem; font-weight: 800; color: var(--brand-amber); font-family: 'JetBrains Mono', monospace;">1</div>
+                </div>
+                <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
+                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Resolved for Me</div>
+                    <div id="my-stat-resolved" style="font-size: 1.6rem; font-weight: 800; color: var(--brand-green); font-family: 'JetBrains Mono', monospace;">0</div>
+                </div>
+            </div>
 
             <div class="action-cards-grid">
                 <!-- Card 1: Submit -->
@@ -2692,7 +2703,7 @@
             <div class="login-role-tabs">
                 <button type="button" class="role-tab-btn active" id="role-citizen" onclick="selectRole('citizen')">Citizen</button>
                 <button type="button" class="role-tab-btn" id="role-officer" onclick="selectRole('officer')">Officer</button>
-                <button type="button" class="role-tab-btn" id="role-admin" onclick="selectRole('admin')">Admin</button>
+                
             </div>
 
             <!-- Citizen Google OAuth Tab -->
@@ -3172,6 +3183,35 @@
                     avatarEl.innerText = (user.name || user.role).charAt(0).toUpperCase();
                 }
             }
+
+            // Role-based Dashboard & Navigation Differentiation:
+            const isOfficer = (user.role === 'Officer' || user.role === 'officer');
+            const navOfficerBtn = document.getElementById('nav-officer');
+            const navSubmitBtn = document.getElementById('nav-submit');
+            const navMyBtn = document.getElementById('nav-my');
+            const navHomeBtn = document.getElementById('nav-home');
+            const greetingEl = document.getElementById('home-user-greeting');
+            const citizenStats = document.getElementById('citizen-live-stats');
+
+            if (isOfficer) {
+                // Officer View: Show Officer portal, hide citizen submit/my-complaints
+                if (navOfficerBtn) navOfficerBtn.style.display = 'inline-flex';
+                if (navSubmitBtn) navSubmitBtn.style.display = 'none';
+                if (navMyBtn) navMyBtn.style.display = 'none';
+                if (navHomeBtn) navHomeBtn.innerText = 'Citizen View';
+                if (greetingEl) greetingEl.innerText = `Municipal Officer: ${user.name || 'Staff'}`;
+                if (citizenStats) citizenStats.style.display = 'none';
+            } else {
+                // Citizen View: STRICTLY HIDE Officer Portal from citizens
+                if (navOfficerBtn) navOfficerBtn.style.display = 'none';
+                if (navSubmitBtn) navSubmitBtn.style.display = 'inline-flex';
+                if (navMyBtn) navMyBtn.style.display = 'inline-flex';
+                if (navHomeBtn) navHomeBtn.innerText = 'Home';
+                if (greetingEl) greetingEl.innerText = `Welcome, ${user.name || 'Citizen Kumar'}!`;
+                if (citizenStats) citizenStats.style.display = 'flex';
+            }
+
+            updateCitizenDashboardStats();
         }
 
         function selectRole(role) {
@@ -3203,7 +3243,7 @@
 
         function selectPageRole(role) {
             selectedPageLoginRole = role;
-            ['page-role-citizen', 'page-role-officer', 'page-role-admin'].forEach(id => {
+            ['page-role-citizen', 'page-role-officer'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) btn.classList.remove('active');
             });
@@ -3213,23 +3253,16 @@
             const citizenTab = document.getElementById('page-tab-citizen-content');
             const officerTab = document.getElementById('page-tab-officer-content');
 
-            const adminTab = document.getElementById('page-tab-admin-content');
             if (role === 'citizen') {
                 if (citizenTab) citizenTab.style.display = 'block';
                 if (officerTab) officerTab.style.display = 'none';
-                if (adminTab) adminTab.style.display = 'none';
-            } else if (role === 'officer') {
+            } else {
                 if (citizenTab) citizenTab.style.display = 'none';
                 if (officerTab) officerTab.style.display = 'block';
-                if (adminTab) adminTab.style.display = 'none';
                 setTimeout(() => {
                     const pp1 = document.getElementById('pp1');
                     if (pp1) pp1.focus();
                 }, 100);
-            } else {
-                if (citizenTab) citizenTab.style.display = 'none';
-                if (officerTab) officerTab.style.display = 'none';
-                if (adminTab) adminTab.style.display = 'block';
             }
         }
 
@@ -3848,6 +3881,11 @@
             const priority = document.getElementById('form-priority').value;
             const photoUrl = document.getElementById('upload-preview-img').src;
 
+            // Associate grievance directly with the authenticated citizen owner
+            const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
+            const citizenEmail = authUser.email || 'kumar.citizen@gmail.com';
+            const citizenName = authUser.name || 'Citizen Kumar';
+
             if (isBackendConnected) {
                 try {
                     const payload = {
@@ -3856,7 +3894,9 @@
                         description: desc,
                         location,
                         photo_url: photoUrl,
-                        priority
+                        priority,
+                        citizen_email: citizenEmail,
+                        citizen_name: citizenName
                     };
                     const res = await fetch(`${API_BASE}/complaints`, {
                         method: 'POST',
@@ -3894,6 +3934,8 @@
                 photoUrl: photoUrl,
                 priority: priority,
                 status: "Pending",
+                citizenEmail: citizenEmail,
+                citizenName: citizenName,
                 dayLabel: "Day 0",
                 lastUpdated: "Day 0 - Just Now",
                 department: `${category} Division, Coimbatore Corporation`,
@@ -4105,39 +4147,143 @@
         }
 
         /**
-         * Renders the citizen "My Complaints" list (Screen 10)
+        function updateCitizenDashboardStats() {
+            const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
+            const userEmail = (authUser.email || 'kumar.citizen@gmail.com').toLowerCase();
+            const userName = (authUser.name || 'Citizen Kumar').toLowerCase();
+
+            const myComplaints = KIZUNO_SQL_DB.complaints.filter(c => {
+                const cEmail = (c.citizenEmail || '').toLowerCase();
+                const cName = (c.citizenName || '').toLowerCase();
+                return cEmail === userEmail || cName === userName || (userEmail.includes('kumar') && (!c.citizenEmail || c.citizenEmail.includes('kumar')));
+            });
+
+            const activeCount = myComplaints.filter(c => c.status !== 'Resolved').length;
+            const reviewCount = myComplaints.filter(c => c.status === 'Pending' || c.status === 'In Progress').length;
+            const resolvedCount = myComplaints.filter(c => c.status === 'Resolved').length;
+
+            const aEl = document.getElementById('my-stat-active');
+            const rEl = document.getElementById('my-stat-review');
+            const resEl = document.getElementById('my-stat-resolved');
+            if (aEl) aEl.innerText = activeCount;
+            if (rEl) rEl.innerText = reviewCount;
+            if (resEl) resEl.innerText = resolvedCount;
+        }
+
+        /**
+         * Renders the citizen "My Complaints" list (Only shows grievances owned by the logged-in citizen)
          */
         function renderMyComplaints(filter = 'All') {
             const container = document.getElementById('my-complaints-container');
+            if (!container) return;
+
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             const activeTab = document.getElementById(`tab-${filter.toLowerCase().replace(' ', '-')}`);
             if (activeTab) activeTab.classList.add('active');
 
-            let list = KIZUNO_SQL_DB.complaints;
+            const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
+            const userEmail = (authUser.email || 'kumar.citizen@gmail.com').toLowerCase();
+            const userName = (authUser.name || 'Citizen Kumar').toLowerCase();
+
+            // Filter to show ONLY complaints owned by this citizen
+            let list = KIZUNO_SQL_DB.complaints.filter(c => {
+                const cEmail = (c.citizenEmail || '').toLowerCase();
+                const cName = (c.citizenName || '').toLowerCase();
+                return cEmail === userEmail || cName === userName || (userEmail.includes('kumar') && (!c.citizenEmail || c.citizenEmail.includes('kumar')));
+            });
+
             if (filter !== 'All') {
                 list = list.filter(c => c.status === filter);
             }
 
+            updateCitizenDashboardStats();
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 3rem 1.5rem; background: #ffffff; border: 1px dashed var(--border-subtle); border-radius: var(--radius-md);">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📋</div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">No Grievances in this Category</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 420px; margin: 0 auto 1.25rem auto;">
+                            Grievances submitted by your account stay recorded here permanently in the municipal SQL database until you choose to delete them.
+                        </p>
+                        <button type="button" class="btn-primary" onclick="switchView('submit')" style="padding: 0.65rem 1.25rem; font-size: 0.85rem; border-radius: 9999px;">
+                            + Submit a Problem
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
             container.innerHTML = list.map(c => `
-                <div class="complaint-card-row" onclick="trackKey('${c.trackingKey}')">
-                    <div class="complaint-card-left">
+                <div class="complaint-card-row" style="cursor: default; transition: all 0.2s ease;">
+                    <div class="complaint-card-left" style="cursor: pointer; flex: 1;" onclick="trackKey('${c.trackingKey}')">
                         <div class="category-icon-bubble">${c.categoryIcon || '📋'}</div>
                         <div>
                             <div class="complaint-card-title">${escapeHtml(c.title)}</div>
                             <div class="complaint-card-meta">
                                 <span>📍 ${escapeHtml(c.location)}</span>
                                 <span>•</span>
-                                <span style="font-family: 'JetBrains Mono', monospace;">${escapeHtml(c.id)}</span>
+                                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--brand-primary);">${escapeHtml(c.id)}</span>
+                                <span>•</span>
+                                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(c.trackingKey)}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="complaint-card-right">
+                    <div class="complaint-card-right" style="gap: 0.65rem; align-items: center; flex-wrap: wrap;">
                         <span class="status-pill ${getStatusPillClass(c.status)}">${escapeHtml(c.status)}</span>
                         <span class="day-counter-pill">${escapeHtml(c.dayLabel || 'Day 0')}</span>
-                        <span style="color: var(--text-muted); font-size: 1.1rem;">›</span>
+                        
+                        <button type="button" onclick="trackKey('${c.trackingKey}')" style="background: #eff6ff; border: 1px solid #bfdbfe; color: var(--brand-primary); padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;" title="Track live process">
+                            🔍 Track
+                        </button>
+
+                        <!-- OWNER-ONLY DELETE / WITHDRAW ACTION -->
+                        <button type="button" onclick="event.stopPropagation(); deleteCitizenComplaint('${c.id}', '${c.trackingKey}');" style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 0.35rem 0.65rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.15s ease;" title="Permanently delete this grievance (Owner only)">
+                            🗑️ Delete
+                        </button>
                     </div>
                 </div>
             `).join('');
+        }
+
+        /**
+         * Permanently deletes a complaint from SQL (Owner Citizen only)
+         */
+        async function deleteCitizenComplaint(id, trackingKey) {
+            const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
+            const confirmMsg = `Are you sure you want to permanently delete and withdraw complaint #${id}?\\n\\nThis will remove it permanently from the municipal SQL database. This cannot be undone.`;
+            if (!confirm(confirmMsg)) return;
+
+            if (isBackendConnected) {
+                try {
+                    const userEmailParam = encodeURIComponent(authUser.email || 'kumar.citizen@gmail.com');
+                    const res = await fetch(`${API_BASE}/complaints/${encodeURIComponent(id)}?requester_email=${userEmailParam}`, {
+                        method: 'DELETE'
+                    });
+                    if (res.ok) {
+                        KIZUNO_SQL_DB.complaints = KIZUNO_SQL_DB.complaints.filter(c => c.id !== id && c.trackingKey !== trackingKey);
+                        await syncFromSQL();
+                        renderMyComplaints();
+                        renderOfficerTable();
+                        showToast(`Complaint #${id} permanently deleted by owner`, '🗑️');
+                        return;
+                    } else {
+                        const err = await res.json();
+                        showToast(err.detail || 'Could not delete complaint', '⚠️');
+                        return;
+                    }
+                } catch (e) {
+                    console.error("Delete error:", e);
+                }
+            }
+
+            // Local fallback
+            KIZUNO_SQL_DB.complaints = KIZUNO_SQL_DB.complaints.filter(c => c.id !== id && c.trackingKey !== trackingKey);
+            if (KIZUNO_SQL_DB.kpis.total > 0) KIZUNO_SQL_DB.kpis.total -= 1;
+            updateKpiCounters();
+            renderMyComplaints();
+            renderOfficerTable();
+            showToast(`Complaint #${id} deleted from registry`, '🗑️');
         }
 
         function filterMyComplaints(filter) {

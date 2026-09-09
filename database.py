@@ -17,7 +17,8 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Index,
-    func
+    func,
+    text
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
@@ -76,6 +77,8 @@ class Complaint(Base):
     last_updated = Column(String(64), nullable=False)
     department = Column(String(128), default="Coimbatore Municipal Corporation")
     assigned_officer = Column(String(128), nullable=True)
+    citizen_email = Column(String(128), nullable=True, default="kumar.citizen@gmail.com")
+    citizen_name = Column(String(128), nullable=True, default="Citizen Kumar")
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relational link to day-wise timeline audit events
@@ -102,6 +105,8 @@ class Complaint(Base):
             "lastUpdated": self.last_updated,
             "department": self.department,
             "assignedOfficer": self.assigned_officer,
+            "citizenEmail": self.citizen_email or "kumar.citizen@gmail.com",
+            "citizenName": self.citizen_name or "Citizen Kumar",
             "createdAt": self.created_at.isoformat() if self.created_at else None,
             "timeline": [event.to_dict() for event in self.timeline_events]
         }
@@ -207,6 +212,21 @@ def init_db():
     Initializes database tables and populates realistic grievance datasets.
     """
     Base.metadata.create_all(bind=engine)
+
+    # Ensure citizen ownership columns exist for existing databases
+    try:
+        with engine.connect() as conn:
+            if "sqlite" in str(engine.url):
+                res = conn.execute(text("PRAGMA table_info(complaints)"))
+                existing_cols = [row[1] for row in res.fetchall()]
+                if "citizen_email" not in existing_cols:
+                    conn.execute(text("ALTER TABLE complaints ADD COLUMN citizen_email VARCHAR(128) DEFAULT 'kumar.citizen@gmail.com'"))
+                if "citizen_name" not in existing_cols:
+                    conn.execute(text("ALTER TABLE complaints ADD COLUMN citizen_name VARCHAR(128) DEFAULT 'Citizen Kumar'"))
+                conn.commit()
+    except Exception as e:
+        print("Schema migration note:", e)
+
     db = SessionLocal()
 
     try:
