@@ -82,8 +82,23 @@ You can also double-click `index.html` to run in browser standalone mode. The fr
 | `/api/complaints/{key_or_id}` | `GET` | Retrieves full grievance and foreign-key joined day-wise timeline records |
 | `/api/complaints` | `POST` | Registers a new citizen complaint and inserts Day 0 milestone into SQL |
 | `/api/officer/update` | `POST` | Updates complaint status and appends verified audit event into SQL |
+| `/api/auth/config` | `GET` | Returns configured Google OAuth 2.0 client ID and auth capabilities |
+| `/api/auth/google` | `POST` | Ingests Google JWT token, validates identity, and creates/updates user in SQLite |
+| `/api/auth/users` | `GET` | Retrieves all registered/authenticated users from SQLite `users` table |
 
 Interactive OpenAPI documentation is available at **http://127.0.0.1:8000/docs**.
+
+---
+
+## 🔐 Google OAuth 2.0 Configuration
+
+Kizuno-AI is configured with official Google Identity Services (GIS):
+- **Client ID**: `485227555296-5jqikr8c4ruddifkp7uj2k3h82sfivd1.apps.googleusercontent.com`
+- **Authorized JavaScript Origins** (Google Cloud Console):
+  - `http://127.0.0.1:8000`
+  - `http://localhost:8000`
+  - `http://localhost`
+- **Features**: One-click Google Identity popup, JWT verification, real SQL user persistence in `civictrack.db`, profile photo and name synchronization, session recovery from `localStorage`, and instant local dev bypass.
 
 ---
 

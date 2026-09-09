@@ -141,6 +141,37 @@ class Officer(Base):
     role = Column(String(64), default="Junior Engineer")
 
 
+class User(Base):
+    """
+    SQL Table: users
+    Stores authenticated citizens, officers, and administrators (including Google OAuth accounts).
+    """
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    google_id = Column(String(128), unique=True, nullable=True, index=True)
+    email = Column(String(128), unique=True, nullable=False, index=True)
+    name = Column(String(128), nullable=False)
+    avatar_url = Column(Text, nullable=True)
+    role = Column(String(32), default="citizen")  # citizen, officer, admin
+    auth_provider = Column(String(32), default="google")  # google, password, mock
+    created_at = Column(DateTime, default=datetime.utcnow)
+    last_login = Column(DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "googleId": self.google_id,
+            "email": self.email,
+            "name": self.name,
+            "avatarUrl": self.avatar_url,
+            "role": self.role,
+            "authProvider": self.auth_provider,
+            "createdAt": self.created_at.isoformat() if self.created_at else None,
+            "lastLogin": self.last_login.isoformat() if self.last_login else None
+        }
+
+
 def get_db():
     """Dependency helper for FastAPI endpoints"""
     db = SessionLocal()

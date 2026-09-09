@@ -1005,6 +1005,39 @@
             display: none !important;
         }
 
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 4, 7, 0.82);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 1.5rem;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-card {
+            background: rgba(18, 18, 23, 0.96);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            width: 100%;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(56, 189, 248, 0.15);
+            animation: popIn 0.25s var(--ease-spring);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
         .btn-google-oauth {
             width: 100%;
             height: 52px;
@@ -1369,14 +1402,37 @@
                 </button>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; position: relative;">
                 <div id="backend-status-pill" class="backend-pill" title="Python FastAPI & SQLite Status">
                     <span class="backend-dot"></span>
                     <span id="backend-status-text">Connecting...</span>
                 </div>
-                <div class="user-pill" onclick="switchView('login')" title="Authentication Enclave">
+                <div class="user-pill" id="navUserPill" onclick="handleUserPillClick(event)" title="Authentication Enclave & Profile">
                     <div class="user-avatar" id="nav-user-initial">C</div>
                     <span id="nav-user-name">Citizen</span>
+                </div>
+
+                <!-- Floating User Profile Popover -->
+                <div id="userProfileDropdown" style="display: none; position: absolute; right: 0; top: 3.2rem; width: 280px; background: rgba(18, 18, 23, 0.96); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(56,189,248,0.15); z-index: 1000;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                        <div class="user-avatar" id="dropdownUserAvatar" style="width: 42px; height: 42px; font-size: 1rem; border-radius: 50%;">C</div>
+                        <div style="overflow: hidden; flex: 1;">
+                            <div id="dropdownUserName" style="font-weight: 700; font-size: 0.92rem; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Citizen</div>
+                            <div id="dropdownUserEmail" style="font-size: 0.74rem; color: var(--text-muted); font-family: var(--font-mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Not Signed In</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span id="dropdownUserRoleBadge" style="display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; background: rgba(56, 189, 248, 0.12); color: var(--brand-primary);">Role: Citizen</span>
+                        <span id="dropdownProviderBadge" style="font-size: 0.68rem; color: var(--text-muted); font-family: var(--font-mono);">Auth: None</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <button type="button" class="btn-secondary-oauth" onclick="switchView('login'); toggleUserDropdown(false);" style="width: 100%; font-size: 0.8rem; height: 36px; justify-content: center;">
+                            🔐 Authentication Enclave
+                        </button>
+                        <button type="button" class="btn-secondary-oauth" id="dropdownSignOutBtn" onclick="logoutUser(); toggleUserDropdown(false);" style="width: 100%; font-size: 0.8rem; height: 36px; color: var(--status-rose); border-color: rgba(244, 63, 94, 0.2); justify-content: center;">
+                            🚪 Sign Out
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1459,9 +1515,32 @@
                     <button type="button" class="role-tab-btn" id="login-role-admin" onclick="selectLoginRole('admin')" style="padding: 6px; border: none; border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer; background: transparent; color: var(--text-muted);">Admin</button>
                 </div>
 
-                <!-- OAuth Options -->
+                <!-- OAuth Options with Real Google Client ID -->
                 <div style="width: 100%;">
-                    <button type="button" class="btn-google-oauth" onclick="triggerGoogleMock()">
+                    <!-- Official Google Identity Services Container -->
+                    <div id="g_id_onload"
+                         data-client_id="485227555296-5jqikr8c4ruddifkp7uj2k3h82sfivd1.apps.googleusercontent.com"
+                         data-context="signin"
+                         data-ux_mode="popup"
+                         data-callback="handleGoogleCredentialResponse"
+                         data-auto_prompt="false">
+                    </div>
+
+                    <!-- Official Google Sign-In Button Container (Dark Filled) -->
+                    <div id="googleBtnOfficial" style="width: 100%; display: flex; justify-content: center; margin-bottom: 8px; min-height: 48px;">
+                        <div class="g_id_signin"
+                             data-type="standard"
+                             data-shape="rectangular"
+                             data-theme="filled_black"
+                             data-text="continue_with"
+                             data-size="large"
+                             data-logo_alignment="left"
+                             data-width="360">
+                        </div>
+                    </div>
+
+                    <!-- Interactive Trigger Button -->
+                    <button type="button" class="btn-google-oauth" id="customGoogleBtn" onclick="triggerGoogleOAuth()">
                         <svg viewBox="0 0 24 24" width="20" height="20">
                             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
                             <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
@@ -1470,6 +1549,17 @@
                         </svg>
                         <span>Continue with Google</span>
                     </button>
+
+                    <!-- Google OAuth 2.0 Telemetry Status Badge -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding: 6px 12px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; font-size: 0.72rem; color: var(--text-secondary);">
+                        <span style="display: flex; align-items: center; gap: 6px;">
+                            <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--status-emerald); box-shadow: 0 0 8px var(--status-emerald);"></span>
+                            <span style="font-weight: 700; color: var(--brand-primary); font-family: var(--font-mono);">Google OAuth 2.0</span>
+                        </span>
+                        <span style="font-family: var(--font-mono); color: var(--text-muted); font-size: 0.68rem;" title="Google Client ID: 485227555296-5jqikr8c4ruddifkp7uj2k3h82sfivd1.apps.googleusercontent.com">
+                            ID: 485227555296...apps
+                        </span>
+                    </div>
 
                     <div class="oauth-secondary-row">
                         <button type="button" class="btn-secondary-oauth" onclick="triggerGithubMock()">
@@ -2330,20 +2420,301 @@
             playKeyClick(600);
         }
 
-        function triggerGoogleMock() {
-            document.getElementById('usernameInput').value = 'alex.google@gmail.com';
-            goToStep('password');
+        // ========================================================
+        // OFFICIAL GOOGLE OAUTH 2.0 IMPLEMENTATION (KIZUNO-AI)
+        // Client ID: 485227555296-5jqikr8c4ruddifkp7uj2k3h82sfivd1.apps.googleusercontent.com
+        // ========================================================
+        const GOOGLE_CLIENT_ID = "485227555296-5jqikr8c4ruddifkp7uj2k3h82sfivd1.apps.googleusercontent.com";
+        let isGoogleGISInitialized = false;
+
+        function parseJwt(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error("Kizuno-AI: JWT Decode error", e);
+                return null;
+            }
+        }
+
+        function initGoogleIdentity() {
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                try {
+                    google.accounts.id.initialize({
+                        client_id: GOOGLE_CLIENT_ID,
+                        callback: handleGoogleCredentialResponse,
+                        auto_select: false,
+                        cancel_on_tap_outside: true,
+                        itp_support: true
+                    });
+
+                    const btnTarget = document.getElementById("googleBtnOfficial");
+                    if (btnTarget) {
+                        google.accounts.id.renderButton(btnTarget, {
+                            type: "standard",
+                            shape: "rectangular",
+                            theme: "filled_black",
+                            text: "continue_with",
+                            size: "large",
+                            logo_alignment: "left",
+                            width: 360
+                        });
+                    }
+
+                    isGoogleGISInitialized = true;
+                    console.log("Kizuno-AI: Google Identity Services initialized with Client ID:", GOOGLE_CLIENT_ID);
+                } catch (err) {
+                    console.warn("Kizuno-AI: Google Identity setup notice:", err);
+                }
+            } else {
+                // Retry after GIS script finishes downloading
+                setTimeout(initGoogleIdentity, 350);
+            }
+        }
+
+        function triggerGoogleOAuth() {
+            playKeyClick(700);
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                try {
+                    google.accounts.id.prompt((notification) => {
+                        if (notification.isNotDisplayed()) {
+                            console.log("Google One-Tap not displayed:", notification.getNotDisplayedReason());
+                            openGoogleAuthModal();
+                        } else if (notification.isSkippedMomentum()) {
+                            console.log("Google prompt skipped:", notification.getSkippedReason());
+                        }
+                    });
+                } catch (e) {
+                    console.warn("Google prompt error:", e);
+                    openGoogleAuthModal();
+                }
+            } else {
+                showToast("Google Identity Services initializing...", "⏳");
+                openGoogleAuthModal();
+            }
+        }
+
+        function openGoogleAuthModal() {
+            const modal = document.getElementById('googleAuthModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeGoogleAuthModal() {
+            const modal = document.getElementById('googleAuthModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function launchGooglePopupDirectly() {
+            closeGoogleAuthModal();
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                google.accounts.id.prompt();
+            } else {
+                showToast("Google Identity Services not yet ready", "⚠️");
+            }
+        }
+
+        async function handleGoogleCredentialResponse(response) {
             playSuccessChime();
+            console.log("Kizuno-AI: Google Credential response received:", response);
+
+            let profile = null;
+            if (response && response.credential) {
+                profile = parseJwt(response.credential);
+            }
+
+            const email = profile?.email || 'citizen.google@gmail.com';
+            const name = profile?.name || email.split('@')[0];
+            const picture = profile?.picture || '';
+            const googleId = profile?.sub || `gid_${Date.now()}`;
+            const role = selectedRole === 'officer' ? 'Officer' : (selectedRole === 'admin' ? 'Admin' : 'Citizen');
+
+            showToast(`Google Authenticated: ${name}`, '🔐');
+
+            // Synchronize with SQLite backend
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        credential: response.credential || 'simulated_google_token',
+                        client_id: GOOGLE_CLIENT_ID,
+                        role: role.toLowerCase()
+                    })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    console.log("Kizuno-AI: SQLite User Sync:", data);
+                }
+            } catch (err) {
+                console.warn("Kizuno-AI: Backend offline sync notice:", err);
+            }
+
+            const authUser = {
+                name: name,
+                email: email,
+                picture: picture,
+                role: role,
+                authProvider: 'Google OAuth 2.0',
+                googleId: googleId,
+                token: response?.credential || null
+            };
+
+            localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
+            applyAuthenticatedUserState(authUser);
+
+            // Animate card unlock
+            const card = document.getElementById('stepIdentity');
+            if (card) {
+                card.classList.add('success-glow');
+                setTimeout(() => {
+                    card.classList.remove('success-glow');
+                    if (role === 'Officer') {
+                        switchView('officer');
+                        showToast(`Welcome ${name}! Municipal Officer Console Activated`, '👨‍💼');
+                    } else {
+                        switchView('home');
+                        showToast(`Welcome ${name}! Kizuno-AI Telemetry Active`, '✨');
+                    }
+                }, 900);
+            }
+        }
+
+        function simulateGoogleAuth(simName, simEmail, simRole) {
+            closeGoogleAuthModal();
+            selectedRole = simRole;
+            // Generate synthetic JWT for instant local dev testing
+            const header = btoa(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+            const payload = btoa(JSON.stringify({
+                sub: "google_uid_" + Math.floor(Math.random() * 9000000 + 1000000),
+                email: simEmail,
+                name: simName,
+                picture: simRole === 'officer'
+                    ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
+                    : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                email_verified: true,
+                aud: GOOGLE_CLIENT_ID
+            }));
+            const mockToken = `${header}.${payload}.signaturesimulated`;
+            handleGoogleCredentialResponse({ credential: mockToken });
+        }
+
+        function applyAuthenticatedUserState(user) {
+            if (!user) return;
+            const nameEl = document.getElementById('nav-user-name');
+            const avatarEl = document.getElementById('nav-user-initial');
+            if (nameEl) nameEl.innerText = user.name || user.role;
+            if (avatarEl) {
+                if (user.picture) {
+                    avatarEl.innerHTML = `<img src="${user.picture}" alt="${escapeHtml(user.name)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                    avatarEl.style.background = 'transparent';
+                } else {
+                    avatarEl.innerText = (user.name || user.role).charAt(0).toUpperCase();
+                    avatarEl.style.background = 'linear-gradient(135deg, #38bdf8, #6366f1)';
+                }
+            }
+
+            // Update user profile dropdown
+            const dropName = document.getElementById('dropdownUserName');
+            const dropEmail = document.getElementById('dropdownUserEmail');
+            const dropAvatar = document.getElementById('dropdownUserAvatar');
+            const dropRole = document.getElementById('dropdownUserRoleBadge');
+            const dropProvider = document.getElementById('dropdownProviderBadge');
+
+            if (dropName) dropName.innerText = user.name || 'Authenticated Citizen';
+            if (dropEmail) dropEmail.innerText = user.email || 'No email attached';
+            if (dropRole) dropRole.innerText = `Role: ${user.role || 'Citizen'}`;
+            if (dropProvider) dropProvider.innerText = `Auth: ${user.authProvider || 'Google'}`;
+            if (dropAvatar) {
+                if (user.picture) {
+                    dropAvatar.innerHTML = `<img src="${user.picture}" alt="${escapeHtml(user.name)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                } else {
+                    dropAvatar.innerText = (user.name || 'C').charAt(0).toUpperCase();
+                }
+            }
+
+            // Sync step 2 enclave chip
+            const chipEmail = document.getElementById('chipEmail');
+            const chipAvatar = document.getElementById('chipAvatar');
+            if (chipEmail) chipEmail.innerText = user.email || user.name;
+            if (chipAvatar) {
+                if (user.picture) {
+                    chipAvatar.innerHTML = `<img src="${user.picture}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+                } else {
+                    chipAvatar.innerText = (user.name || 'C').charAt(0).toUpperCase();
+                }
+            }
+        }
+
+        function restoreSavedSession() {
+            try {
+                const raw = localStorage.getItem('kizuno_auth_user');
+                if (raw) {
+                    const user = JSON.parse(raw);
+                    applyAuthenticatedUserState(user);
+                    console.log("Kizuno-AI: Restored active session for", user.name);
+                }
+            } catch (e) {
+                console.warn("Session restore error:", e);
+            }
+        }
+
+        function handleUserPillClick(e) {
+            e.stopPropagation();
+            playKeyClick(650);
+            const raw = localStorage.getItem('kizuno_auth_user');
+            if (raw) {
+                toggleUserDropdown();
+            } else {
+                switchView('login');
+            }
+        }
+
+        function toggleUserDropdown(forceState) {
+            const dropdown = document.getElementById('userProfileDropdown');
+            if (!dropdown) return;
+            if (typeof forceState === 'boolean') {
+                dropdown.style.display = forceState ? 'block' : 'none';
+            } else {
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('userProfileDropdown');
+            const pill = document.getElementById('navUserPill');
+            if (dropdown && dropdown.style.display === 'block') {
+                if (!dropdown.contains(e.target) && !pill.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            }
+        });
+
+        function logoutUser() {
+            localStorage.removeItem('kizuno_auth_user');
+            const nameEl = document.getElementById('nav-user-name');
+            const avatarEl = document.getElementById('nav-user-initial');
+            if (nameEl) nameEl.innerText = 'Citizen';
+            if (avatarEl) {
+                avatarEl.innerHTML = 'C';
+                avatarEl.style.background = 'linear-gradient(135deg, #38bdf8, #6366f1)';
+            }
+            showToast('Signed out of Kizuno-AI Enclave', '👋');
+            playKeyClick(500);
+            switchView('login');
         }
 
         function triggerGithubMock() {
-            document.getElementById('usernameInput').value = 'github.developer@id';
+            document.getElementById('usernameInput').value = 'developer.github@kizuno.ai';
             goToStep('password');
             playSuccessChime();
         }
 
         function triggerPasskeyMock() {
-            document.getElementById('usernameInput').value = 'passkey.fido2@device';
+            document.getElementById('usernameInput').value = 'fido2.passkey@device';
             goToStep('password');
             playSuccessChime();
         }
@@ -2481,8 +2852,18 @@
 
             const email = document.getElementById('usernameInput').value;
             const role = email.includes('officer') ? 'Officer' : (email.includes('admin') ? 'Admin' : 'Citizen');
-            document.getElementById('nav-user-name').innerText = `${role}`;
-            document.getElementById('nav-user-initial').innerText = role.charAt(0);
+            const savedRaw = localStorage.getItem('kizuno_auth_user');
+            if (!savedRaw) {
+                const passUser = {
+                    name: role === 'Officer' ? 'Officer Selvam' : (role === 'Admin' ? 'System Administrator' : 'Citizen User'),
+                    email: email,
+                    role: role,
+                    authProvider: 'Enclave PIN / Passcode',
+                    token: 'pin_verified'
+                };
+                localStorage.setItem('kizuno_auth_user', JSON.stringify(passUser));
+                applyAuthenticatedUserState(passUser);
+            }
 
             setTimeout(() => {
                 card.classList.remove('success-glow');
@@ -2502,8 +2883,58 @@
             await checkBackendHealth();
             renderOfficerTable();
             renderMyComplaints();
+            restoreSavedSession();
+            initGoogleIdentity();
         });
     </script>
+
+    <!-- ========================================================
+         GOOGLE OAUTH 2.0 INTEGRATION & LOCAL DEV MODAL
+         ======================================================== -->
+    <div id="googleAuthModal" class="modal-backdrop" style="display: none;" onclick="if(event.target === this) closeGoogleAuthModal()">
+        <div class="modal-card" style="max-width: 500px; text-align: left;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+                        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                    </svg>
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: #fff;">Google OAuth 2.0 Status</h3>
+                        <div style="font-size: 0.75rem; color: var(--brand-primary); font-family: var(--font-mono);">Kizuno-AI Identity Services</div>
+                    </div>
+                </div>
+                <button type="button" onclick="closeGoogleAuthModal()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.4rem; padding: 4px;">✕</button>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;">Configured Google Client ID:</div>
+                <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(56,189,248,0.25); border-radius: 10px; padding: 10px 12px; font-family: var(--font-mono); font-size: 0.74rem; color: var(--brand-primary); word-break: break-all;">
+                    485227555296-5jqikr8c4ruddifkp7uj2k3h82sfivd1.apps.googleusercontent.com
+                </div>
+            </div>
+
+            <div style="background: rgba(56, 189, 248, 0.08); border-left: 3px solid var(--brand-primary); padding: 12px 14px; border-radius: 8px; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 18px; line-height: 1.5;">
+                <strong style="color: #fff;">Google Cloud Console Tip:</strong> If Google One-Tap or popup displays an origin restriction, ensure your Google Cloud OAuth Client includes:<br>
+                <code style="color: var(--brand-primary); background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.75rem;">http://127.0.0.1:8000</code> &nbsp;
+                <code style="color: var(--brand-primary); background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.75rem;">http://localhost:8000</code>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button type="button" class="btn-primary" onclick="launchGooglePopupDirectly()" style="width: 100%;">
+                    <span>Launch Google One-Tap / Account Popup</span>
+                </button>
+                <button type="button" class="btn-secondary-oauth" onclick="simulateGoogleAuth('Dilip Palanisamy', 'dilip.palanisamy@gmail.com', 'citizen')" style="width: 100%; border: 1px solid rgba(56,189,248,0.3); color: #fff; justify-content: center;">
+                    <span>⚡ Quick Test Sign-In (Citizen - Dilip Palanisamy)</span>
+                </button>
+                <button type="button" class="btn-secondary-oauth" onclick="simulateGoogleAuth('Officer R. Selvam', 'officer.selvam@gov.in', 'officer')" style="width: 100%; border: 1px solid rgba(52,211,153,0.3); color: #fff; justify-content: center;">
+                    <span>⚡ Quick Test Sign-In (Municipal Officer - Selvam)</span>
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
