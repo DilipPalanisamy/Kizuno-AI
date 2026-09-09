@@ -266,6 +266,27 @@ def init_db():
 
     db = SessionLocal()
 
+    # Ensure default verified citizen exists in SQL users table
+    try:
+        default_user = db.query(User).filter(User.email == "kumar.citizen@gmail.com").first()
+        if not default_user:
+            import hashlib
+            salt = "4a8c9b2f1e0d3c5b"
+            key = hashlib.pbkdf2_hmac('sha256', b'password123', salt.encode('utf-8'), 100000)
+            hashed_pw = f"{salt}${key.hex()}"
+            db.add(User(
+                email="kumar.citizen@gmail.com",
+                name="Citizen Kumar",
+                password_hash=hashed_pw,
+                is_verified=True,
+                role="citizen",
+                auth_provider="email"
+            ))
+            db.commit()
+            print("Default citizen seeded in SQL users table: kumar.citizen@gmail.com / password123")
+    except Exception as e:
+        print("Default user seed note:", e)
+
     try:
         # Check if already seeded
         existing_count = db.query(Complaint).count()

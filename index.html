@@ -2072,7 +2072,10 @@
                                     Password <span style="color: var(--brand-red);">*</span>
                                 </label>
                             </div>
-                            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
+                            <input type="password" id="login-password" class="form-control" placeholder="••••••••" value="password123" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
+                            <div style="margin-top: 0.35rem; font-size: 0.75rem; color: var(--text-muted);">
+                                Default Demo Password: <span style="font-family: 'JetBrains Mono', monospace; color: var(--brand-primary); font-weight: 700;">password123</span>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.925rem; font-weight: 700; border-radius: var(--radius-md);">
@@ -3957,7 +3960,7 @@
                     const data = await res.json();
                     isBackendConnected = true;
                     if (pill) pill.className = 'backend-pill online';
-                    if (text) text.innerText = `Kizuno-AI Engine & SQLite Active (${data.activeComplaintsInSQL} in SQL)`;
+                    if (text) text.innerText = `Kizuno-AI Engine & ${data.database || 'SQL'} Active (${data.activeComplaintsInSQL} Complaints in SQL)`;
                     await syncFromSQL();
                     return;
                 }
