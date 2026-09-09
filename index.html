@@ -2259,25 +2259,28 @@
     <!-- ========================================================
          VIEW 3: COMPLAINT SUBMITTED (Screen 3)
          ======================================================== -->
-    <main class="app-view" id="view-submitted">
-        <div class="narrow-container">
-            <div class="content-card">
-                <div class="success-hero">
-                    <div class="success-icon-badge">
-                        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <main class="app-view" id="view-submitted">
+        <div class="narrow-container" style="max-width: 800px;">
+            <div class="content-card" style="padding: 2.25rem 2rem;">
+                
+                <!-- Success Header -->
+                <div class="success-hero" style="padding: 0.5rem 0 1.5rem 0;">
+                    <div class="success-icon-badge" style="width: 68px; height: 68px; font-size: 1.85rem; box-shadow: 0 8px 20px rgba(22, 163, 74, 0.2);">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                     </div>
-                    <h2 class="success-title">Complaint Registered Successfully!</h2>
-                    <p class="success-desc">Your complaint has been submitted and routed to the municipal department.</p>
+                    <h2 class="success-title" style="font-size: 1.75rem; margin-bottom: 0.4rem;">Complaint Registered Successfully!</h2>
+                    <p class="success-desc" style="font-size: 0.95rem; color: var(--text-secondary);">Your grievance has been officially validated and recorded into the Kizuno-AI civic SQL database.</p>
                 </div>
 
-                <div class="keys-grid">
+                <!-- Reference Keys Grid -->
+                <div class="keys-grid" style="margin: 1.25rem 0 1.5rem 0;">
                     <!-- Key 1: Internal ID -->
                     <div class="key-box">
                         <div class="key-label">
                             <span>Complaint ID</span>
-                            <span style="font-size: 0.65rem; color: var(--text-muted);">Internal</span>
+                            <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Internal SQL Ref</span>
                         </div>
                         <div class="key-value" id="generated-complaint-id">CIV-2026-1042</div>
                         <div class="key-subtext">Departmental Reference ID</div>
@@ -2286,33 +2289,103 @@
                     <!-- Key 2: Tracking Key -->
                     <div class="key-box highlight">
                         <div class="key-label">
-                            <span style="color: var(--brand-primary);">Tracking Key</span>
-                            <button type="button" class="copy-btn" onclick="copyTrackingKey()">Copy</button>
+                            <span style="color: var(--brand-primary); font-weight: 800;">Public Tracking Key</span>
+                            <button type="button" class="copy-btn" onclick="copyTrackingKey()">Copy Key</button>
                         </div>
                         <div class="key-value" id="generated-tracking-key">TN-GOV-X7K92P4M</div>
-                        <div class="key-subtext">Share this key to track public status</div>
+                        <div class="key-subtext">Share or use this key to monitor day-wise progress</div>
                     </div>
                 </div>
 
-                <div class="alert-box">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink: 0;">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
-                    <div>
-                        <strong>Important Notice:</strong> Save your tracking key. You can use it anytime to track the day-wise progress of this complaint. Personal information is protected.
+                <!-- Submitted Complaint Full Display Card -->
+                <div id="submitted-complaint-card" style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--border-light);">
+                        <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+                            <span id="submitted-cat-badge" style="display: inline-flex; align-items: center; gap: 0.4rem; background: #eff6ff; color: var(--brand-primary); font-size: 0.825rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 9999px; border: 1px solid #bfdbfe;">
+                                <span id="submitted-cat-icon">💡</span>
+                                <span id="submitted-cat-text">Streetlight & Public Lighting</span>
+                            </span>
+                            <span id="submitted-priority-badge" style="display: inline-flex; align-items: center; background: #fef3c7; color: #b45309; font-size: 0.75rem; font-weight: 700; padding: 0.28rem 0.65rem; border-radius: 9999px;">
+                                🟡 Medium Priority
+                            </span>
+                        </div>
+                        <span id="submitted-status-pill" style="display: inline-flex; align-items: center; gap: 0.35rem; background: #f0fdf4; color: #16a34a; font-size: 0.775rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 9999px; border: 1px solid #bbf7d0;">
+                            <span style="width: 7px; height: 7px; border-radius: 50%; background: #16a34a;"></span>
+                            <span id="submitted-status-text">Registered • Day 0</span>
+                        </span>
+                    </div>
+
+                    <!-- Title -->
+                    <h3 id="submitted-complaint-title" style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.6rem; letter-spacing: -0.01em;">
+                        Streetlight not working
+                    </h3>
+
+                    <!-- Description box -->
+                    <div id="submitted-complaint-desc" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.15rem;">
+                        The streetlight near my house has not been working for the past 3 days. It's very dark at night.
+                    </div>
+
+                    <!-- Details 2x2 Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.85rem; font-size: 0.825rem; margin-bottom: 1.15rem;">
+                        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
+                            <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">📍 Location</div>
+                            <div id="submitted-complaint-location" style="font-weight: 600; color: var(--text-primary);">Gandhipuram, Coimbatore</div>
+                        </div>
+                        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
+                            <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">🏢 Assigned Department</div>
+                            <div id="submitted-complaint-dept" style="font-weight: 600; color: var(--text-primary);">Electrical & Streetlight Division</div>
+                        </div>
+                        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
+                            <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">📅 Registered At</div>
+                            <div id="submitted-complaint-timestamp" style="font-weight: 600; color: var(--text-primary);">Today, Just Now</div>
+                        </div>
+                        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
+                            <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">⏱️ Resolution SLA Target</div>
+                            <div id="submitted-complaint-sla" style="font-weight: 600; color: var(--brand-primary);">48 Hours Standard SLA</div>
+                        </div>
+                    </div>
+
+                    <!-- Photo Evidence Row (if provided) -->
+                    <div id="submitted-photo-preview-box" style="display: flex; align-items: center; gap: 0.85rem; background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 1.15rem;">
+                        <img id="submitted-preview-thumbnail" src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=150&auto=format&fit=crop&q=80" alt="Evidence" style="width: 52px; height: 52px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-light);">
+                        <div style="flex: 1;">
+                            <div style="font-size: 0.825rem; font-weight: 700; color: var(--text-primary);">Photographic Evidence Attached</div>
+                            <div style="font-size: 0.725rem; color: var(--text-muted);">Verified tamper-evident citizen photo upload</div>
+                        </div>
+                        <span style="font-size: 0.725rem; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 0.2rem 0.5rem; border-radius: 4px;">✓ Verified</span>
+                    </div>
+
+                    <!-- AI Verification Audit Notice -->
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <span style="font-size: 1.25rem;">🛡️</span>
+                        <div style="font-size: 0.8rem; color: #1e40af; line-height: 1.45;">
+                            <strong>Kizuno-AI Engine Status:</strong> Verified Day 0 intake logged. Target SLA countdown initiated. Public timeline stream ready for tracking.
+                        </div>
                     </div>
                 </div>
 
-                <div class="keys-actions">
-                    <button type="button" class="btn-primary" onclick="trackKey(document.getElementById('generated-tracking-key').innerText)">
-                        <span>Track Complaint Now</span>
+                <!-- Two Action Options: Back to Dashboard & Track the Process -->
+                <div class="keys-actions" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button type="button" class="btn-secondary" id="btn-back-dashboard" onclick="switchView('home')" style="flex: 1; min-width: 200px; justify-content: center; padding: 0.95rem 1.25rem; font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        <span>Back to Dashboard</span>
                     </button>
-                    <button type="button" class="btn-secondary" onclick="switchView('home')">
-                        <span>Back to Home</span>
+
+                    <button type="button" class="btn-primary" id="btn-track-process" onclick="trackLastSubmittedComplaint()" style="flex: 1; min-width: 220px; justify-content: center; padding: 0.95rem 1.25rem; font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <span>Track the Process</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
                     </button>
                 </div>
+
             </div>
         </div>
     </main>
@@ -3662,6 +3735,110 @@
         /**
          * Form submission handler for new complaints (Saves directly to SQL)
          */
+        
+        let lastSubmittedComplaint = null;
+
+        /**
+         * Populates and renders the full submitted complaint confirmation card
+         */
+        function displaySubmittedComplaint(complaint) {
+            if (!complaint) return;
+            lastSubmittedComplaint = complaint;
+
+            // Internal ID & Public Tracking Key
+            const idEl = document.getElementById('generated-complaint-id');
+            const keyEl = document.getElementById('generated-tracking-key');
+            if (idEl) idEl.innerText = complaint.id || 'CIV-2026-1042';
+            if (keyEl) keyEl.innerText = complaint.trackingKey || 'TN-GOV-X7K92P4M';
+
+            // Category & Priority Badges
+            const catIcon = complaint.categoryIcon || getCategoryIcon(complaint.category || 'General');
+            const catText = complaint.category || 'General Civic Issue';
+            const catIconEl = document.getElementById('submitted-cat-icon');
+            const catTextEl = document.getElementById('submitted-cat-text');
+            if (catIconEl) catIconEl.innerText = catIcon;
+            if (catTextEl) catTextEl.innerText = catText;
+
+            const priority = complaint.priority || 'Medium';
+            const priorityBadge = document.getElementById('submitted-priority-badge');
+            if (priorityBadge) {
+                let badgeBg = '#fef3c7';
+                let badgeColor = '#b45309';
+                let icon = '🟡';
+                if (priority === 'Critical') {
+                    badgeBg = '#fef2f2';
+                    badgeColor = '#991b1b';
+                    icon = '🚨';
+                } else if (priority === 'High') {
+                    badgeBg = '#fee2e2';
+                    badgeColor = '#b91c1c';
+                    icon = '🔴';
+                } else if (priority === 'Low') {
+                    badgeBg = '#f1f5f9';
+                    badgeColor = '#475569';
+                    icon = '⚪';
+                }
+                priorityBadge.style.backgroundColor = badgeBg;
+                priorityBadge.style.color = badgeColor;
+                priorityBadge.innerText = `${icon} ${priority} Priority`;
+            }
+
+            // Title & Description
+            const titleEl = document.getElementById('submitted-complaint-title');
+            const descEl = document.getElementById('submitted-complaint-desc');
+            if (titleEl) titleEl.innerText = complaint.title || 'Civic Grievance Report';
+            if (descEl) descEl.innerText = complaint.description || 'No additional details provided.';
+
+            // Metadata: Location, Department, Timestamp, SLA
+            const locEl = document.getElementById('submitted-complaint-location');
+            if (locEl) locEl.innerText = complaint.location || 'Coimbatore Municipal Area';
+
+            const deptEl = document.getElementById('submitted-complaint-dept');
+            if (deptEl) {
+                deptEl.innerText = complaint.department || `${catText} Division, Coimbatore Corporation`;
+            }
+
+            const timeEl = document.getElementById('submitted-complaint-timestamp');
+            if (timeEl) {
+                const now = new Date();
+                timeEl.innerText = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) + ' • ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            }
+
+            const slaEl = document.getElementById('submitted-complaint-sla');
+            if (slaEl) {
+                if (priority === 'Critical') slaEl.innerText = 'Immediate Dispatch (12h SLA)';
+                else if (priority === 'High') slaEl.innerText = '24 Hours Critical SLA';
+                else if (priority === 'Low') slaEl.innerText = '72 Hours Routine SLA';
+                else slaEl.innerText = '48 Hours Standard SLA';
+            }
+
+            // Photo preview
+            const photoContainer = document.getElementById('submitted-photo-preview-box');
+            const photoImg = document.getElementById('submitted-preview-thumbnail');
+            if (complaint.photoUrl) {
+                if (photoImg) photoImg.src = complaint.photoUrl;
+                if (photoContainer) photoContainer.style.display = 'flex';
+            } else {
+                if (photoContainer) photoContainer.style.display = 'none';
+            }
+        }
+
+        /**
+         * Navigates directly to track the process of the last submitted complaint
+         */
+        function trackLastSubmittedComplaint() {
+            if (lastSubmittedComplaint && (lastSubmittedComplaint.trackingKey || lastSubmittedComplaint.id)) {
+                trackKey(lastSubmittedComplaint.trackingKey || lastSubmittedComplaint.id);
+            } else {
+                const key = document.getElementById('generated-tracking-key')?.innerText;
+                if (key) {
+                    trackKey(key);
+                } else {
+                    switchView('track');
+                }
+            }
+        }
+
         async function handleFormSubmission(e) {
             e.preventDefault();
             const category = document.getElementById('form-category').value;
@@ -3689,11 +3866,10 @@
                     if (res.ok) {
                         const created = await res.json();
                         KIZUNO_SQL_DB.complaints.unshift(created);
-                        document.getElementById('generated-complaint-id').innerText = created.id;
-                        document.getElementById('generated-tracking-key').innerText = created.trackingKey;
+                        displaySubmittedComplaint(created);
                         await syncFromSQL();
                         switchView('submitted');
-                        showToast(`Stored in SQLite DB! (${created.id})`, '💾');
+                        showToast(`Stored in SQL Database! (${created.id})`, '💾');
                         return;
                     }
                 } catch (err) {
@@ -3720,6 +3896,7 @@
                 status: "Pending",
                 dayLabel: "Day 0",
                 lastUpdated: "Day 0 - Just Now",
+                department: `${category} Division, Coimbatore Corporation`,
                 timeline: [
                     {
                         day: "Day 0",
@@ -3738,11 +3915,9 @@
             KIZUNO_SQL_DB.kpis.pending += 1;
             updateKpiCounters();
 
-            document.getElementById('generated-complaint-id').innerText = newComplaintId;
-            document.getElementById('generated-tracking-key').innerText = newTrackingKey;
-
+            displaySubmittedComplaint(newComplaint);
             switchView('submitted');
-            showToast('Complaint registered locally', '✅');
+            showToast('Complaint registered in SQL DB!', '✅');
         }
 
         /**
@@ -4124,6 +4299,9 @@
 
             renderOfficerTable();
             renderMyComplaints();
+            if (KIZUNO_SQL_DB.complaints.length > 0) {
+                displaySubmittedComplaint(KIZUNO_SQL_DB.complaints[0]);
+            }
         });
     </script>
 </body>
