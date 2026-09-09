@@ -222,18 +222,20 @@ CivicTrack is engineered to interface directly with existing e-Governance platfo
 
 ---
 
-## 9. Real Python & SQL Database Implementation
+## 9. Real FastAPI Backend & PostgreSQL / SQLite Database Implementation
 
-CivicTrack is implemented with a production-ready Python backend and an ACID-compliant SQL database:
+Kizuno-AI is implemented with a production-ready Python backend and an ACID-compliant SQL database architecture supporting both **PostgreSQL** (production on Render/Supabase) and **SQLite** (local development):
 
 - **Backend Framework**: Python 3.12 with **FastAPI** and **Uvicorn** (`server.py`).
-- **SQL Database**: **SQLite** managed via **SQLAlchemy ORM** (`civictrack.db`), ensuring zero-configuration deployment while executing genuine SQL operations (`SELECT`, `INSERT`, `UPDATE`, `JOIN`).
+- **SQL Database**: **PostgreSQL & SQLite** managed via **SQLAlchemy ORM** (`database.py` with `psycopg2-binary` driver), dynamically selecting PostgreSQL when `DATABASE_URL` is set, and SQLite (`kizuno.db`) for zero-configuration local development.
 - **REST Endpoints**:
-  - `GET /api/health`: Health status and SQL table record counts.
+  - `GET /api/health`: Health status and dynamic SQL database dialect reporting.
   - `GET /api/kpis`: Computes municipal KPIs dynamically with SQL `COUNT(*)`.
   - `GET /api/complaints`: Queries complaints with SQL status/category filtering.
   - `GET /api/complaints/{key_or_id}`: Retrieves full complaint with foreign-key joined day-wise timeline records.
   - `POST /api/complaints`: Inserts new citizen grievance, generates unique keys, and writes Day 0 verified milestone into SQL.
   - `POST /api/officer/update`: Applies officer action, writes verified audit event into SQL `timeline_events`, and updates complaint status.
-- **Frontend Integration**: Asynchronous API client in `index.html` with real-time health polling and live SQL synchronization.
+  - `POST /api/auth/google`: Ingests and decodes Google ID token, saves user to SQL `users` table, and returns verified profile payload.
+- **Render Deployment**: Fully equipped with `requirements.txt` and `render.yaml` for 1-click cloud deployment.
+- **Frontend Integration**: Single-page application in `index.html` with start-at-login security flow, single official Google OAuth 2.0 button, and immediate post-login redirection to the citizen/officer dashboard.
 

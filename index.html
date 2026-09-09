@@ -1972,7 +1972,7 @@
             </a>
 
             <div class="nav-links">
-                <button type="button" class="nav-btn active" id="nav-home" onclick="switchView('home')">Home</button>
+                <button type="button" class="nav-btn" id="nav-home" onclick="switchView('home')">Home</button>
                 <button type="button" class="nav-btn" id="nav-track" onclick="switchView('track')">Track Complaint</button>
                 <button type="button" class="nav-btn" id="nav-submit" onclick="switchView('submit')">Submit Complaint</button>
                 <button type="button" class="nav-btn" id="nav-my" onclick="switchView('my-complaints')">My Complaints</button>
@@ -1997,7 +1997,89 @@
     <!-- ========================================================
          VIEW 1: HOME / LANDING PAGE (Screen 1)
          ======================================================== -->
-    <main class="app-view active" id="view-home">
+        <!-- ========================================================
+         VIEW 0: LOGIN & AUTHENTICATION LANDING SCREEN (START PAGE)
+         ======================================================== -->
+    <main class="app-view active" id="view-login">
+        <div class="narrow-container" style="max-width: 480px; margin: 2rem auto;">
+            <div class="content-card" style="padding: 2.5rem 2rem; box-shadow: var(--shadow-md); border-radius: var(--radius-lg); border: 1px solid var(--border-light);">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div class="brand-shield" style="margin: 0 auto 1rem auto; width: 48px; height: 48px; border-radius: 12px;">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <h1 style="font-size: 1.65rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">Kizuno-AI Redressal Portal</h1>
+                    <p style="font-size: 0.885rem; color: var(--text-secondary);">Sign in to access your grievance dashboard & live audit stream</p>
+                </div>
+
+                <!-- Role Switcher Tabs -->
+                <div class="login-role-tabs" style="margin-bottom: 1.5rem;">
+                    <button type="button" class="role-tab-btn active" id="page-role-citizen" onclick="selectPageRole('citizen')">Citizen</button>
+                    <button type="button" class="role-tab-btn" id="page-role-officer" onclick="selectPageRole('officer')">Officer</button>
+                    <button type="button" class="role-tab-btn" id="page-role-admin" onclick="selectPageRole('admin')">Admin</button>
+                </div>
+
+                <!-- Citizen Tab: Exactly ONE Google Button + Instant Demo -->
+                                <!-- Citizen Tab: Exactly ONE Official Google Button + Demo Option -->
+                <div id="page-tab-citizen-content">
+                    <div style="text-align: center; padding: 1rem 0;">
+                        <p style="font-size: 0.885rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                            Sign in securely with your verified Google Account:
+                        </p>
+                        
+                        <!-- The SINGLE Official Google Sign-In Button Container -->
+                        <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+                            <div id="google-login-btn-page"></div>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1.5rem 0 1rem 0;">
+                            <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
+                            <span style="font-size: 0.725rem; color: var(--text-muted); text-transform: uppercase;">Or Quick Demo Bypass</span>
+                            <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
+                        </div>
+
+                        <button type="button" class="btn-secondary" onclick="simulateGoogleLogin('Citizen Kumar', 'kumar.citizen@gmail.com', 'citizen')" style="width: 100%; max-width: 280px; margin: 0 auto; justify-content: center; padding: 0.75rem 1.25rem; font-size: 0.85rem; border-radius: 100px;">
+                            <span>👤 Quick Demo Access (Citizen Kumar)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Officer Tab: PIN Entry -->
+                <div id="page-tab-officer-content" style="display: none;">
+                    <div style="text-align: center;">
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                            Enter 4-Digit Municipal Officer Authorization PIN:
+                        </p>
+                        <div class="pin-boxes">
+                            <input type="password" maxlength="1" class="pin-digit" id="pp1" onkeyup="handlePagePinKey(this, 1, event)">
+                            <input type="password" maxlength="1" class="pin-digit" id="pp2" onkeyup="handlePagePinKey(this, 2, event)">
+                            <input type="password" maxlength="1" class="pin-digit" id="pp3" onkeyup="handlePagePinKey(this, 3, event)">
+                            <input type="password" maxlength="1" class="pin-digit" id="pp4" onkeyup="handlePagePinKey(this, 4, event)">
+                        </div>
+
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
+                            <button type="button" class="btn-primary" onclick="submitPageOfficerPin()" style="flex: 1; justify-content: center; padding: 0.8rem;">
+                                Verify & Enter Console
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="fillPageOfficerDemoPin()" style="padding: 0.8rem 1rem;" title="Fill demo PIN (1234)">
+                                Demo PIN
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guest link -->
+                <div style="text-align: center; margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-light);">
+                    <button type="button" onclick="switchView('home')" style="background: none; border: none; color: var(--brand-primary); font-weight: 600; font-size: 0.85rem; cursor: pointer;">
+                        🌐 Or Explore Public Grievance Portal as Guest →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main class="app-view" id="view-home">
         <div class="hero-banner">
             <h1 class="hero-title">Report Issues.<br>Track Progress. Build a Better City.</h1>
             <p class="hero-subtitle">A simple platform to register government complaints and track their resolution in real-time with day-wise audit evidence.</p>
@@ -2511,25 +2593,26 @@
             </div>
 
             <!-- Citizen Google OAuth Tab -->
+                        <!-- Citizen Google OAuth Tab -->
             <div id="tab-citizen-content">
                 <div style="text-align: center; margin: 1.5rem 0;">
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
-                        One-click cryptographic verification via Google Identity Services
+                    <p style="font-size: 0.885rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                        Sign in securely with your verified Google Account:
                     </p>
                     
-                    <!-- Official Google Button Container -->
-                    <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+                    <!-- The SINGLE Official Google Button Container -->
+                    <div style="display: flex; justify-content: center; margin-bottom: 1.25rem;">
                         <div id="google-signin-btn"></div>
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1.25rem 0;">
                         <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
-                        <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Or Instant Demo</span>
+                        <span style="font-size: 0.725rem; color: var(--text-muted); text-transform: uppercase;">Or Quick Demo</span>
                         <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
                     </div>
 
-                    <button type="button" class="btn-primary" onclick="simulateGoogleLogin('Citizen Kumar', 'kumar.citizen@gmail.com', 'citizen')" style="width: 100%; justify-content: center; gap: 0.5rem;">
-                        <span>👤 Continue as Citizen (Kumar)</span>
+                    <button type="button" class="btn-secondary" onclick="simulateGoogleLogin('Citizen Kumar', 'kumar.citizen@gmail.com', 'citizen')" style="width: 100%; max-width: 280px; margin: 0 auto; justify-content: center; padding: 0.75rem 1.25rem; font-size: 0.85rem; border-radius: 100px;">
+                        <span>👤 Quick Demo Access (Kumar)</span>
                     </button>
                 </div>
             </div>
@@ -2572,9 +2655,9 @@
     <script>
         /**
          * IN-MEMORY DATABASE WITH FULL SAMPLE COMPLAINTS
-         * Reflects exact data from CivicTrack screens.
+         * Reflects exact data from Kizuno-AI screens.
          */
-        const CIVICTRACK_DB = {
+        const KIZUNO_SQL_DB = {
             complaints: [
                 // Case 1: The flagship Streetlight complaint (CIV-2026-1042 / TN-GOV-X7K92P4M)
                 {
@@ -2850,14 +2933,29 @@
                         auto_select: false,
                         cancel_on_tap_outside: true
                     });
-                    const btnContainer = document.getElementById('google-signin-btn');
-                    if (btnContainer) {
-                        google.accounts.id.renderButton(btnContainer, {
+                    // Render to the start Login Page
+                    const pageBtnContainer = document.getElementById('google-login-btn-page');
+                    if (pageBtnContainer) {
+                        pageBtnContainer.innerHTML = ''; // Ensure single button, no duplication
+                        google.accounts.id.renderButton(pageBtnContainer, {
                             theme: 'outline',
                             size: 'large',
                             type: 'standard',
                             shape: 'pill',
-                            text: 'signin_with',
+                            text: 'continue_with',
+                            width: 320
+                        });
+                    }
+                    // Render to the Modal if open
+                    const modalBtnContainer = document.getElementById('google-signin-btn');
+                    if (modalBtnContainer) {
+                        modalBtnContainer.innerHTML = '';
+                        google.accounts.id.renderButton(modalBtnContainer, {
+                            theme: 'outline',
+                            size: 'large',
+                            type: 'standard',
+                            shape: 'pill',
+                            text: 'continue_with',
                             width: 280
                         });
                     }
@@ -2905,8 +3003,12 @@
             applyUserSession(authUser);
             closeLoginModal();
 
-            if (role === 'Officer') {
+                        if (role === 'Officer' || role === 'officer') {
                 switchView('officer');
+                showToast(`Welcome ${name}! Officer Command Center Loaded`, '👨‍💼');
+            } else {
+                switchView('home');
+                showToast(`Welcome ${name}! Citizen Dashboard Loaded`, '✓');
             }
         }
 
@@ -2924,9 +3026,24 @@
             applyUserSession(authUser);
             closeLoginModal();
             showToast(`Signed in as ${name}`, '✓');
-            if (role === 'officer') {
+                        if (role === 'Officer' || role === 'officer') {
                 switchView('officer');
+                showToast(`Welcome ${name}! Officer Command Center Loaded`, '👨‍💼');
+            } else {
+                switchView('home');
+                showToast(`Welcome ${name}! Citizen Dashboard Loaded`, '✓');
             }
+        }
+
+        
+        function userSignOut() {
+            localStorage.removeItem('kizuno_auth_user');
+            const nameEl = document.getElementById('nav-user-name');
+            const avatarEl = document.getElementById('nav-user-initial');
+            if (nameEl) nameEl.innerText = 'Log In';
+            if (avatarEl) avatarEl.innerText = '🔐';
+            showToast('Signed out successfully', 'ℹ️');
+            switchView('login');
         }
 
         function applyUserSession(user) {
@@ -2962,6 +3079,75 @@
                     const p1 = document.getElementById('p1');
                     if (p1) p1.focus();
                 }, 100);
+            }
+        }
+
+        
+        /* ========================================================
+           PAGE-LEVEL LOGIN ROLE & PIN CONTROLLERS
+           ======================================================== */
+        let selectedPageLoginRole = 'citizen';
+
+        function selectPageRole(role) {
+            selectedPageLoginRole = role;
+            ['page-role-citizen', 'page-role-officer', 'page-role-admin'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.classList.remove('active');
+            });
+            const activeBtn = document.getElementById(`page-role-${role}`);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            const citizenTab = document.getElementById('page-tab-citizen-content');
+            const officerTab = document.getElementById('page-tab-officer-content');
+
+            if (role === 'citizen') {
+                if (citizenTab) citizenTab.style.display = 'block';
+                if (officerTab) officerTab.style.display = 'none';
+            } else {
+                if (citizenTab) citizenTab.style.display = 'none';
+                if (officerTab) officerTab.style.display = 'block';
+                setTimeout(() => {
+                    const pp1 = document.getElementById('pp1');
+                    if (pp1) pp1.focus();
+                }, 100);
+            }
+        }
+
+        function handlePagePinKey(input, index, e) {
+            if (e.key === 'Backspace' && !input.value && index > 1) {
+                document.getElementById(`pp${index - 1}`).focus();
+                return;
+            }
+            if (input.value && index < 4) {
+                document.getElementById(`pp${index + 1}`).focus();
+            }
+            if (index === 4 && input.value) {
+                submitPageOfficerPin();
+            }
+        }
+
+        function fillPageOfficerDemoPin() {
+            document.getElementById('pp1').value = '1';
+            document.getElementById('pp2').value = '2';
+            document.getElementById('pp3').value = '3';
+            document.getElementById('pp4').value = '4';
+            submitPageOfficerPin();
+        }
+
+        function submitPageOfficerPin() {
+            const pin = (document.getElementById('pp1').value || '') +
+                        (document.getElementById('pp2').value || '') +
+                        (document.getElementById('pp3').value || '') +
+                        (document.getElementById('pp4').value || '');
+            if (pin === '1234') {
+                simulateGoogleLogin('Officer R. Selvam', 'selvam.officer@gov.in', 'officer');
+            } else {
+                showToast('Invalid PIN! Try 1234 for demo', '⚠️');
+                ['pp1', 'pp2', 'pp3', 'pp4'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+                document.getElementById('pp1').focus();
             }
         }
 
@@ -3374,12 +3560,12 @@
                     fetch(`${API_BASE}/kpis`)
                 ]);
                 if (complaintsRes.ok) {
-                    CIVICTRACK_DB.complaints = await complaintsRes.json();
+                    KIZUNO_SQL_DB.complaints = await complaintsRes.json();
                     renderOfficerTable();
                     renderMyComplaints();
                 }
                 if (kpisRes.ok) {
-                    CIVICTRACK_DB.kpis = await kpisRes.json();
+                    KIZUNO_SQL_DB.kpis = await kpisRes.json();
                     updateKpiCounters();
                 }
             } catch (e) {
@@ -3408,7 +3594,7 @@
                 }
             }
 
-            const record = CIVICTRACK_DB.complaints.find(c => 
+            const record = KIZUNO_SQL_DB.complaints.find(c => 
                 c.trackingKey.toUpperCase() === cleanKey || 
                 c.id.toUpperCase() === cleanKey
             );
@@ -3455,7 +3641,7 @@
                     });
                     if (res.ok) {
                         const created = await res.json();
-                        CIVICTRACK_DB.complaints.unshift(created);
+                        KIZUNO_SQL_DB.complaints.unshift(created);
                         document.getElementById('generated-complaint-id').innerText = created.id;
                         document.getElementById('generated-tracking-key').innerText = created.trackingKey;
                         await syncFromSQL();
@@ -3495,14 +3681,14 @@
                         tagType: "tag-verified",
                         tagText: "Verified Event",
                         title: "Complaint Submitted & Registered",
-                        desc: "Citizen complaint accepted and validated in CivicTrack municipal registry."
+                        desc: "Citizen complaint accepted and validated in Kizuno-AI municipal registry."
                     }
                 ]
             };
 
-            CIVICTRACK_DB.complaints.unshift(newComplaint);
-            CIVICTRACK_DB.kpis.total += 1;
-            CIVICTRACK_DB.kpis.pending += 1;
+            KIZUNO_SQL_DB.complaints.unshift(newComplaint);
+            KIZUNO_SQL_DB.kpis.total += 1;
+            KIZUNO_SQL_DB.kpis.pending += 1;
             updateKpiCounters();
 
             document.getElementById('generated-complaint-id').innerText = newComplaintId;
@@ -3517,7 +3703,7 @@
          */
         function renderOfficerTable(filterStatus = 'All') {
             const tbody = document.getElementById('officer-table-body');
-            let list = CIVICTRACK_DB.complaints;
+            let list = KIZUNO_SQL_DB.complaints;
 
             if (filterStatus !== 'All') {
                 list = list.filter(c => c.status === filterStatus);
@@ -3555,11 +3741,11 @@
          * Opens the action console for an officer (Screen 8)
          */
         function openOfficerActionConsole(complaintId) {
-            const complaint = CIVICTRACK_DB.complaints.find(c => c.id === complaintId);
+            const complaint = KIZUNO_SQL_DB.complaints.find(c => c.id === complaintId);
             if (!complaint) return;
 
-            CIVICTRACK_DB.currentActiveActionId = complaintId;
-            CIVICTRACK_DB.selectedActionType = null;
+            KIZUNO_SQL_DB.currentActiveActionId = complaintId;
+            KIZUNO_SQL_DB.selectedActionType = null;
 
             document.querySelectorAll('.officer-action-btn').forEach(btn => btn.classList.remove('selected'));
 
@@ -3582,7 +3768,7 @@
         }
 
         function selectAction(actionType) {
-            CIVICTRACK_DB.selectedActionType = actionType;
+            KIZUNO_SQL_DB.selectedActionType = actionType;
             document.querySelectorAll('.officer-action-btn').forEach(btn => btn.classList.remove('selected'));
             const btn = document.getElementById(`act-btn-${actionType}`);
             if (btn) btn.classList.add('selected');
@@ -3592,8 +3778,8 @@
          * Applies the officer update (Saves directly to SQL database)
          */
         async function applyOfficerUpdate() {
-            const complaintId = CIVICTRACK_DB.currentActiveActionId;
-            const actionType = CIVICTRACK_DB.selectedActionType;
+            const complaintId = KIZUNO_SQL_DB.currentActiveActionId;
+            const actionType = KIZUNO_SQL_DB.selectedActionType;
             const comments = document.getElementById('officer-comments').value.trim();
 
             if (!actionType) {
@@ -3626,7 +3812,7 @@
             }
 
             // Client fallback
-            const complaint = CIVICTRACK_DB.complaints.find(c => c.id === complaintId);
+            const complaint = KIZUNO_SQL_DB.complaints.find(c => c.id === complaintId);
             if (!complaint) return;
 
             const today = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
@@ -3642,8 +3828,8 @@
                     title: "Work Started",
                     desc: comments || "Officer assigned and physical repair work has begun on site."
                 });
-                CIVICTRACK_DB.kpis.inProgress += 1;
-                if (CIVICTRACK_DB.kpis.delayed > 0) CIVICTRACK_DB.kpis.delayed -= 1;
+                KIZUNO_SQL_DB.kpis.inProgress += 1;
+                if (KIZUNO_SQL_DB.kpis.delayed > 0) KIZUNO_SQL_DB.kpis.delayed -= 1;
                 showToast(`Work Started logged for ${complaint.id}`, '🔧');
             } else if (actionType === 'resolve') {
                 complaint.status = 'Resolved';
@@ -3656,8 +3842,8 @@
                     title: "Resolved",
                     desc: comments || "Issue has been verified, tested, and resolved."
                 });
-                CIVICTRACK_DB.kpis.resolved += 1;
-                if (CIVICTRACK_DB.kpis.inProgress > 0) CIVICTRACK_DB.kpis.inProgress -= 1;
+                KIZUNO_SQL_DB.kpis.resolved += 1;
+                if (KIZUNO_SQL_DB.kpis.inProgress > 0) KIZUNO_SQL_DB.kpis.inProgress -= 1;
                 showToast(`Complaint ${complaint.id} marked as RESOLVED!`, '✅');
             } else if (actionType === 'assign') {
                 complaint.timeline.push({
@@ -3690,7 +3876,7 @@
         }
 
         function viewUpdatedTimelineFromOfficer() {
-            const complaint = CIVICTRACK_DB.complaints.find(c => c.id === CIVICTRACK_DB.currentActiveActionId);
+            const complaint = KIZUNO_SQL_DB.complaints.find(c => c.id === KIZUNO_SQL_DB.currentActiveActionId);
             if (complaint) {
                 showComplaintDetails(complaint);
             }
@@ -3705,7 +3891,7 @@
             const activeTab = document.getElementById(`tab-${filter.toLowerCase().replace(' ', '-')}`);
             if (activeTab) activeTab.classList.add('active');
 
-            let list = CIVICTRACK_DB.complaints;
+            let list = KIZUNO_SQL_DB.complaints;
             if (filter !== 'All') {
                 list = list.filter(c => c.status === filter);
             }
@@ -3737,12 +3923,12 @@
         }
 
         function updateKpiCounters() {
-            document.getElementById('kpi-total').innerText = CIVICTRACK_DB.kpis.total;
-            document.getElementById('kpi-pending').innerText = CIVICTRACK_DB.kpis.pending;
-            document.getElementById('kpi-progress').innerText = CIVICTRACK_DB.kpis.inProgress;
-            document.getElementById('kpi-resolved').innerText = CIVICTRACK_DB.kpis.resolved;
-            document.getElementById('kpi-delayed').innerText = CIVICTRACK_DB.kpis.delayed;
-            document.getElementById('kpi-escalations').innerText = CIVICTRACK_DB.kpis.escalations;
+            document.getElementById('kpi-total').innerText = KIZUNO_SQL_DB.kpis.total;
+            document.getElementById('kpi-pending').innerText = KIZUNO_SQL_DB.kpis.pending;
+            document.getElementById('kpi-progress').innerText = KIZUNO_SQL_DB.kpis.inProgress;
+            document.getElementById('kpi-resolved').innerText = KIZUNO_SQL_DB.kpis.resolved;
+            document.getElementById('kpi-delayed').innerText = KIZUNO_SQL_DB.kpis.delayed;
+            document.getElementById('kpi-escalations').innerText = KIZUNO_SQL_DB.kpis.escalations;
         }
 
         function getStatusPillClass(status) {
@@ -3832,7 +4018,7 @@
             if (role === 'officer') {
                 emailInput.value = 'officer@gov.in';
             } else if (role === 'admin') {
-                emailInput.value = 'admin@civictrack.gov.in';
+                emailInput.value = 'admin@kizuno.gov.in';
             } else {
                 emailInput.value = 'citizen@gmail.com';
             }
@@ -3848,10 +4034,12 @@
             closeLoginModal();
             showToast(`Logged in as ${role}`, '👤');
 
-            if (role === 'Officer') {
+            if (role === 'Officer' || role === 'officer') {
                 switchView('officer');
+                showToast(`Welcome! Officer Command Center Loaded`, '👨‍💼');
             } else {
                 switchView('home');
+                showToast(`Welcome! Citizen Dashboard Loaded`, '✓');
             }
         }
 
@@ -3861,20 +4049,31 @@
             return String(text).replace(/[&<>"']/g, m => map[m]);
         }
 
-        // Initialize on DOM load
+                // Initialize on DOM load
         window.addEventListener('DOMContentLoaded', async () => {
+            initGoogleAuth();
             await checkBackendHealth();
 
-        // Auth restoration & Google Init
-        window.addEventListener('DOMContentLoaded', () => {
-            initGoogleAuth();
+            // Check if user is already authenticated
             const savedUser = localStorage.getItem('kizuno_auth_user');
             if (savedUser) {
                 try {
-                    applyUserSession(JSON.parse(savedUser));
-                } catch (e) {}
+                    const u = JSON.parse(savedUser);
+                    applyUserSession(u);
+                    // If user is already logged in, go directly to their dashboard!
+                    if (u.role === 'Officer') {
+                        switchView('officer');
+                    } else {
+                        switchView('home');
+                    }
+                } catch (e) {
+                    // Invalid session -> show Login start page
+                    switchView('login');
+                }
+            } else {
+                // Not logged in -> Show Login Page as the START page!
+                switchView('login');
             }
-        });
 
             renderOfficerTable();
             renderMyComplaints();

@@ -1,9 +1,11 @@
 """
-CivicTrack (Kizuna-AI) - Database Layer
-SQLite + SQLAlchemy ORM implementation for real SQL storage of grievances,
+Kizuno-AI - SQL Database Layer
+PostgreSQL & SQLite + SQLAlchemy ORM implementation for real SQL storage of grievances,
 day-wise timeline audit events, and municipal officer actions.
 """
 
+import os
+import shutil
 from datetime import datetime
 from typing import List, Optional
 from sqlalchemy import (
@@ -19,14 +21,33 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
-DATABASE_URL = "sqlite:///./civictrack.db"
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-# Enable check_same_thread=False for SQLite with FastAPI concurrent requests
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    echo=False
-)
+if DATABASE_URL:
+    # Render and Supabase provide postgres:// which SQLAlchemy 1.4+ requires as postgresql://
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    engine = create_engine(
+        DATABASE_URL,
+        pool_pre_ping=True,
+        echo=False
+    )
+    DB_DIALECT = "PostgreSQL"
+else:
+    # Use kizuno.db or fall back to existing civictrack.db
+    if os.path.exists("civictrack.db") and not os.path.exists("kizuno.db"):
+        try:
+            shutil.copyfile("civictrack.db", "kizuno.db")
+        except Exception:
+            pass
+    db_file = "./kizuno.db" if os.path.exists("kizuno.db") else "./civictrack.db"
+    DATABASE_URL = f"sqlite:///{db_file}"
+    engine = create_engine(
+        DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        echo=False
+    )
+    DB_DIALECT = "SQLite"
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

@@ -26,7 +26,8 @@ from database import (
     Complaint,
     TimelineEvent,
     Officer,
-    User
+    User,
+    DB_DIALECT
 )
 
 # Verified Google OAuth 2.0 Client ID for Kizuno-AI
@@ -173,13 +174,13 @@ def list_authenticated_users(db: Session = Depends(get_db)):
 
 @app.get("/api/health")
 def health_check(db: Session = Depends(get_db)):
-    """Health check validating Python FastAPI engine and SQLite database connectivity"""
+    """Health check validating Python FastAPI engine and SQL (PostgreSQL / SQLite) connectivity"""
     total_complaints = db.query(Complaint).count()
     total_events = db.query(TimelineEvent).count()
     return {
         "status": "online",
-        "engine": "Python 3.12 + FastAPI + SQLite",
-        "database": "civictrack.db",
+        "engine": f"FastAPI + {DB_DIALECT}",
+        "database": DB_DIALECT,
         "activeComplaintsInSQL": total_complaints,
         "timelineEventsInSQL": total_events,
         "timestamp": datetime.utcnow().isoformat()
@@ -400,10 +401,12 @@ def serve_index():
 
 
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    host = os.environ.get("HOST", "0.0.0.0")
     print("=" * 60)
-    print("Kizuno-AI Python Backend & Real SQL Server Starting...")
-    print("REST API available at: http://localhost:8000/api/health")
-    print("Frontend Application at: http://localhost:8000/")
-    print("SQL Database: civictrack.db (SQLite + SQLAlchemy)")
+    print(f"Kizuno-AI FastAPI & SQL Server Starting on port {port}...")
+    print(f"REST API available at: http://{host}:{port}/api/health")
+    print(f"Frontend Application at: http://{host}:{port}/")
+    print(f"SQL Database Dialect: {DB_DIALECT}")
     print("=" * 60)
-    uvicorn.run("server:app", host="127.0.0.1", port=8000, reload=False)
+    uvicorn.run("server:app", host=host, port=port, reload=False)
