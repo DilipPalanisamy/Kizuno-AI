@@ -1301,29 +1301,35 @@
 
         .login-role-tabs {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 0.35rem;
             background: #f1f5f9;
-            padding: 0.3rem;
-            border-radius: 10px;
+            padding: 0.35rem;
+            border-radius: 12px;
             margin-bottom: 1.5rem;
+            width: 100%;
         }
 
         .role-tab-btn {
             background: transparent;
             border: none;
-            padding: 0.45rem;
+            padding: 0.65rem 1rem;
             border-radius: 8px;
-            font-size: 0.8rem;
+            font-size: 0.875rem;
             font-weight: 700;
             color: var(--text-secondary);
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.2s ease;
         }
 
         .role-tab-btn.active {
             background: #ffffff;
             color: var(--brand-primary);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
 
         .modal-close-btn {
@@ -2044,17 +2050,15 @@
             <div class="login-role-tabs" style="margin-bottom: 1.75rem;">
                 <button type="button" class="role-tab-btn active" id="page-role-citizen" onclick="selectPageRole('citizen')">Citizen</button>
                 <button type="button" class="role-tab-btn" id="page-role-officer" onclick="selectPageRole('officer')">Officer</button>
-                
             </div>
 
-            <!-- Citizen Tab: Exactly ONE Google Button + Demo Option -->
             <!-- Citizen Tab: Gmail & Password + Continue with Google OR option + Create Account with Real Verification -->
             <div id="page-tab-citizen-content">
                 
                 <!-- 1. SIGN IN MODE (DEFAULT) -->
                 <div id="citizen-signin-container">
                     <div style="margin-bottom: 1.25rem; text-align: left;">
-                        <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">Citizen Sign In</h2>
+                        <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">Citizen Login</h2>
                         <p style="font-size: 0.825rem; color: var(--text-secondary);">Enter your verified Gmail and password to access your grievances</p>
                     </div>
 
@@ -2063,7 +2067,7 @@
                             <label class="form-label" for="login-email" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
                                 Gmail / Email Address <span style="color: var(--brand-red);">*</span>
                             </label>
-                            <input type="email" id="login-email" class="form-control" placeholder="name@gmail.com" value="kumar.citizen@gmail.com" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
+                            <input type="email" id="login-email" class="form-control" placeholder="name@gmail.com" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
                         </div>
 
                         <div class="form-group" style="text-align: left; margin-bottom: 1.25rem;">
@@ -2072,14 +2076,11 @@
                                     Password <span style="color: var(--brand-red);">*</span>
                                 </label>
                             </div>
-                            <input type="password" id="login-password" class="form-control" placeholder="••••••••" value="password123" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
-                            <div style="margin-top: 0.35rem; font-size: 0.75rem; color: var(--text-muted);">
-                                Default Demo Password: <span style="font-family: 'JetBrains Mono', monospace; color: var(--brand-primary); font-weight: 700;">password123</span>
-                            </div>
+                            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
                         </div>
 
                         <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.925rem; font-weight: 700; border-radius: var(--radius-md);">
-                            Sign In with Gmail
+                            Login
                         </button>
                     </form>
 
@@ -2091,14 +2092,9 @@
                     </div>
 
                     <!-- Single Official Google Sign-In Button Container -->
-                    <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: center; margin-bottom: 1.25rem;">
                         <div id="google-login-btn-page"></div>
                     </div>
-
-                    <!-- Quick Demo Shortcut for Testing -->
-                    <button type="button" class="btn-secondary" onclick="simulateGoogleLogin('Citizen Kumar', 'kumar.citizen@gmail.com', 'citizen')" style="width: 100%; max-width: 280px; margin: 0 auto 1.25rem auto; justify-content: center; padding: 0.65rem 1rem; font-size: 0.8rem; border-radius: 100px;">
-                        <span>👤 Quick Demo (Citizen Kumar)</span>
-                    </button>
 
                     <!-- Toggle to Create Account -->
                     <div style="text-align: center; padding-top: 1rem; border-top: 1px solid var(--border-light); font-size: 0.85rem; color: var(--text-secondary);">
@@ -2184,18 +2180,14 @@
                         <input type="password" maxlength="1" class="pin-digit" id="pp4" onkeyup="handlePagePinKey(this, 4, event)">
                     </div>
 
-                    <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem; justify-content: center;">
-                        <button type="button" class="btn-primary" onclick="submitPageOfficerPin()" style="flex: 1; justify-content: center; padding: 0.8rem;">
+                    <div style="margin-top: 1.5rem; text-align: center;">
+                        <button type="button" class="btn-primary" onclick="submitPageOfficerPin()" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; border-radius: var(--radius-md);">
                             Verify & Enter Console
-                        </button>
-                        <button type="button" class="btn-secondary" onclick="fillPageOfficerDemoPin()" style="padding: 0.8rem 1rem;" title="Fill demo PIN (1234)">
-                            Demo PIN
                         </button>
                     </div>
                 </div>
             </div>
 
-            </div>
         </div>
     </main>
 
@@ -2818,16 +2810,6 @@
                     <div style="display: flex; justify-content: center; margin-bottom: 1.25rem;">
                         <div id="google-signin-btn"></div>
                     </div>
-
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin: 1.25rem 0;">
-                        <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
-                        <span style="font-size: 0.725rem; color: var(--text-muted); text-transform: uppercase;">Or Quick Demo</span>
-                        <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
-                    </div>
-
-                    <button type="button" class="btn-secondary" onclick="simulateGoogleLogin('Citizen Kumar', 'kumar.citizen@gmail.com', 'citizen')" style="width: 100%; max-width: 280px; margin: 0 auto; justify-content: center; padding: 0.75rem 1.25rem; font-size: 0.85rem; border-radius: 100px;">
-                        <span>👤 Quick Demo Access (Kumar)</span>
-                    </button>
                 </div>
             </div>
 
@@ -2844,12 +2826,9 @@
                         <input type="password" maxlength="1" class="pin-digit" id="p4" onkeyup="handlePinKey(this, 4, event)">
                     </div>
 
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button type="button" class="btn-primary" onclick="submitOfficerPin()" style="flex: 1; justify-content: center;">
+                    <div style="margin-top: 1.25rem;">
+                        <button type="button" class="btn-primary" onclick="submitOfficerPin()" style="width: 100%; justify-content: center; padding: 0.8rem;">
                             Verify & Enter Console
-                        </button>
-                        <button type="button" class="btn-secondary" onclick="fillOfficerDemoPin()" style="padding: 0.6rem 0.9rem; font-size: 0.8rem;" title="Fill default demo PIN (1234)">
-                            Demo PIN
                         </button>
                     </div>
                 </div>
