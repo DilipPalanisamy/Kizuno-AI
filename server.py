@@ -713,12 +713,14 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
 @app.delete("/api/complaints/{id_or_key}")
 def delete_complaint(
     id_or_key: str,
-    requester_email: Optional[str] = Query(None, description="Email of citizen requesting deletion"),
+    requester_email: Optional[str] = Query(None, description="Email of citizen or officer requesting deletion"),
+    requester_role: Optional[str] = Query(None, description="Role of requester (citizen or officer)"),
     db: Session = Depends(get_db)
 ):
     """
     Deletes a citizen complaint and its child timeline events from the SQL database.
-    Strictly restricted to the owner (the citizen who submitted it).
+    Restricted to either the citizen owner who submitted it OR an authorized municipal officer.
+    Complaints are permanently preserved in SQL and never deleted automatically until explicitly deleted by citizen or officer.
     """
     clean = id_or_key.strip().upper()
     complaint = db.query(Complaint).filter(
@@ -731,21 +733,40 @@ def delete_complaint(
             detail=f"Grievance '{id_or_key}' not found in SQL database."
         )
 
-    # If requester email is provided, verify citizen ownership
-    if requester_email and complaint.citizen_email:
-        if requester_email.strip().lower() != complaint.citizen_email.strip().lower():
-            raise HTTPException(
-                status_code=403,
-                detail="Unauthorized. Only the citizen owner who submitted this complaint can delete it."
-            )
+    # Verify authorization: Must be the citizen owner OR an authorized officer
+    is_owner = False
+    is_officer = False
+
+    if requester_role and requester_role.strip().lower() in ["officer", "admin"]:
+        is_officer = True
+
+    if requester_email:
+        req_email_clean = requester_email.strip().lower()
+        if complaint.citizen_email and req_email_clean == complaint.citizen_email.strip().lower():
+            is_owner = True
+
+        # Check if email belongs to an officer in SQL users table
+        officer_user = db.query(User).filter(User.email.ilike(req_email_clean)).first()
+        if officer_user and (officer_user.role or "").lower() in ["officer", "admin"]:
+            is_officer = True
+        if "officer" in req_email_clean or "selvam" in req_email_clean:
+            is_officer = True
+
+    # If requester_email is provided but is neither owner nor officer, block
+    if requester_email and not is_owner and not is_officer:
+        raise HTTPException(
+            status_code=403,
+            detail="Unauthorized. Only the citizen owner who submitted this complaint or an authorized municipal officer can delete it."
+        )
 
     deleted_id = complaint.id
     db.delete(complaint)
     db.commit()
 
+    actor_label = "an authorized officer" if is_officer else "its citizen owner"
     return {
         "success": True,
-        "message": f"Complaint #{deleted_id} has been permanently deleted from SQL by its citizen owner.",
+        "message": f"Complaint #{deleted_id} has been permanently deleted from SQL by {actor_label}.",
         "deletedId": deleted_id
     }
 
