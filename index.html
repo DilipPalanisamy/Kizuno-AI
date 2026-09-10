@@ -12,37 +12,37 @@
         rel="stylesheet">
     <script>
         // Apply saved theme immediately to prevent any visual flash
-        // Apply saved theme immediately to prevent any visual flash (Default: dark-green)
+        // Apply saved theme immediately to prevent any visual flash (Default: mono-slate)
         (function() {
-            const saved = localStorage.getItem('kizuno_active_theme') || 'dark-green';
+            const saved = localStorage.getItem('kizuno_active_theme') || 'mono-slate';
             document.documentElement.setAttribute('data-theme', saved);
         })();
     </script>
     <style>
         :root {
-            /* Default #1 Main Theme: Dark Slate & Vivid Green */
-            --bg-canvas: #090d16;
-            --card-bg: #111827;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
+            /* Default #1 Opening Theme: Executive Slate Monochrome */
+            --bg-canvas: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
             --text-muted: #64748b;
-            --border-light: #1e293b;
-            --border-subtle: #334155;
+            --border-light: #cbd5e1;
+            --border-subtle: #94a3b8;
 
-            --brand-primary: #22c55e;
-            --brand-primary-hover: #16a34a;
-            --brand-primary-subtle: rgba(34, 197, 94, 0.12);
-            --brand-primary-border: #166534;
-            --brand-primary-text: #4ade80;
-            --brand-primary-shadow: rgba(34, 197, 94, 0.25);
-            --brand-shield-gradient: linear-gradient(135deg, #22c55e 0%, #0f172a 100%);
-            --hero-card-1: linear-gradient(135deg, #15803d 0%, #14532d 100%);
-            --hero-card-2: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            --hero-card-3: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            --brand-primary: #334155;
+            --brand-primary-hover: #1e293b;
+            --brand-primary-subtle: #e2e8f0;
+            --brand-primary-border: #cbd5e1;
+            --brand-primary-text: #0f172a;
+            --brand-primary-shadow: rgba(51, 65, 85, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #475569 0%, #0f172a 100%);
+            --hero-card-1: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            --hero-card-2: linear-gradient(135deg, #475569 0%, #334155 100%);
+            --hero-card-3: linear-gradient(135deg, #64748b 0%, #475569 100%);
 
-            --brand-green: #22c55e;
-            --brand-green-hover: #16a34a;
-            --brand-green-subtle: rgba(34, 197, 94, 0.12);
+            --brand-green: #16a34a;
+            --brand-green-hover: #15803d;
+            --brand-green-subtle: #f0fdf4;
             --brand-purple: #8b5cf6;
             --brand-purple-hover: #7c3aed;
             --brand-purple-subtle: #f5f3ff;
@@ -52,15 +52,15 @@
             --brand-red-subtle: #fef2f2;
 
             /* Status Theme */
-            --status-green: #22c55e;
-            --status-blue: #3b82f6;
-            --status-amber: #f59e0b;
-            --status-red: #ef4444;
+            --status-green: #16a34a;
+            --status-blue: #2563eb;
+            --status-amber: #d97706;
+            --status-red: #dc2626;
             --status-gray: #64748b;
 
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
             --radius-lg: 16px;
             --radius-md: 10px;
             --radius-sm: 6px;
@@ -69,8 +69,29 @@
         /* -------------------------------------------------------------
            THEME VARIATIONS (SWITCHABLE VIA THEME MENU)
            ------------------------------------------------------------- */
-        /* Theme 1 (Default / First): Dark Slate & Vivid Green */
-        [data-theme="dark-green"], :root:not([data-theme]) {
+        /* Theme 1 (Default / Opening): Executive Slate Monochrome */
+        [data-theme="mono-slate"], :root:not([data-theme]) {
+            --bg-canvas: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border-light: #cbd5e1;
+            --border-subtle: #94a3b8;
+            --brand-primary: #334155;
+            --brand-primary-hover: #1e293b;
+            --brand-primary-subtle: #e2e8f0;
+            --brand-primary-border: #cbd5e1;
+            --brand-primary-text: #0f172a;
+            --brand-primary-shadow: rgba(51, 65, 85, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #475569 0%, #0f172a 100%);
+            --hero-card-1: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            --hero-card-2: linear-gradient(135deg, #475569 0%, #334155 100%);
+            --hero-card-3: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        }
+
+        /* Theme 2: Dark Charcoal & Vivid Green */
+        [data-theme="dark-green"] {
             --bg-canvas: #090d16;
             --card-bg: #111827;
             --text-primary: #f8fafc;
@@ -90,7 +111,7 @@
             --hero-card-3: linear-gradient(135deg, #334155 0%, #1e293b 100%);
         }
 
-        /* Theme 2: Grey & Given Green (#16a34a) */
+        /* Theme 3: Grey & Given Green (#16a34a) */
         [data-theme="grey-green"] {
             --bg-canvas: #f8fafc;
             --card-bg: #ffffff;
@@ -111,7 +132,7 @@
             --hero-card-3: linear-gradient(135deg, #475569 0%, #334155 100%);
         }
 
-        /* Theme 3: Classic Civic Blue & Slate */
+        /* Theme 4: Classic Civic Blue & Slate */
         [data-theme="classic-blue"] {
             --bg-canvas: #f8fafc;
             --card-bg: #ffffff;
@@ -130,27 +151,6 @@
             --hero-card-1: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             --hero-card-2: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
             --hero-card-3: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-        }
-
-        /* Theme 4: Executive Slate Monochrome */
-        [data-theme="mono-slate"] {
-            --bg-canvas: #f1f5f9;
-            --card-bg: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #334155;
-            --text-muted: #64748b;
-            --border-light: #cbd5e1;
-            --border-subtle: #94a3b8;
-            --brand-primary: #334155;
-            --brand-primary-hover: #1e293b;
-            --brand-primary-subtle: #e2e8f0;
-            --brand-primary-border: #cbd5e1;
-            --brand-primary-text: #0f172a;
-            --brand-primary-shadow: rgba(51, 65, 85, 0.25);
-            --brand-shield-gradient: linear-gradient(135deg, #475569 0%, #0f172a 100%);
-            --hero-card-1: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-            --hero-card-2: linear-gradient(135deg, #475569 0%, #334155 100%);
-            --hero-card-3: linear-gradient(135deg, #64748b 0%, #475569 100%);
         }
 
         /* Theme 5: Forest Emerald & Warm Stone */
@@ -2407,8 +2407,8 @@
                 <!-- THEME SWITCHER DROPDOWN -->
                 <div style="position: relative;" id="theme-switcher-container">
                     <button type="button" id="theme-toggle-btn" onclick="toggleThemeMenu(event)" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-primary);" title="Switch color theme">
-                        <span id="theme-btn-icon">🌑</span>
-                        <span id="theme-btn-label">Dark Green</span>
+                        <span id="theme-btn-icon">🏛️</span>
+                        <span id="theme-btn-label">Mono Slate</span>
                         <span style="font-size: 0.65rem; opacity: 0.7;">▼</span>
                     </button>
                     <div id="theme-dropdown" class="theme-dropdown-menu" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); min-width: 315px; z-index: 200;">
@@ -2416,28 +2416,45 @@
                             <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;">
                                 Choose Project Palette
                             </span>
-                            <span style="font-size: 0.65rem; font-weight: 700; color: #4ade80;">5 Themes</span>
+                            <span style="font-size: 0.65rem; font-weight: 700; color: #64748b;">5 Themes</span>
                         </div>
 
-                        <!-- 1. Dark Slate & Green (DEFAULT / FIRST) -->
-                        <button type="button" class="theme-option-btn active" onclick="setAppTheme('dark-green')" data-theme-target="dark-green">
+                        <!-- 1. Executive Slate (DEFAULT / FIRST OPENING THEME) -->
+                        <button type="button" class="theme-option-btn active" onclick="setAppTheme('mono-slate')" data-theme-target="mono-slate">
+                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #475569 50%, #1e293b 50%); border-color: #64748b;">
+                                🏛️
+                            </span>
+                            <div class="theme-info-box">
+                                <div class="theme-name-title" style="color: #334155; font-family: 'JetBrains Mono', monospace; font-weight: 800;">
+                                    <span>Executive Slate</span>
+                                    <span class="theme-badge-default" style="background: rgba(51, 65, 85, 0.16); color: #334155;">Default</span>
+                                </div>
+                                <div class="theme-color-subtext">
+                                    <span style="color: #334155; font-weight: 700;">● #334155 Deep Slate</span>
+                                    <span>+ Monochrome</span>
+                                </div>
+                            </div>
+                            <span class="theme-check" id="check-mono-slate" style="color: #334155;">✓</span>
+                        </button>
+
+                        <!-- 2. Dark Slate & Green -->
+                        <button type="button" class="theme-option-btn" onclick="setAppTheme('dark-green')" data-theme-target="dark-green">
                             <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #22c55e 50%, #090d16 50%); border-color: #22c55e;">
                                 🌑
                             </span>
                             <div class="theme-info-box">
-                                <div class="theme-name-title" style="color: #4ade80;">
+                                <div class="theme-name-title" style="color: #22c55e;">
                                     <span>Dark Slate & Green</span>
-                                    <span class="theme-badge-default">Default</span>
                                 </div>
                                 <div class="theme-color-subtext">
                                     <span style="color: #22c55e; font-weight: 700;">● #22c55e Neon Green</span>
                                     <span>+ #090d16 Slate</span>
                                 </div>
                             </div>
-                            <span class="theme-check" id="check-dark-green" style="color: #4ade80;">✓</span>
+                            <span class="theme-check" id="check-dark-green"></span>
                         </button>
 
-                        <!-- 2. Grey & Given Green -->
+                        <!-- 3. Grey & Given Green -->
                         <button type="button" class="theme-option-btn" onclick="setAppTheme('grey-green')" data-theme-target="grey-green">
                             <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #16a34a 50%, #334155 50%); border-color: #16a34a;">
                                 🌿
@@ -2454,7 +2471,7 @@
                             <span class="theme-check" id="check-grey-green"></span>
                         </button>
 
-                        <!-- 3. Classic Civic Blue -->
+                        <!-- 4. Classic Civic Blue -->
                         <button type="button" class="theme-option-btn" onclick="setAppTheme('classic-blue')" data-theme-target="classic-blue">
                             <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #2563eb 50%, #1e293b 50%); border-color: #2563eb;">
                                 🌊
@@ -2469,23 +2486,6 @@
                                 </div>
                             </div>
                             <span class="theme-check" id="check-classic-blue"></span>
-                        </button>
-
-                        <!-- 4. Executive Slate -->
-                        <button type="button" class="theme-option-btn" onclick="setAppTheme('mono-slate')" data-theme-target="mono-slate">
-                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #475569 50%, #1e293b 50%); border-color: #64748b;">
-                                🏛️
-                            </span>
-                            <div class="theme-info-box">
-                                <div class="theme-name-title" style="color: #cbd5e1; font-family: 'JetBrains Mono', monospace;">
-                                    <span>Executive Slate</span>
-                                </div>
-                                <div class="theme-color-subtext">
-                                    <span style="color: #cbd5e1; font-weight: 700;">● #475569 Deep Slate</span>
-                                    <span>+ Monochrome</span>
-                                </div>
-                            </div>
-                            <span class="theme-check" id="check-mono-slate"></span>
                         </button>
 
                         <!-- 5. Forest Emerald -->
@@ -2538,8 +2538,8 @@
         <div class="login-card-standalone" style="position: relative;">
             <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
                 <button type="button" onclick="cycleNextTheme()" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-secondary);" title="Click to cycle theme color">
-                    <span id="login-theme-icon">🌑</span>
-                    <span id="login-theme-label">Dark Green</span>
+                    <span id="login-theme-icon">🏛️</span>
+                    <span id="login-theme-label">Mono Slate</span>
                     <span>↻</span>
                 </button>
             </div>
@@ -5961,13 +5961,13 @@
         }
 
         // ========================================================
-        // THEME MANAGEMENT (Dark Slate & Vivid Green Main + 5 Palettes)
+        // THEME MANAGEMENT (Executive Slate Opening Theme + 5 Palettes)
         // ========================================================
         const THEMES = [
-            { id: 'dark-green', name: 'Dark Slate & Green (Default)', shortName: 'Dark Green', icon: '🌑' },
+            { id: 'mono-slate', name: 'Executive Slate (Default)', shortName: 'Mono Slate', icon: '🏛️' },
+            { id: 'dark-green', name: 'Dark Slate & Green', shortName: 'Dark Green', icon: '🌑' },
             { id: 'grey-green', name: 'Grey & Given Green', shortName: 'Grey & Green', icon: '🌿' },
             { id: 'classic-blue', name: 'Classic Civic Blue', shortName: 'Civic Blue', icon: '🌊' },
-            { id: 'mono-slate', name: 'Executive Slate', shortName: 'Mono Slate', icon: '🏛️' },
             { id: 'forest-emerald', name: 'Forest Emerald', shortName: 'Emerald', icon: '🌲' }
         ];
 
@@ -6017,14 +6017,14 @@
         }
 
         function cycleNextTheme() {
-            const current = localStorage.getItem('kizuno_active_theme') || 'dark-green';
+            const current = localStorage.getItem('kizuno_active_theme') || 'mono-slate';
             const currentIndex = THEMES.findIndex(t => t.id === current);
             const nextIndex = (currentIndex + 1) % THEMES.length;
             setAppTheme(THEMES[nextIndex].id, true);
         }
 
         function initAppTheme() {
-            const saved = localStorage.getItem('kizuno_active_theme') || 'dark-green';
+            const saved = localStorage.getItem('kizuno_active_theme') || 'mono-slate';
             setAppTheme(saved, false);
 
             // Close dropdown when clicking outside
