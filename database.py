@@ -292,12 +292,16 @@ def init_db():
         existing_officer = db.query(Officer).first()
         if not existing_officer:
             officer1 = Officer(
-                name="R. Selvam",
-                email="officer@gov.in",
+                name="DILIP",
+                email="dilip.officer@gov.in",
                 department="Coimbatore Corporation Electrical Wing",
                 role="Junior Engineer"
             )
             db.add(officer1)
+            db.commit()
+        elif existing_officer.name != "DILIP":
+            existing_officer.name = "DILIP"
+            existing_officer.email = "dilip.officer@gov.in"
             db.commit()
 
         # Database starts with 0 complaints by default. Complaints only appear when submitted by users.

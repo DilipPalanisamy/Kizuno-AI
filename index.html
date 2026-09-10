@@ -3267,9 +3267,9 @@
             <!-- Sidebar (Screen 7 Left) -->
             <aside class="officer-sidebar">
                 <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.5rem; padding: 0 0.5rem;">
-                    <div class="user-avatar" style="background: #1e293b;">O</div>
+                    <div class="user-avatar" id="officer-sidebar-avatar" style="background: #1e293b;">D</div>
                     <div>
-                        <div style="font-size: 0.875rem; font-weight: 800;">Officer R. Selvam</div>
+                        <div id="officer-sidebar-name" style="font-size: 0.875rem; font-weight: 800;">Officer DILIP</div>
                         <div style="font-size: 0.7rem; color: var(--text-muted);">Coimbatore Corporation</div>
                     </div>
                 </div>
@@ -4570,6 +4570,12 @@
 
             // Role-based Dashboard & Navigation Differentiation:
             const isOfficer = (user.role === 'Officer' || user.role === 'officer');
+            if (isOfficer) {
+                const offNameEl = document.getElementById('officer-sidebar-name');
+                if (offNameEl && user.name) offNameEl.innerText = user.name;
+                const offAvatarEl = document.getElementById('officer-sidebar-avatar');
+                if (offAvatarEl && user.name) offAvatarEl.innerText = user.name.replace('Officer', '').trim().charAt(0).toUpperCase() || 'D';
+            }
             const navOfficerBtn = document.getElementById('nav-officer');
             const navSubmitBtn = document.getElementById('nav-submit');
             const navMyBtn = document.getElementById('nav-my');
@@ -4757,7 +4763,7 @@
                 (document.getElementById('pp3').value || '') +
                 (document.getElementById('pp4').value || '');
             if (pin === '1234') {
-                simulateGoogleLogin('Officer R. Selvam', 'selvam.officer@gov.in', 'officer');
+                simulateGoogleLogin('Officer DILIP', 'dilip.officer@gov.in', 'officer');
             } else {
                 showToast('Invalid PIN. Please enter your 4-digit authorization PIN.', '⚠️');
                 ['pp1', 'pp2', 'pp3', 'pp4'].forEach(id => {
@@ -4787,7 +4793,7 @@
                 (document.getElementById('p3').value || '') +
                 (document.getElementById('p4').value || '');
             if (pin === '1234') {
-                simulateGoogleLogin('Officer R. Selvam', 'selvam.officer@gov.in', 'officer');
+                simulateGoogleLogin('Officer DILIP', 'dilip.officer@gov.in', 'officer');
             } else {
                 showToast('Invalid PIN. Please enter your 4-digit authorization PIN.', '⚠️');
                 ['p1', 'p2', 'p3', 'p4'].forEach(id => {
@@ -5574,7 +5580,7 @@
                             complaint_id: complaintId,
                             action_type: actionType,
                             comments: comments,
-                            officer_name: "Officer R. Selvam"
+                            officer_name: "Officer DILIP"
                         })
                     });
                     if (res.ok) {
@@ -5631,7 +5637,7 @@
                     tagType: "tag-verified",
                     tagText: "Verified Event",
                     title: "Assigned to Field Unit",
-                    desc: comments || "Allocated to Junior Engineer R. Selvam."
+                    desc: comments || "Allocated to Junior Engineer DILIP."
                 });
                 showToast(`Officer assigned to ${complaint.id}`, '👤');
             } else if (actionType === 'progress') {
@@ -5780,7 +5786,7 @@
 
             if (isBackendConnected) {
                 try {
-                    const userEmailParam = encodeURIComponent(authUser.email || (isOfficer ? 'officer.selvam@coimbatorecorp.gov.in' : 'kumar.citizen@gmail.com'));
+                    const userEmailParam = encodeURIComponent(authUser.email || (isOfficer ? 'officer.dilip@coimbatorecorp.gov.in' : 'kumar.citizen@gmail.com'));
                     const roleParam = encodeURIComponent(authUser.role || (isOfficer ? 'officer' : 'citizen'));
                     const res = await fetch(`${API_BASE}/complaints/${encodeURIComponent(id)}?requester_email=${userEmailParam}&requester_role=${roleParam}`, {
                         method: 'DELETE'

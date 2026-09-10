@@ -261,7 +261,7 @@ class OfficerUpdateDTO(BaseModel):
     complaint_id: str
     action_type: str  # assign, start, progress, resolve
     comments: Optional[str] = None
-    officer_name: Optional[str] = "Officer R. Selvam"
+    officer_name: Optional[str] = "Officer DILIP"
 
 
 class GoogleAuthDTO(BaseModel):
@@ -749,7 +749,7 @@ def delete_complaint(
         officer_user = db.query(User).filter(User.email.ilike(req_email_clean)).first()
         if officer_user and (officer_user.role or "").lower() in ["officer", "admin"]:
             is_officer = True
-        if "officer" in req_email_clean or "selvam" in req_email_clean:
+        if "officer" in req_email_clean or "dilip" in req_email_clean or "selvam" in req_email_clean:
             is_officer = True
 
     # If requester_email is provided but is neither owner nor officer, block
