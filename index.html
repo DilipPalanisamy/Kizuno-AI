@@ -7,7 +7,9 @@
     <title>Kizuno-AI — Evidence-Based Citizen Grievance Tracking Engine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-canvas: #f8fafc;
@@ -253,8 +255,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ----------------------------------------------------
@@ -837,10 +846,29 @@
             gap: 0.4rem;
         }
 
-        .status-pill.delayed { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-        .status-pill.resolved { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-        .status-pill.in-progress { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
-        .status-pill.pending { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+        .status-pill.delayed {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .status-pill.resolved {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .status-pill.in-progress {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        .status-pill.pending {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
 
         .priority-badge {
             padding: 0.2rem 0.6rem;
@@ -850,10 +878,25 @@
             display: inline-block;
         }
 
-        .priority-badge.Medium { background: #fef3c7; color: #b45309; }
-        .priority-badge.High { background: #fee2e2; color: #b91c1c; }
-        .priority-badge.Critical { background: #7f1d1d; color: #ffffff; }
-        .priority-badge.Low { background: #f1f5f9; color: #475569; }
+        .priority-badge.Medium {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .priority-badge.High {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .priority-badge.Critical {
+            background: #7f1d1d;
+            color: #ffffff;
+        }
+
+        .priority-badge.Low {
+            background: #f1f5f9;
+            color: #475569;
+        }
 
         /* Day-Wise Timeline Styling */
         .timeline-box {
@@ -909,13 +952,42 @@
         }
 
         /* Timeline Node Flavors */
-        .timeline-node.submitted::before { border-color: var(--status-green); background: var(--status-green); }
-        .timeline-node.forwarded::before { border-color: var(--status-blue); background: var(--status-blue); }
-        .timeline-node.stationary::before { border-color: var(--status-gray); background: #ffffff; border-style: dashed; }
-        .timeline-node.delayed::before { border-color: var(--status-amber); background: var(--status-amber); }
-        .timeline-node.escalated::before { border-color: var(--status-red); background: var(--status-red); }
-        .timeline-node.work-started::before { border-color: var(--brand-primary); background: var(--brand-primary); }
-        .timeline-node.resolved::before { border-color: var(--status-green); background: var(--status-green); box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2); }
+        .timeline-node.submitted::before {
+            border-color: var(--status-green);
+            background: var(--status-green);
+        }
+
+        .timeline-node.forwarded::before {
+            border-color: var(--status-blue);
+            background: var(--status-blue);
+        }
+
+        .timeline-node.stationary::before {
+            border-color: var(--status-gray);
+            background: #ffffff;
+            border-style: dashed;
+        }
+
+        .timeline-node.delayed::before {
+            border-color: var(--status-amber);
+            background: var(--status-amber);
+        }
+
+        .timeline-node.escalated::before {
+            border-color: var(--status-red);
+            background: var(--status-red);
+        }
+
+        .timeline-node.work-started::before {
+            border-color: var(--brand-primary);
+            background: var(--brand-primary);
+        }
+
+        .timeline-node.resolved::before {
+            border-color: var(--status-green);
+            background: var(--status-green);
+            box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2);
+        }
 
         .timeline-meta {
             display: flex;
@@ -949,10 +1021,25 @@
             text-transform: uppercase;
         }
 
-        .tag-verified { background: #dbeafe; color: #1e40af; }
-        .tag-stationary { background: #e2e8f0; color: #475569; }
-        .tag-ai-inference { background: #fef3c7; color: #92400e; }
-        .tag-escalated { background: #fee2e2; color: #991b1b; }
+        .tag-verified {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .tag-stationary {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .tag-ai-inference {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tag-escalated {
+            background: #fee2e2;
+            color: #991b1b;
+        }
 
         .timeline-event-name {
             font-size: 0.975rem;
@@ -1023,7 +1110,8 @@
             transition: all 0.15s ease;
         }
 
-        .sidebar-item:hover, .sidebar-item.active {
+        .sidebar-item:hover,
+        .sidebar-item.active {
             background: var(--brand-primary-subtle);
             color: var(--brand-primary);
             font-weight: 700;
@@ -1061,11 +1149,25 @@
             line-height: 1;
         }
 
-        .kpi-number.pending { color: var(--brand-amber); }
-        .kpi-number.in-progress { color: var(--brand-primary); }
-        .kpi-number.resolved { color: var(--brand-green); }
-        .kpi-number.delayed { color: #ea580c; }
-        .kpi-number.escalations { color: var(--brand-red); }
+        .kpi-number.pending {
+            color: var(--brand-amber);
+        }
+
+        .kpi-number.in-progress {
+            color: var(--brand-primary);
+        }
+
+        .kpi-number.resolved {
+            color: var(--brand-green);
+        }
+
+        .kpi-number.delayed {
+            color: #ea580c;
+        }
+
+        .kpi-number.escalations {
+            color: var(--brand-red);
+        }
 
         /* Complaints Table */
         .table-responsive {
@@ -1363,8 +1465,15 @@
         }
 
         @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         /* Responsive Breakpoints */
@@ -1372,9 +1481,11 @@
             .public-view-grid {
                 grid-template-columns: 1fr;
             }
+
             .officer-layout {
                 grid-template-columns: 1fr;
             }
+
             .keys-grid {
                 grid-template-columns: 1fr;
             }
@@ -1384,20 +1495,24 @@
             .hero-title {
                 font-size: 2rem;
             }
+
             .action-cards-grid {
                 grid-template-columns: 1fr;
             }
+
             .nav-links {
                 display: none;
             }
+
             .track-search-form {
                 flex-direction: column;
             }
+
             .keys-actions {
                 flex-direction: column;
             }
         }
-    
+
         /* ========================================================
            DAYS AS FIRST: E-COMMERCE STEPPER & TIMELINE STYLES
            ======================================================== */
@@ -1512,9 +1627,17 @@
         }
 
         @keyframes pulse-step {
-            0% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4); }
-            70% { box-shadow: 0 0 0 8px rgba(217, 119, 6, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(217, 119, 6, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
+            }
         }
 
         .step-label {
@@ -1629,9 +1752,17 @@
         }
 
         @keyframes pulse-ring {
-            0% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4); }
-            70% { box-shadow: 0 0 0 8px rgba(217, 119, 6, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(217, 119, 6, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
+            }
         }
 
         .event-meta {
@@ -1955,7 +2086,7 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
-    
+
         /* Dedicated Full-Screen Login / Sign-Up View (No Navbar) */
         #view-login {
             min-height: 100vh;
@@ -1979,7 +2110,6 @@
             box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
             padding: 2.75rem 2.25rem;
         }
-
     </style>
     <!-- Official Google Identity Services SDK -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1990,9 +2120,10 @@
     <!-- TOP APPLICATION NAVBAR -->
     <nav class="app-nav" id="main-app-nav" style="display: none;">
         <div class="nav-container">
-            <a class="brand-logo" onclick="switchView('home')">
+            <a class="brand-logo" onclick="switchView('dashboard')">
                 <div class="brand-shield">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
                 </div>
@@ -2003,10 +2134,13 @@
             </a>
 
             <div class="nav-links">
-                <button type="button" class="nav-btn" id="nav-home" onclick="switchView('home')">Home</button>
-                <button type="button" class="nav-btn" id="nav-track" onclick="switchView('track')">Track Complaint</button>
-                <button type="button" class="nav-btn" id="nav-submit" onclick="switchView('submit')">Submit Complaint</button>
-                <button type="button" class="nav-btn" id="nav-my" onclick="switchView('my-complaints')">My Complaints</button>
+                <button type="button" class="nav-btn active" id="nav-dashboard" onclick="switchView('dashboard')">📊 Dashboard</button>
+                <button type="button" class="nav-btn" id="nav-track" onclick="switchView('track')">Track
+                    Complaint</button>
+                <button type="button" class="nav-btn" id="nav-submit" onclick="switchView('submit')">Submit
+                    Complaint</button>
+                <button type="button" class="nav-btn" id="nav-my" onclick="switchView('my-complaints')">My
+                    Complaints</button>
                 <button type="button" class="nav-btn officer-btn" id="nav-officer" onclick="switchView('officer')">
                     👨‍💼 Officer Portal
                 </button>
@@ -2020,7 +2154,9 @@
                 <div class="user-pill" id="nav-user-pill" style="cursor: pointer;">
                     <div class="user-avatar" id="nav-user-initial">C</div>
                     <span id="nav-user-name">Citizen View</span>
-                    <button type="button" onclick="event.stopPropagation(); userSignOut();" style="background: rgba(0,0,0,0.06); border: 1px solid var(--border-light); padding: 0.2rem 0.55rem; border-radius: 9999px; font-size: 0.725rem; font-weight: 700; cursor: pointer; color: var(--text-secondary); margin-left: 0.35rem;" title="Sign out of account">
+                    <button type="button" onclick="event.stopPropagation(); userSignOut();"
+                        style="background: rgba(0,0,0,0.06); border: 1px solid var(--border-light); padding: 0.2rem 0.55rem; border-radius: 9999px; font-size: 0.725rem; font-weight: 700; cursor: pointer; color: var(--text-secondary); margin-left: 0.35rem;"
+                        title="Sign out of account">
                         Sign Out
                     </button>
                 </div>
@@ -2031,63 +2167,94 @@
     <!-- ========================================================
          VIEW 1: HOME / LANDING PAGE (Screen 1)
          ======================================================== -->
-        <!-- ========================================================
+    <!-- ========================================================
          VIEW 0: LOGIN & AUTHENTICATION LANDING SCREEN (START PAGE)
          ======================================================== -->
-        <main class="app-view active" id="view-login">
+    <main class="app-view active" id="view-login">
         <div class="login-card-standalone">
             <div style="text-align: center; margin-bottom: 2rem;">
-                <div class="brand-shield" style="margin: 0 auto 1rem auto; width: 50px; height: 50px; border-radius: 12px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <div class="brand-shield"
+                    style="margin: 0 auto 1rem auto; width: 50px; height: 50px; border-radius: 12px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
                 </div>
-                <h1 style="font-size: 1.65rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem; letter-spacing: -0.02em;">Kizuno-AI Redressal Portal</h1>
-                <p style="font-size: 0.885rem; color: var(--text-secondary);">Evidence-Based Grievance & Day-Wise Audit Engine</p>
+                <h1
+                    style="font-size: 1.65rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem; letter-spacing: -0.02em;">
+                    Kizuno-AI</h1>
+                <p style="font-size: 0.885rem; color: var(--text-secondary);">Welcome to Kizuno-AI</p>
             </div>
 
             <!-- Role Tabs -->
             <div class="login-role-tabs" style="margin-bottom: 1.75rem;">
-                <button type="button" class="role-tab-btn active" id="page-role-citizen" onclick="selectPageRole('citizen')">Citizen</button>
-                <button type="button" class="role-tab-btn" id="page-role-officer" onclick="selectPageRole('officer')">Officer</button>
+                <button type="button" class="role-tab-btn active" id="page-role-citizen"
+                    onclick="selectPageRole('citizen')">Citizen</button>
+                <button type="button" class="role-tab-btn" id="page-role-officer"
+                    onclick="selectPageRole('officer')">Officer</button>
             </div>
 
             <!-- Citizen Tab: Gmail & Password + Continue with Google OR option + Create Account with Real Verification -->
             <div id="page-tab-citizen-content">
-                
+
                 <!-- 1. SIGN IN MODE (DEFAULT) -->
                 <div id="citizen-signin-container">
                     <div style="margin-bottom: 1.25rem; text-align: left;">
-                        <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">Citizen Login</h2>
-                        <p style="font-size: 0.825rem; color: var(--text-secondary);">Enter your verified Gmail and password to access your grievances</p>
+                        <h2
+                            style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">
+                            Citizen Login</h2>
+                        <p style="font-size: 0.825rem; color: var(--text-secondary);"></p>
                     </div>
 
                     <form id="citizen-signin-form" onsubmit="handleCitizenPasswordLogin(event); return false;">
                         <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
-                            <label class="form-label" for="login-email" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
+                            <label class="form-label" for="login-email"
+                                style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
                                 Gmail Address <span style="color: var(--brand-red);">*</span>
                             </label>
-                            <input type="email" id="login-email" class="form-control" placeholder="name@gmail.com" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
+                            <input type="email" id="login-email" class="form-control" placeholder="name@gmail.com"
+                                required
+                                style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
                         </div>
 
                         <div class="form-group" style="text-align: left; margin-bottom: 1.25rem;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-                                <label class="form-label" for="login-password" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                                <label class="form-label" for="login-password"
+                                    style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0;">
                                     Password <span style="color: var(--brand-red);">*</span>
                                 </label>
                             </div>
-                            <input type="password" id="login-password" class="form-control" placeholder="••••••••" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
+                            <input type="password" id="login-password" class="form-control" placeholder="••••••••"
+                                required
+                                style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
                         </div>
 
-                        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.925rem; font-weight: 700; border-radius: var(--radius-md);">
+                        <button type="submit" class="btn-primary"
+                            style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.925rem; font-weight: 700; border-radius: var(--radius-md);">
                             Login
                         </button>
+
+                        <!-- 1-Click Quick Demo Citizen Login -->
+                        <div style="margin-top: 0.85rem; padding: 0.75rem 0.85rem; background: #f0fdf4; border: 1px dashed #86efac; border-radius: var(--radius-md); text-align: center;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #166534; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                                <span>⚡</span><span>Quick Demo Access (1-Click)</span>
+                            </div>
+                            <button type="button" onclick="quickLoginAsCitizen()" class="btn-secondary" style="width: 100%; justify-content: center; padding: 0.55rem 0.75rem; font-size: 0.825rem; font-weight: 700; color: #15803d; border-color: #86efac; background: #ffffff; cursor: pointer; border-radius: var(--radius-sm);">
+                                Login as Demo Citizen (Citizen Kumar)
+                            </button>
+                            <div style="font-size: 0.7rem; color: #166534; margin-top: 0.3rem; font-family: 'JetBrains Mono', monospace;">
+                                kumar.citizen@gmail.com / password123
+                            </div>
+                        </div>
                     </form>
 
                     <!-- OR CONTINUE WITH DIVIDER -->
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin: 1.5rem 0 1.25rem 0;">
                         <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
-                        <span style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">OR CONTINUE WITH</span>
+                        <span
+                            style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">OR
+                            CONTINUE WITH</span>
                         <hr style="flex: 1; border: none; border-top: 1px solid var(--border-light);">
                     </div>
 
@@ -2097,73 +2264,105 @@
                     </div>
 
                     <!-- Toggle to Create Account -->
-                    <div style="text-align: center; padding-top: 1rem; border-top: 1px solid var(--border-light); font-size: 0.85rem; color: var(--text-secondary);">
-                        Don't have an account? <button type="button" onclick="showCitizenAuthMode('signup')" style="background: none; border: none; color: var(--brand-primary); font-weight: 800; cursor: pointer; text-decoration: underline;">Create Account</button>
+                    <div
+                        style="text-align: center; padding-top: 1rem; border-top: 1px solid var(--border-light); font-size: 0.85rem; color: var(--text-secondary);">
+                        Don't have an account? <button type="button" onclick="showCitizenAuthMode('signup')"
+                            style="background: none; border: none; color: var(--brand-primary); font-weight: 800; cursor: pointer; text-decoration: underline;">Create
+                            Account</button>
                     </div>
                 </div>
 
                 <!-- 2. CREATE ACCOUNT MODE (WITH REAL GMAIL VERIFICATION) -->
                 <div id="citizen-signup-container" style="display: none;">
                     <div style="margin-bottom: 1.25rem; text-align: left;">
-                        <h2 style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">Create Citizen Account</h2>
-                        <p style="font-size: 0.825rem; color: var(--text-secondary);">Enter your details and verify your real Gmail address with an OTP code</p>
+                        <h2
+                            style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">
+                            Create Citizen Account</h2>
+                        <p style="font-size: 0.825rem; color: var(--text-secondary);">Enter your details and verify your
+                            real Gmail address with an OTP code</p>
                     </div>
 
                     <form id="citizen-signup-form" onsubmit="event.preventDefault(); return false;">
                         <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
-                            <label class="form-label" for="signup-username" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
+                            <label class="form-label" for="signup-username"
+                                style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
                                 Username / Full Name <span style="color: var(--brand-red);">*</span>
                             </label>
-                            <input type="text" id="signup-username" class="form-control" placeholder="e.g. Ramesh Kumar" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
+                            <input type="text" id="signup-username" class="form-control" placeholder="e.g. Ramesh Kumar"
+                                required
+                                style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
                         </div>
 
                         <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
-                            <label class="form-label" for="signup-email" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
+                            <label class="form-label" for="signup-email"
+                                style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
                                 Gmail Address <span style="color: var(--brand-red);">*</span>
                             </label>
-                            <input type="email" id="signup-email" class="form-control" placeholder="yourname@gmail.com" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
+                            <input type="email" id="signup-email" class="form-control" placeholder="yourname@gmail.com"
+                                required
+                                style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
                         </div>
 
                         <div class="form-group" style="text-align: left; margin-bottom: 1.25rem;">
-                            <label class="form-label" for="signup-password" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
+                            <label class="form-label" for="signup-password"
+                                style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
                                 Create Password <span style="color: var(--brand-red);">*</span>
                             </label>
-                            <input type="password" id="signup-password" class="form-control" placeholder="At least 6 characters" minlength="6" required style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
+                            <input type="password" id="signup-password" class="form-control"
+                                placeholder="At least 6 characters" minlength="6" required
+                                style="padding: 0.75rem 1rem; font-size: 0.9rem; border-radius: var(--radius-sm);">
                         </div>
 
-                        <button type="button" id="btn-request-otp" onclick="requestGmailVerificationCode(event)" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.925rem; font-weight: 700; border-radius: var(--radius-md);">
+                        <button type="button" id="btn-request-otp" onclick="requestGmailVerificationCode(event)"
+                            class="btn-primary"
+                            style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.925rem; font-weight: 700; border-radius: var(--radius-md);">
                             Send Gmail Verification Code
                         </button>
                     </form>
 
-                    <!-- Real 6-Digit Verification Code Section (Revealed after Requesting Code) -->
-                    <div id="signup-otp-section" style="display: none; margin-top: 1.25rem; padding: 1.25rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); text-align: center;">
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.4rem;">
-                            <span style="font-size: 1.2rem;">✉️</span>
-                            <span style="font-size: 0.875rem; font-weight: 800; color: #1e40af;">Enter 6-Digit Verification Code</span>
+                    <!-- Real 6-Digit Verification Code Section (Revealed after Requesting Code, form is hidden) -->
+                    <div id="signup-otp-section"
+                        style="display: none; margin-top: 1.25rem; padding: 1.5rem 1.25rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); text-align: center;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.35rem;">✉️</span>
+                            <span style="font-size: 1rem; font-weight: 800; color: #1e40af;">Check Your Email Inbox</span>
                         </div>
-                        <p id="otp-sent-status" style="font-size: 0.775rem; color: #2563eb; margin-bottom: 0.85rem;">
-                            A 6-digit code has been sent to your Gmail address.
+                        <p id="otp-sent-status" style="font-size: 0.825rem; color: #1e3a8a; margin-bottom: 1.15rem; line-height: 1.45;">
+                            A 6-digit verification code has been dispatched to <strong id="otp-target-email" style="color: #1d4ed8; word-break: break-all;">your Gmail address</strong>. Please check your inbox and enter it below.
                         </p>
 
-                        <div id="otp-dev-hint" style="display: none; background: #ffffff; border: 1px dashed #93c5fd; border-radius: 6px; padding: 0.6rem; margin-bottom: 0.85rem; font-size: 0.85rem; color: #1e40af; text-align: center;"></div>
+                        <div style="margin-bottom: 1.15rem; text-align: left;">
+                            <label for="signup-otp-code" style="font-size: 0.775rem; font-weight: 700; color: #1e40af; display: block; margin-bottom: 0.35rem; text-align: center;">
+                                Enter 6-Digit Code from Email:
+                            </label>
+                            <input type="text" maxlength="6" id="signup-otp-code" class="form-control" placeholder="••••••"
+                                style="text-align: center; font-size: 1.6rem; font-weight: 800; letter-spacing: 0.35em; font-family: 'JetBrains Mono', monospace; padding: 0.65rem 1rem; background: #ffffff; border: 1.5px solid #93c5fd; border-radius: var(--radius-sm); width: 100%; box-sizing: border-box;">
+                        </div>
 
-                        <input type="text" maxlength="6" id="signup-otp-code" class="form-control" placeholder="••••••" style="text-align: center; font-size: 1.5rem; font-weight: 800; letter-spacing: 0.35em; font-family: 'JetBrains Mono', monospace; padding: 0.65rem 1rem; margin-bottom: 1rem; background: #ffffff;">
-
-                        <button type="button" class="btn-primary" onclick="completeCitizenRegistration(event)" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 800; background: var(--brand-green); border-color: var(--brand-green);">
-                            ✓ Verify Gmail & Create Account
+                        <button type="button" id="btn-verify-otp" class="btn-primary" onclick="completeCitizenRegistration(event)"
+                            style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 800; background: var(--brand-green); border-color: var(--brand-green); font-size: 0.925rem; cursor: pointer;">
+                            ✓ Verify Code & Create Account
                         </button>
 
-                        <div style="margin-top: 0.75rem;">
-                            <button type="button" onclick="requestGmailVerificationCode(event, true)" style="background: none; border: none; font-size: 0.775rem; color: var(--brand-primary); font-weight: 700; cursor: pointer; text-decoration: underline;">
-                                🔄 Resend Verification Code
+                        <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.775rem;">
+                            <button type="button" onclick="editSignupDetails()"
+                                style="background: none; border: none; color: #475569; font-weight: 700; cursor: pointer; text-decoration: underline;">
+                                ← Change Details
+                            </button>
+                            <button type="button" onclick="requestGmailVerificationCode(event, true)"
+                                style="background: none; border: none; color: var(--brand-primary); font-weight: 700; cursor: pointer; text-decoration: underline;">
+                                🔄 Resend Code
                             </button>
                         </div>
                     </div>
 
                     <!-- Toggle to Sign In -->
-                    <div style="text-align: center; padding-top: 1rem; border-top: 1px solid var(--border-light); font-size: 0.85rem; color: var(--text-secondary); margin-top: 1.25rem;">
-                        Already have an account? <button type="button" onclick="showCitizenAuthMode('signin')" style="background: none; border: none; color: var(--brand-primary); font-weight: 800; cursor: pointer; text-decoration: underline;">Sign In</button>
+                    <div
+                        style="text-align: center; padding-top: 1rem; border-top: 1px solid var(--border-light); font-size: 0.85rem; color: var(--text-secondary); margin-top: 1.25rem;">
+                        Already have an account? <button type="button" onclick="showCitizenAuthMode('signin')"
+                            style="background: none; border: none; color: var(--brand-primary); font-weight: 800; cursor: pointer; text-decoration: underline;">Sign
+                            In</button>
                     </div>
                 </div>
 
@@ -2176,16 +2375,34 @@
                         Enter 4-Digit Municipal Officer Authorization PIN:
                     </p>
                     <div class="pin-boxes">
-                        <input type="password" maxlength="1" class="pin-digit" id="pp1" onkeyup="handlePagePinKey(this, 1, event)">
-                        <input type="password" maxlength="1" class="pin-digit" id="pp2" onkeyup="handlePagePinKey(this, 2, event)">
-                        <input type="password" maxlength="1" class="pin-digit" id="pp3" onkeyup="handlePagePinKey(this, 3, event)">
-                        <input type="password" maxlength="1" class="pin-digit" id="pp4" onkeyup="handlePagePinKey(this, 4, event)">
+                        <input type="password" maxlength="1" class="pin-digit" id="pp1"
+                            onkeyup="handlePagePinKey(this, 1, event)">
+                        <input type="password" maxlength="1" class="pin-digit" id="pp2"
+                            onkeyup="handlePagePinKey(this, 2, event)">
+                        <input type="password" maxlength="1" class="pin-digit" id="pp3"
+                            onkeyup="handlePagePinKey(this, 3, event)">
+                        <input type="password" maxlength="1" class="pin-digit" id="pp4"
+                            onkeyup="handlePagePinKey(this, 4, event)">
                     </div>
 
                     <div style="margin-top: 1.5rem; text-align: center;">
-                        <button type="button" class="btn-primary" onclick="submitPageOfficerPin()" style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; border-radius: var(--radius-md);">
+                        <button type="button" class="btn-primary" onclick="submitPageOfficerPin()"
+                            style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; border-radius: var(--radius-md);">
                             Verify & Enter Console
                         </button>
+
+                        <!-- 1-Click Quick Demo Officer Login -->
+                        <div style="margin-top: 1rem; padding: 0.75rem 0.85rem; background: #eff6ff; border: 1px dashed #93c5fd; border-radius: var(--radius-md); text-align: center;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #1e40af; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                                <span>⚡</span><span>Official Demo Access (1-Click)</span>
+                            </div>
+                            <button type="button" onclick="quickLoginAsOfficer()" class="btn-secondary" style="width: 100%; justify-content: center; padding: 0.55rem 0.75rem; font-size: 0.825rem; font-weight: 700; color: #1d4ed8; border-color: #93c5fd; background: #ffffff; cursor: pointer; border-radius: var(--radius-sm);">
+                                Login as Municipal Officer (PIN: 1234)
+                            </button>
+                            <div style="font-size: 0.7rem; color: #1e40af; margin-top: 0.3rem; font-family: 'JetBrains Mono', monospace;">
+                                Officer R. Selvam • Electrical Wing
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2193,44 +2410,72 @@
         </div>
     </main>
 
-    <main class="app-view" id="view-home">
-        <div class="hero-banner">
-            <div id="citizen-dashboard-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.825rem; font-weight: 700; color: var(--brand-primary); margin-bottom: 1rem;">
-                <span>👤 Citizen Redressal Portal</span>
+    <main class="app-view" id="view-dashboard">
+        <div class="hero-banner" style="max-width: 1050px; margin: 0 auto;">
+            <div id="citizen-dashboard-badge"
+                style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.825rem; font-weight: 700; color: var(--brand-primary); margin-bottom: 0.85rem;">
+                <span>📊 Citizen Dashboard</span>
                 <span>•</span>
                 <span id="home-user-greeting">Welcome, Citizen Kumar!</span>
             </div>
-            <h1 class="hero-title">Report Issues.<br>Track Progress. Build a Better City.</h1>
-            <p class="hero-subtitle">Your personal civic portal to register grievances, monitor day-wise progress live from municipal SQL, and manage your reported complaints.</p>
+            <h1 class="hero-title" id="dashboard-user-greeting" style="font-size: 2.2rem; margin-bottom: 0.35rem; letter-spacing: -0.02em;">Welcome to your Dashboard</h1>
+            <p class="hero-subtitle" style="max-width: 680px; margin: 0 auto 1.5rem auto;">Monitor live day-wise municipal progress on your grievances, track SLA accountability, and submit new complaints.</p>
 
             <!-- Personalized Citizen Live Tracker Stats Strip -->
-            <div id="citizen-live-stats" style="display: flex; justify-content: center; gap: 1.25rem; margin: 1.75rem 0 2rem 0; flex-wrap: wrap;">
-                <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">My Active Issues</div>
-                    <div id="my-stat-active" style="font-size: 1.6rem; font-weight: 800; color: var(--brand-primary); font-family: 'JetBrains Mono', monospace;">1</div>
+            <div id="citizen-live-stats"
+                style="display: flex; justify-content: center; gap: 1rem; margin: 1.5rem 0 2rem 0; flex-wrap: wrap;">
+                <div
+                    style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
+                    <div
+                        style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em;">
+                        My Active Issues</div>
+                    <div id="my-stat-active"
+                        style="font-size: 1.65rem; font-weight: 800; color: var(--brand-primary); font-family: 'JetBrains Mono', monospace; margin-top: 0.2rem;">
+                        1</div>
                 </div>
-                <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Under Inspection</div>
-                    <div id="my-stat-review" style="font-size: 1.6rem; font-weight: 800; color: var(--brand-amber); font-family: 'JetBrains Mono', monospace;">1</div>
+                <div
+                    style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
+                    <div
+                        style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em;">
+                        Under Inspection</div>
+                    <div id="my-stat-review"
+                        style="font-size: 1.65rem; font-weight: 800; color: var(--brand-amber); font-family: 'JetBrains Mono', monospace; margin-top: 0.2rem;">
+                        1</div>
                 </div>
-                <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
-                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Resolved for Me</div>
-                    <div id="my-stat-resolved" style="font-size: 1.6rem; font-weight: 800; color: var(--brand-green); font-family: 'JetBrains Mono', monospace;">0</div>
+                <div
+                    style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
+                    <div
+                        style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em;">
+                        Resolved for Me</div>
+                    <div id="my-stat-resolved"
+                        style="font-size: 1.65rem; font-weight: 800; color: var(--brand-green); font-family: 'JetBrains Mono', monospace; margin-top: 0.2rem;">
+                        0</div>
+                </div>
+                <div
+                    style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
+                    <div
+                        style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em;">
+                        Avg Resolution</div>
+                    <div
+                        style="font-size: 1.65rem; font-weight: 800; color: #6366f1; font-family: 'JetBrains Mono', monospace; margin-top: 0.2rem;">
+                        4.2d</div>
                 </div>
             </div>
 
-            <div class="action-cards-grid">
+            <!-- Quick Action Cards Grid -->
+            <div class="action-cards-grid" style="margin-bottom: 2.25rem;">
                 <!-- Card 1: Submit -->
                 <div class="action-card blue" onclick="switchView('submit')">
                     <div>
                         <div class="action-card-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                             </svg>
                         </div>
-                        <h2 class="action-card-title">Submit Complaint</h2>
-                        <p class="action-card-desc">Report an issue in your area with photos and location.</p>
+                        <h2 class="action-card-title">Submit Grievance</h2>
+                        <p class="action-card-desc">Report an infrastructure or civic failure with location and photos.</p>
                     </div>
                 </div>
 
@@ -2238,13 +2483,14 @@
                 <div class="action-card green" onclick="switchView('track')">
                     <div>
                         <div class="action-card-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
                         </div>
-                        <h2 class="action-card-title">Track Complaint</h2>
-                        <p class="action-card-desc">Check live day-wise status with your unique tracking key.</p>
+                        <h2 class="action-card-title">Track Journey</h2>
+                        <p class="action-card-desc">Check live day-wise audit trail using your unique tracking key.</p>
                     </div>
                 </div>
 
@@ -2252,7 +2498,8 @@
                 <div class="action-card purple" onclick="switchView('my-complaints')">
                     <div>
                         <div class="action-card-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="8" y1="6" x2="21" y2="6"></line>
                                 <line x1="8" y1="12" x2="21" y2="12"></line>
                                 <line x1="8" y1="18" x2="21" y2="18"></line>
@@ -2262,26 +2509,57 @@
                             </svg>
                         </div>
                         <h2 class="action-card-title">My Complaints</h2>
-                        <p class="action-card-desc">View and manage all your submitted grievances.</p>
+                        <p class="action-card-desc">View and manage all your registered grievances and escalation status.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="hero-pillars">
+            <!-- Citizen Dashboard Live Stream & Recent Complaints Widget -->
+            <div id="citizen-dashboard-recent-section" style="margin-top: 1.5rem; text-align: left; background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.85rem;">
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin: 0 0 0.2rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <span>📋</span> Your Recent Grievances & Live Status
+                        </h3>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary); margin: 0;">Verified day-wise administrative audit events synced with municipal SQL</p>
+                    </div>
+                    <button type="button" onclick="switchView('my-complaints')" class="btn-secondary" style="font-size: 0.8rem; font-weight: 700; padding: 0.45rem 0.85rem; border-radius: var(--radius-sm); display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                        <span>View All Complaints</span>
+                        <span>→</span>
+                    </button>
+                </div>
+                <div id="citizen-dashboard-recent-container" style="display: flex; flex-direction: column; gap: 0.85rem;">
+                    <!-- Dynamically rendered via renderCitizenDashboardRecent() -->
+                </div>
+            </div>
+
+            <div class="hero-pillars" style="margin-top: 2rem;">
                 <div class="pillar-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
                     Cleaner Streets
                 </div>
                 <div class="pillar-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
                     Safer Communities
                 </div>
                 <div class="pillar-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 14 14"></polyline>
+                    </svg>
                     Automatic Delay Detection
                 </div>
                 <div class="pillar-item">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
                     Evidence-Based Truth
                 </div>
             </div>
@@ -2313,32 +2591,41 @@
 
                     <div class="form-group">
                         <label class="form-label" for="form-title">Issue Title <span class="req">*</span></label>
-                        <input type="text" class="form-control" id="form-title" placeholder="e.g. Streetlight not working" value="Streetlight not working" required>
+                        <input type="text" class="form-control" id="form-title"
+                            placeholder="e.g. Streetlight not working" value="Streetlight not working" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="form-desc">Description <span class="req">*</span></label>
-                        <textarea class="form-control" id="form-desc" placeholder="Describe the problem in detail..." required>The streetlight near my house has not been working for the past 3 days. It's very dark at night.</textarea>
+                        <textarea class="form-control" id="form-desc" placeholder="Describe the problem in detail..."
+                            required>The streetlight near my house has not been working for the past 3 days. It's very dark at night.</textarea>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="form-location">Location <span class="req">*</span></label>
-                        <input type="text" class="form-control" id="form-location" placeholder="e.g. Gandhipuram, Coimbatore" value="Gandhipuram, Coimbatore" required>
+                        <input type="text" class="form-control" id="form-location"
+                            placeholder="e.g. Gandhipuram, Coimbatore" value="Gandhipuram, Coimbatore" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Upload Photo (Evidence)</label>
                         <div class="upload-dropzone" onclick="document.getElementById('form-photo-file').click()">
-                            <input type="file" id="form-photo-file" accept="image/*" style="display: none;" onchange="handlePhotoSelect(event)">
+                            <input type="file" id="form-photo-file" accept="image/*" style="display: none;"
+                                onchange="handlePhotoSelect(event)">
                             <div style="font-size: 1.75rem; margin-bottom: 0.35rem;">📷</div>
-                            <div style="font-size: 0.875rem; font-weight: 700; color: var(--text-primary);">Click to upload photograph</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">PNG, JPG up to 5MB</div>
+                            <div style="font-size: 0.875rem; font-weight: 700; color: var(--text-primary);">Click to
+                                upload photograph</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">PNG, JPG up
+                                to 5MB</div>
                         </div>
                         <div class="upload-preview-box" id="upload-preview-container">
-                            <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80" alt="Streetlight" class="upload-preview-img" id="upload-preview-img">
+                            <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80"
+                                alt="Streetlight" class="upload-preview-img" id="upload-preview-img">
                             <div style="flex: 1;">
-                                <div style="font-size: 0.85rem; font-weight: 700;" id="upload-filename">streetlight_hazard.jpg</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">2.4 MB • Photographic Evidence Attached</div>
+                                <div style="font-size: 0.85rem; font-weight: 700;" id="upload-filename">
+                                    streetlight_hazard.jpg</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">2.4 MB • Photographic
+                                    Evidence Attached</div>
                             </div>
                         </div>
                     </div>
@@ -2364,19 +2651,23 @@
     <!-- ========================================================
          VIEW 3: COMPLAINT SUBMITTED (Screen 3)
          ======================================================== -->
-        <main class="app-view" id="view-submitted">
+    <main class="app-view" id="view-submitted">
         <div class="narrow-container" style="max-width: 800px;">
             <div class="content-card" style="padding: 2.25rem 2rem;">
-                
+
                 <!-- Success Header -->
                 <div class="success-hero" style="padding: 0.5rem 0 1.5rem 0;">
-                    <div class="success-icon-badge" style="width: 68px; height: 68px; font-size: 1.85rem; box-shadow: 0 8px 20px rgba(22, 163, 74, 0.2);">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <div class="success-icon-badge"
+                        style="width: 68px; height: 68px; font-size: 1.85rem; box-shadow: 0 8px 20px rgba(22, 163, 74, 0.2);">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                     </div>
-                    <h2 class="success-title" style="font-size: 1.75rem; margin-bottom: 0.4rem;">Complaint Registered Successfully!</h2>
-                    <p class="success-desc" style="font-size: 0.95rem; color: var(--text-secondary);">Your grievance has been officially validated and recorded into the Kizuno-AI civic SQL database.</p>
+                    <h2 class="success-title" style="font-size: 1.75rem; margin-bottom: 0.4rem;">Complaint Registered
+                        Successfully!</h2>
+                    <p class="success-desc" style="font-size: 0.95rem; color: var(--text-secondary);">Your grievance has
+                        been officially validated and recorded into the Kizuno-AI civic SQL database.</p>
                 </div>
 
                 <!-- Reference Keys Grid -->
@@ -2385,7 +2676,9 @@
                     <div class="key-box">
                         <div class="key-label">
                             <span>Complaint ID</span>
-                            <span style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Internal SQL Ref</span>
+                            <span
+                                style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Internal
+                                SQL Ref</span>
                         </div>
                         <div class="key-value" id="generated-complaint-id">CIV-2026-1042</div>
                         <div class="key-subtext">Departmental Reference ID</div>
@@ -2403,89 +2696,129 @@
                 </div>
 
                 <!-- Submitted Complaint Full Display Card -->
-                <div id="submitted-complaint-card" style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.75rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--border-light);">
+                <div id="submitted-complaint-card"
+                    style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.75rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--border-light);">
                         <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
-                            <span id="submitted-cat-badge" style="display: inline-flex; align-items: center; gap: 0.4rem; background: #eff6ff; color: var(--brand-primary); font-size: 0.825rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 9999px; border: 1px solid #bfdbfe;">
+                            <span id="submitted-cat-badge"
+                                style="display: inline-flex; align-items: center; gap: 0.4rem; background: #eff6ff; color: var(--brand-primary); font-size: 0.825rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 9999px; border: 1px solid #bfdbfe;">
                                 <span id="submitted-cat-icon">💡</span>
                                 <span id="submitted-cat-text">Streetlight & Public Lighting</span>
                             </span>
-                            <span id="submitted-priority-badge" style="display: inline-flex; align-items: center; background: #fef3c7; color: #b45309; font-size: 0.75rem; font-weight: 700; padding: 0.28rem 0.65rem; border-radius: 9999px;">
+                            <span id="submitted-priority-badge"
+                                style="display: inline-flex; align-items: center; background: #fef3c7; color: #b45309; font-size: 0.75rem; font-weight: 700; padding: 0.28rem 0.65rem; border-radius: 9999px;">
                                 🟡 Medium Priority
                             </span>
                         </div>
-                        <span id="submitted-status-pill" style="display: inline-flex; align-items: center; gap: 0.35rem; background: #f0fdf4; color: #16a34a; font-size: 0.775rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 9999px; border: 1px solid #bbf7d0;">
+                        <span id="submitted-status-pill"
+                            style="display: inline-flex; align-items: center; gap: 0.35rem; background: #f0fdf4; color: #16a34a; font-size: 0.775rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 9999px; border: 1px solid #bbf7d0;">
                             <span style="width: 7px; height: 7px; border-radius: 50%; background: #16a34a;"></span>
                             <span id="submitted-status-text">Registered • Day 0</span>
                         </span>
                     </div>
 
                     <!-- Title -->
-                    <h3 id="submitted-complaint-title" style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.6rem; letter-spacing: -0.01em;">
+                    <h3 id="submitted-complaint-title"
+                        style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.6rem; letter-spacing: -0.01em;">
                         Streetlight not working
                     </h3>
 
                     <!-- Description box -->
-                    <div id="submitted-complaint-desc" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.15rem;">
+                    <div id="submitted-complaint-desc"
+                        style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.15rem;">
                         The streetlight near my house has not been working for the past 3 days. It's very dark at night.
                     </div>
 
                     <!-- Details 2x2 Grid -->
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.85rem; font-size: 0.825rem; margin-bottom: 1.15rem;">
-                        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
-                            <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">📍 Location</div>
-                            <div id="submitted-complaint-location" style="font-weight: 600; color: var(--text-primary);">Gandhipuram, Coimbatore</div>
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.85rem; font-size: 0.825rem; margin-bottom: 1.15rem;">
+                        <div
+                            style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
+                            <div
+                                style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">
+                                📍 Location</div>
+                            <div id="submitted-complaint-location"
+                                style="font-weight: 600; color: var(--text-primary);">Gandhipuram, Coimbatore</div>
                         </div>
-                        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
-                            <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">🏢 Assigned Department</div>
-                            <div id="submitted-complaint-dept" style="font-weight: 600; color: var(--text-primary);">Electrical & Streetlight Division</div>
+                        <div
+                            style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
+                            <div
+                                style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">
+                                🏢 Assigned Department</div>
+                            <div id="submitted-complaint-dept" style="font-weight: 600; color: var(--text-primary);">
+                                Electrical & Streetlight Division</div>
                         </div>
-                        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
-                            <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">📅 Registered At</div>
-                            <div id="submitted-complaint-timestamp" style="font-weight: 600; color: var(--text-primary);">Today, Just Now</div>
+                        <div
+                            style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
+                            <div
+                                style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">
+                                📅 Registered At</div>
+                            <div id="submitted-complaint-timestamp"
+                                style="font-weight: 600; color: var(--text-primary);">Today, Just Now</div>
                         </div>
-                        <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
-                            <div style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">⏱️ Resolution SLA Target</div>
-                            <div id="submitted-complaint-sla" style="font-weight: 600; color: var(--brand-primary);">48 Hours Standard SLA</div>
+                        <div
+                            style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem;">
+                            <div
+                                style="color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; font-weight: 700; margin-bottom: 0.2rem;">
+                                ⏱️ Resolution SLA Target</div>
+                            <div id="submitted-complaint-sla" style="font-weight: 600; color: var(--brand-primary);">48
+                                Hours Standard SLA</div>
                         </div>
                     </div>
 
                     <!-- Photo Evidence Row (if provided) -->
-                    <div id="submitted-photo-preview-box" style="display: flex; align-items: center; gap: 0.85rem; background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 1.15rem;">
-                        <img id="submitted-preview-thumbnail" src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=150&auto=format&fit=crop&q=80" alt="Evidence" style="width: 52px; height: 52px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-light);">
+                    <div id="submitted-photo-preview-box"
+                        style="display: flex; align-items: center; gap: 0.85rem; background: #ffffff; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 1.15rem;">
+                        <img id="submitted-preview-thumbnail"
+                            src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=150&auto=format&fit=crop&q=80"
+                            alt="Evidence"
+                            style="width: 52px; height: 52px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-light);">
                         <div style="flex: 1;">
-                            <div style="font-size: 0.825rem; font-weight: 700; color: var(--text-primary);">Photographic Evidence Attached</div>
-                            <div style="font-size: 0.725rem; color: var(--text-muted);">Verified tamper-evident citizen photo upload</div>
+                            <div style="font-size: 0.825rem; font-weight: 700; color: var(--text-primary);">Photographic
+                                Evidence Attached</div>
+                            <div style="font-size: 0.725rem; color: var(--text-muted);">Verified tamper-evident citizen
+                                photo upload</div>
                         </div>
-                        <span style="font-size: 0.725rem; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 0.2rem 0.5rem; border-radius: 4px;">✓ Verified</span>
+                        <span
+                            style="font-size: 0.725rem; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 0.2rem 0.5rem; border-radius: 4px;">✓
+                            Verified</span>
                     </div>
 
                     <!-- AI Verification Audit Notice -->
-                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <div
+                        style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.75rem;">
                         <span style="font-size: 1.25rem;">🛡️</span>
                         <div style="font-size: 0.8rem; color: #1e40af; line-height: 1.45;">
-                            <strong>Kizuno-AI Engine Status:</strong> Verified Day 0 intake logged. Target SLA countdown initiated. Public timeline stream ready for tracking.
+                            <strong>Kizuno-AI Engine Status:</strong> Verified Day 0 intake logged. Target SLA countdown
+                            initiated. Public timeline stream ready for tracking.
                         </div>
                     </div>
                 </div>
 
                 <!-- Two Action Options: Back to Dashboard & Track the Process -->
                 <div class="keys-actions" style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                    <button type="button" class="btn-secondary" id="btn-back-dashboard" onclick="switchView('home')" style="flex: 1; min-width: 200px; justify-content: center; padding: 0.95rem 1.25rem; font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <button type="button" class="btn-secondary" id="btn-back-dashboard" onclick="switchView('dashboard')"
+                        style="flex: 1; min-width: 200px; justify-content: center; padding: 0.95rem 1.25rem; font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                             <polyline points="9 22 9 12 15 12 15 22"></polyline>
                         </svg>
                         <span>Back to Dashboard</span>
                     </button>
 
-                    <button type="button" class="btn-primary" id="btn-track-process" onclick="trackLastSubmittedComplaint()" style="flex: 1; min-width: 220px; justify-content: center; padding: 0.95rem 1.25rem; font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <button type="button" class="btn-primary" id="btn-track-process"
+                        onclick="trackLastSubmittedComplaint()"
+                        style="flex: 1; min-width: 220px; justify-content: center; padding: 0.95rem 1.25rem; font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
                         <span>Track the Process</span>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
                     </button>
@@ -2502,38 +2835,47 @@
         <div class="narrow-container">
             <div class="content-card track-search-card">
                 <div class="track-search-icon">
-                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </div>
                 <h1 class="track-search-title">Track Your Complaint</h1>
-                <p class="track-search-desc">Enter the tracking key you received after submitting your complaint to view its verified day-by-day journal.</p>
+                <p class="track-search-desc">Enter the tracking key you received after submitting your complaint to view
+                    its verified day-by-day journal.</p>
 
                 <form class="track-search-form" onsubmit="handleTrackFormSubmit(event)">
-                    <input type="text" class="track-search-input" id="track-key-input" placeholder="e.g. TN-GOV-X7K92P4M" value="TN-GOV-X7K92P4M" required autocomplete="off">
+                    <input type="text" class="track-search-input" id="track-key-input"
+                        placeholder="e.g. TN-GOV-X7K92P4M" value="TN-GOV-X7K92P4M" required autocomplete="off">
                     <button type="submit" class="btn-primary" style="width: auto; padding: 0.9rem 2rem;">Track</button>
                 </form>
 
                 <div class="sample-search-chips">
                     <span style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600;">Demo Keys:</span>
-                    <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-X7K92P4M')">💡 TN-GOV-X7K92P4M (Streetlight • Delayed)</button>
-                    <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-KA99120')">✓ TN-GOV-KA99120 (Transformer • Resolved)</button>
+                    <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-X7K92P4M')">💡 TN-GOV-X7K92P4M
+                        (Streetlight • Delayed)</button>
+                    <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-KA99120')">✓ TN-GOV-KA99120
+                        (Transformer • Resolved)</button>
                 </div>
 
                 <div class="alert-box" style="text-align: left; margin: 0 auto; max-width: 580px;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="flex-shrink: 0;">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="16" x2="12" y2="12"></line>
                         <line x1="12" y1="8" x2="12.01" y2="8"></line>
                     </svg>
                     <div style="font-size: 0.825rem;">
-                        <strong>Where to find your tracking key?</strong> It is generated when you submit a complaint and also sent to your registered SMS/email (if provided).
+                        <strong>Where to find your tracking key?</strong> It is generated when you submit a complaint
+                        and also sent to your registered SMS/email (if provided).
                     </div>
                 </div>
 
                 <div style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted);">
-                    Don't have a key? <a onclick="switchView('submit')" style="color: var(--brand-primary); font-weight: 700; cursor: pointer;">Submit a new complaint</a>
+                    Don't have a key? <a onclick="switchView('submit')"
+                        style="color: var(--brand-primary); font-weight: 700; cursor: pointer;">Submit a new
+                        complaint</a>
                 </div>
             </div>
         </div>
@@ -2542,22 +2884,26 @@
     <!-- ========================================================
          VIEW 5 & 6: COMPLAINT DETAILS & DAY-WISE TIMELINE (Screen 5, 6, 9)
          ======================================================== -->
-        <!-- ========================================================
+    <!-- ========================================================
          VIEW 5 & 6: COMPLAINT DETAILS & DAY-WISE TIMELINE (Screen 5, 6, 9)
          DAYS AS FIRST ARCHITECTURE
          ======================================================== -->
     <main class="app-view" id="view-details">
         <div class="standard-container">
             <!-- Top Action Header -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
-                <button type="button" class="btn-secondary" onclick="switchView('track')" style="padding: 0.45rem 1rem; font-size: 0.825rem;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
+                <button type="button" class="btn-secondary" onclick="switchView('track')"
+                    style="padding: 0.45rem 1rem; font-size: 0.825rem;">
                     ← Back to Track
                 </button>
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <span id="det-header-pill" class="status-pill delayed" style="padding: 0.35rem 0.85rem; border-radius: 100px; font-weight: 700; font-size: 0.775rem;">
+                    <span id="det-header-pill" class="status-pill delayed"
+                        style="padding: 0.35rem 0.85rem; border-radius: 100px; font-weight: 700; font-size: 0.775rem;">
                         ● Status
                     </span>
-                    <button type="button" class="copy-btn" onclick="copyDetailKey()" style="padding: 0.35rem 0.85rem; font-size: 0.75rem;">Copy Key</button>
+                    <button type="button" class="copy-btn" onclick="copyDetailKey()"
+                        style="padding: 0.35rem 0.85rem; font-size: 0.75rem;">Copy Key</button>
                 </div>
             </div>
 
@@ -2586,35 +2932,70 @@
                 <div class="sidebar-heading">Navigation</div>
                 <ul class="sidebar-menu">
                     <li class="sidebar-item active" onclick="showOfficerTab('dashboard')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
                         Dashboard
                     </li>
                     <li class="sidebar-item" onclick="showOfficerTab('complaints')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
                         Complaints
                     </li>
                     <li class="sidebar-item" onclick="filterOfficerStatus('Pending')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 14 14"></polyline>
+                        </svg>
                         Pending (71)
                     </li>
                     <li class="sidebar-item" onclick="filterOfficerStatus('In Progress')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                        </svg>
                         In Progress (43)
                     </li>
                     <li class="sidebar-item" onclick="filterOfficerStatus('Resolved')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
                         Resolved (134)
                     </li>
                     <li class="sidebar-item" onclick="filterOfficerStatus('Delayed')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                            </path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
                         Delayed (18)
                     </li>
                 </ul>
 
                 <div class="sidebar-heading">System</div>
                 <ul class="sidebar-menu">
-                    <li class="sidebar-item" onclick="switchView('home')">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <li class="sidebar-item" onclick="switchView('dashboard')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
                         Exit to Citizen
                     </li>
                 </ul>
@@ -2624,7 +3005,8 @@
             <div>
                 <!-- Officer Overview (Screen 7 Right) -->
                 <div id="officer-overview-section">
-                    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div class="page-header"
+                        style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
                             <h1 class="page-title">Officer Dashboard</h1>
                             <p class="page-desc">Manage, triage, and update municipal grievances.</p>
@@ -2664,9 +3046,12 @@
 
                     <!-- Recent Complaints Management Table -->
                     <div class="content-card">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                             <h2 style="font-size: 1.1rem; font-weight: 800;">Recent Complaints</h2>
-                            <span style="font-size: 0.8rem; color: var(--brand-primary); font-weight: 700; cursor: pointer;" onclick="renderOfficerTable('All')">View All</span>
+                            <span
+                                style="font-size: 0.8rem; color: var(--brand-primary); font-weight: 700; cursor: pointer;"
+                                onclick="renderOfficerTable('All')">View All</span>
                         </div>
 
                         <div class="table-responsive">
@@ -2691,49 +3076,63 @@
 
                 <!-- Officer Action Console Modal/Panel (Screen 8) -->
                 <div class="action-console-card" id="officer-action-panel" style="display: none; margin-top: 1.5rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
                         <div>
-                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--brand-primary); text-transform: uppercase;">
+                            <div
+                                style="font-size: 0.75rem; font-weight: 700; color: var(--brand-primary); text-transform: uppercase;">
                                 Action Console
                             </div>
-                            <h2 style="font-size: 1.35rem; font-weight: 800;" id="action-complaint-header">Complaint #CIV-2026-1042</h2>
+                            <h2 style="font-size: 1.35rem; font-weight: 800;" id="action-complaint-header">Complaint
+                                #CIV-2026-1042</h2>
                             <div style="font-size: 0.875rem; color: var(--text-secondary);" id="action-complaint-sub">
                                 Streetlight not working • Gandhipuram, Coimbatore
                             </div>
                         </div>
-                        <button type="button" class="btn-secondary" onclick="closeOfficerActionPanel()" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                        <button type="button" class="btn-secondary" onclick="closeOfficerActionPanel()"
+                            style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
                             Close
                         </button>
                     </div>
 
-                    <div style="display: flex; gap: 1rem; align-items: center; background: #f8fafc; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
-                        <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80" id="action-thumb" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+                    <div
+                        style="display: flex; gap: 1rem; align-items: center; background: #f8fafc; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                        <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80"
+                            id="action-thumb" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
                         <div>
-                            <div style="font-size: 0.95rem; font-weight: 700;" id="action-title">Streetlight not working</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);" id="action-location">Gandhipuram, Coimbatore</div>
-                            <span class="status-pill delayed" id="action-status-pill" style="margin-top: 0.35rem; font-size: 0.7rem; padding: 0.2rem 0.5rem;">Delayed</span>
+                            <div style="font-size: 0.95rem; font-weight: 700;" id="action-title">Streetlight not working
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);" id="action-location">Gandhipuram,
+                                Coimbatore</div>
+                            <span class="status-pill delayed" id="action-status-pill"
+                                style="margin-top: 0.35rem; font-size: 0.7rem; padding: 0.2rem 0.5rem;">Delayed</span>
                         </div>
                     </div>
 
                     <div class="form-label">Update Status</div>
                     <div class="action-buttons-group">
-                        <button type="button" class="officer-action-btn" id="act-btn-assign" onclick="selectAction('assign')">
+                        <button type="button" class="officer-action-btn" id="act-btn-assign"
+                            onclick="selectAction('assign')">
                             <span>👤 Assign to Officer</span>
                         </button>
-                        <button type="button" class="officer-action-btn" id="act-btn-start" onclick="selectAction('start')">
+                        <button type="button" class="officer-action-btn" id="act-btn-start"
+                            onclick="selectAction('start')">
                             <span>🔧 Start Work</span>
                         </button>
-                        <button type="button" class="officer-action-btn" id="act-btn-progress" onclick="selectAction('progress')">
+                        <button type="button" class="officer-action-btn" id="act-btn-progress"
+                            onclick="selectAction('progress')">
                             <span>🔄 Update Progress</span>
                         </button>
-                        <button type="button" class="officer-action-btn" id="act-btn-resolve" onclick="selectAction('resolve')">
+                        <button type="button" class="officer-action-btn" id="act-btn-resolve"
+                            onclick="selectAction('resolve')">
                             <span>✅ Mark as Resolved</span>
                         </button>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="officer-comments">Comments / Department Notes</label>
-                        <textarea class="form-control" id="officer-comments" placeholder="Add operational notes or reason for status update..."></textarea>
+                        <textarea class="form-control" id="officer-comments"
+                            placeholder="Add operational notes or reason for status update..."></textarea>
                     </div>
 
                     <div style="display: flex; gap: 0.75rem;">
@@ -2756,15 +3155,20 @@
         <div class="standard-container">
             <div class="page-header">
                 <h1 class="page-title">My Complaints</h1>
-                <p class="page-desc">View and monitor all your registered grievances and their day-wise tracking progress.</p>
+                <p class="page-desc">View and monitor all your registered grievances and their day-wise tracking
+                    progress.</p>
             </div>
 
             <!-- Filter Tabs (Screen 10 Top) -->
             <div class="filter-tabs">
-                <button type="button" class="tab-btn active" id="tab-all" onclick="filterMyComplaints('All')">All (3)</button>
-                <button type="button" class="tab-btn" id="tab-pending" onclick="filterMyComplaints('Pending')">Pending (1)</button>
-                <button type="button" class="tab-btn" id="tab-in-progress" onclick="filterMyComplaints('In Progress')">In Progress (1)</button>
-                <button type="button" class="tab-btn" id="tab-resolved" onclick="filterMyComplaints('Resolved')">Resolved (1)</button>
+                <button type="button" class="tab-btn active" id="tab-all" onclick="filterMyComplaints('All')">All
+                    (3)</button>
+                <button type="button" class="tab-btn" id="tab-pending" onclick="filterMyComplaints('Pending')">Pending
+                    (1)</button>
+                <button type="button" class="tab-btn" id="tab-in-progress"
+                    onclick="filterMyComplaints('In Progress')">In Progress (1)</button>
+                <button type="button" class="tab-btn" id="tab-resolved"
+                    onclick="filterMyComplaints('Resolved')">Resolved (1)</button>
             </div>
 
             <!-- Complaints List (Screen 10 List) -->
@@ -2777,7 +3181,7 @@
     <!-- ========================================================
          VIEW 12: LOGIN MODAL (OFFICIALS / CITIZENS) (Screen 12)
          ======================================================== -->
-        <!-- ========================================================
+    <!-- ========================================================
          MODAL 1: AUTHENTICATION (Google OAuth 2.0 & Officer PIN)
          ======================================================== -->
     <div class="modal-backdrop" id="login-modal" onclick="closeLoginModal(event)">
@@ -2786,28 +3190,33 @@
 
             <div class="login-header">
                 <div class="brand-shield" style="margin: 0 auto 0.75rem auto;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
                 </div>
-                <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-primary);">Kizuno-AI Redressal Login</h2>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Sign in with verified Google account or officer PIN</p>
+                <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-primary);">Kizuno-AI Redressal Login
+                </h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Sign in with verified Google account or officer
+                    PIN</p>
             </div>
 
             <div class="login-role-tabs">
-                <button type="button" class="role-tab-btn active" id="role-citizen" onclick="selectRole('citizen')">Citizen</button>
-                <button type="button" class="role-tab-btn" id="role-officer" onclick="selectRole('officer')">Officer</button>
-                
+                <button type="button" class="role-tab-btn active" id="role-citizen"
+                    onclick="selectRole('citizen')">Citizen</button>
+                <button type="button" class="role-tab-btn" id="role-officer"
+                    onclick="selectRole('officer')">Officer</button>
+
             </div>
 
             <!-- Citizen Google OAuth Tab -->
-                        <!-- Citizen Google OAuth Tab -->
+            <!-- Citizen Google OAuth Tab -->
             <div id="tab-citizen-content">
                 <div style="text-align: center; margin: 1.5rem 0;">
                     <p style="font-size: 0.885rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
                         Sign in securely with your verified Google Account:
                     </p>
-                    
+
                     <!-- The SINGLE Official Google Button Container -->
                     <div style="display: flex; justify-content: center; margin-bottom: 1.25rem;">
                         <div id="google-signin-btn"></div>
@@ -2822,14 +3231,19 @@
                         Enter 4-Digit Municipal Authorization PIN:
                     </p>
                     <div class="pin-boxes">
-                        <input type="password" maxlength="1" class="pin-digit" id="p1" onkeyup="handlePinKey(this, 1, event)">
-                        <input type="password" maxlength="1" class="pin-digit" id="p2" onkeyup="handlePinKey(this, 2, event)">
-                        <input type="password" maxlength="1" class="pin-digit" id="p3" onkeyup="handlePinKey(this, 3, event)">
-                        <input type="password" maxlength="1" class="pin-digit" id="p4" onkeyup="handlePinKey(this, 4, event)">
+                        <input type="password" maxlength="1" class="pin-digit" id="p1"
+                            onkeyup="handlePinKey(this, 1, event)">
+                        <input type="password" maxlength="1" class="pin-digit" id="p2"
+                            onkeyup="handlePinKey(this, 2, event)">
+                        <input type="password" maxlength="1" class="pin-digit" id="p3"
+                            onkeyup="handlePinKey(this, 3, event)">
+                        <input type="password" maxlength="1" class="pin-digit" id="p4"
+                            onkeyup="handlePinKey(this, 4, event)">
                     </div>
 
                     <div style="margin-top: 1.25rem;">
-                        <button type="button" class="btn-primary" onclick="submitOfficerPin()" style="width: 100%; justify-content: center; padding: 0.8rem;">
+                        <button type="button" class="btn-primary" onclick="submitOfficerPin()"
+                            style="width: 100%; justify-content: center; padding: 0.8rem;">
                             Verify & Enter Console
                         </button>
                     </div>
@@ -3070,32 +3484,55 @@
          * Switches the active application view
          */
         function switchView(viewId) {
-            currentView = viewId;
-            document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            try {
+                // Handle aliases: 'home' and 'dashboard'
+                if (viewId === 'home') viewId = 'dashboard';
 
-            // Navbar visibility: HIDDEN on login page, VISIBLE on all other pages
-            const navBar = document.getElementById('main-app-nav') || document.querySelector('.app-nav');
-            if (navBar) {
-                if (viewId === 'login') {
-                    navBar.style.display = 'none';
-                } else {
-                    navBar.style.display = 'block';
+                // Role-based dashboard redirect: if an Officer asks for 'dashboard', go to 'officer'
+                const savedUser = localStorage.getItem('kizuno_auth_user');
+                let currentUser = null;
+                try { currentUser = savedUser ? JSON.parse(savedUser) : null; } catch (e) { }
+                if (viewId === 'dashboard' && currentUser && (currentUser.role === 'Officer' || currentUser.role === 'officer')) {
+                    viewId = 'officer';
                 }
-            }
 
-            const targetView = document.getElementById(`view-${viewId}`);
-            if (targetView) targetView.classList.add('active');
+                currentView = viewId;
+                document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
 
-            const activeNavBtn = document.getElementById(`nav-${viewId}`);
-            if (activeNavBtn) activeNavBtn.classList.add('active');
+                // Navbar visibility: HIDDEN on login page, VISIBLE on all other pages
+                const navBar = document.getElementById('main-app-nav') || document.querySelector('.app-nav');
+                if (navBar) {
+                    if (viewId === 'login') {
+                        navBar.style.display = 'none';
+                    } else {
+                        navBar.style.display = 'block';
+                    }
+                }
 
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+                const targetView = document.getElementById(`view-${viewId}`) ||
+                    (viewId === 'dashboard' ? document.getElementById('view-home') : null) ||
+                    (viewId === 'home' ? document.getElementById('view-dashboard') : null);
+                if (targetView) targetView.classList.add('active');
 
-            if (viewId === 'officer') {
-                renderOfficerTable();
-            } else if (viewId === 'my-complaints') {
-                renderMyComplaints('All');
+                const activeNavBtn = document.getElementById(`nav-${viewId}`) ||
+                    (viewId === 'my-complaints' ? (document.getElementById('nav-my') || document.getElementById('nav-my-complaints')) : null) ||
+                    (viewId === 'dashboard' ? (document.getElementById('nav-dashboard') || document.getElementById('nav-home')) : null) ||
+                    (viewId === 'home' ? (document.getElementById('nav-dashboard') || document.getElementById('nav-home')) : null);
+                if (activeNavBtn) activeNavBtn.classList.add('active');
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                if (viewId === 'officer') {
+                    try { renderOfficerTable(); } catch (e) { console.warn("renderOfficerTable non-fatal notice:", e); }
+                } else if (viewId === 'dashboard' || viewId === 'home') {
+                    try { updateCitizenDashboardStats(); } catch (e) { console.warn("updateCitizenDashboardStats notice:", e); }
+                    try { renderCitizenDashboardRecent(); } catch (e) { console.warn("renderCitizenDashboardRecent notice:", e); }
+                } else if (viewId === 'my-complaints') {
+                    try { renderMyComplaints('All'); } catch (e) { console.warn("renderMyComplaints notice:", e); }
+                }
+            } catch (err) {
+                console.error("switchView error:", err);
             }
         }
 
@@ -3120,7 +3557,7 @@
         /**
          * Displays the public details of a complaint (Screen 5 & 6)
          */
-        
+
         /* ========================================================
            GOOGLE OAUTH 2.0 & AUTHENTICATION HANDLERS
            ======================================================== */
@@ -3131,7 +3568,7 @@
             try {
                 const base64Url = token.split('.')[1];
                 const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
                     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
                 }).join(''));
                 return JSON.parse(jsonPayload);
@@ -3206,7 +3643,7 @@
                         role: role.toLowerCase()
                     })
                 });
-            } catch (err) {}
+            } catch (err) { }
 
             const authUser = {
                 name: name,
@@ -3219,16 +3656,16 @@
             applyUserSession(authUser);
             closeLoginModal();
 
-                        if (role === 'Officer' || role === 'officer') {
+            if (role === 'Officer' || role === 'officer') {
                 switchView('officer');
-                showToast(`Welcome ${name}! Officer Command Center Loaded`, '👨‍💼');
+                showToast(`Welcome ${name}! Officer Dashboard Loaded`, '👨‍💼');
             } else {
-                switchView('home');
+                switchView('dashboard');
                 showToast(`Welcome ${name}! Citizen Dashboard Loaded`, '✓');
             }
         }
 
-        
+
         /* ========================================================
            CITIZEN GMAIL/PASSWORD AUTHENTICATION & REAL VERIFICATION
            ======================================================== */
@@ -3239,6 +3676,10 @@
             if (mode === 'signup') {
                 if (signinBox) signinBox.style.display = 'none';
                 if (signupBox) signupBox.style.display = 'block';
+                const signupForm = document.getElementById('citizen-signup-form');
+                const otpSection = document.getElementById('signup-otp-section');
+                if (signupForm) signupForm.style.display = 'block';
+                if (otpSection) otpSection.style.display = 'none';
                 const u = document.getElementById('signup-username');
                 if (u) u.focus();
             } else {
@@ -3249,10 +3690,21 @@
             }
         }
 
+        function editSignupDetails() {
+            const signupForm = document.getElementById('citizen-signup-form');
+            const otpSection = document.getElementById('signup-otp-section');
+            if (signupForm) signupForm.style.display = 'block';
+            if (otpSection) otpSection.style.display = 'none';
+            const emailInput = document.getElementById('signup-email');
+            if (emailInput) emailInput.focus();
+        }
+
         async function handleCitizenPasswordLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value;
+            if (e && e.preventDefault) e.preventDefault();
+            const emailInput = document.getElementById('login-email');
+            const passwordInput = document.getElementById('login-password');
+            const email = emailInput ? emailInput.value.trim() : '';
+            const password = passwordInput ? passwordInput.value : '';
 
             if (!email || !password) {
                 showToast('Please enter both Gmail and password', '⚠️');
@@ -3270,8 +3722,8 @@
                 if (res.ok && data.success) {
                     localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
                     applyUserSession(data.user);
-                    switchView('home');
-                    showToast(data.message || `Welcome back, ${data.user.name}!`, '✓');
+                    switchView('dashboard');
+                    showToast(data.message || `Welcome back, ${data.user.name}! Citizen Dashboard Loaded`, '✓');
                 } else {
                     showToast(data.detail || 'Invalid Gmail address or password', '⚠️');
                 }
@@ -3286,8 +3738,8 @@
                 };
                 localStorage.setItem('kizuno_auth_user', JSON.stringify(fallbackUser));
                 applyUserSession(fallbackUser);
-                switchView('home');
-                showToast(`Logged in as ${fallbackUser.name}`, '✓');
+                switchView('dashboard');
+                showToast(`Logged in as ${fallbackUser.name}! Citizen Dashboard Loaded`, '✓');
             }
         }
 
@@ -3337,10 +3789,21 @@
 
                 const data = await res.json();
                 if (res.ok && data.success) {
+                    // Hide signup form completely so password is NOT displayed during verification
+                    const signupForm = document.getElementById('citizen-signup-form');
+                    if (signupForm) signupForm.style.display = 'none';
+
+                    // Reveal OTP verification section
                     const otpSection = document.getElementById('signup-otp-section');
-                    const statusText = document.getElementById('otp-sent-status');
                     if (otpSection) otpSection.style.display = 'block';
-                    if (statusText) statusText.innerText = `A 6-digit code has been dispatched to ${email}. Check your Gmail!`;
+
+                    const targetEmailSpan = document.getElementById('otp-target-email');
+                    if (targetEmailSpan) targetEmailSpan.innerText = email;
+
+                    const statusText = document.getElementById('otp-sent-status');
+                    if (statusText) {
+                        statusText.innerHTML = `A 6-digit verification code has been dispatched to <strong style="color: #1d4ed8; word-break: break-all;">${email}</strong>. Please check your email inbox and enter it below:`;
+                    }
 
                     const codeInput = document.getElementById('signup-otp-code');
                     if (codeInput) {
@@ -3348,18 +3811,11 @@
                         codeInput.focus();
                     }
 
-                    if (data.devCode) {
-                        const hintBox = document.getElementById('otp-dev-hint');
-                        if (hintBox) {
-                            hintBox.style.display = 'block';
-                            hintBox.innerHTML = `Verification Code: <strong style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; letter-spacing: 2px;">${data.devCode}</strong>`;
-                        }
-                        showToast(`Verification code: ${data.devCode}`, '✉️');
-                    } else {
-                        const hintBox = document.getElementById('otp-dev-hint');
-                        if (hintBox) hintBox.style.display = 'none';
-                        showToast(`Verification code sent to ${email}. Check your Gmail!`, '✉️');
-                    }
+                    // Ensure no developer hints or passwords are shown on screen
+                    const hintBox = document.getElementById('otp-dev-hint');
+                    if (hintBox) hintBox.style.display = 'none';
+
+                    showToast(`Verification code sent to ${email}. Check your email inbox!`, '✉️');
                 } else {
                     showToast(data.detail || 'Failed to send verification code', '⚠️');
                 }
@@ -3383,10 +3839,16 @@
             const code = document.getElementById('signup-otp-code').value.trim();
 
             if (!code || code.length !== 6) {
-                showToast('Please enter the 6-digit verification code sent to your Gmail', '⚠️');
+                showToast('Please enter the 6-digit verification code sent to your email', '⚠️');
                 const c = document.getElementById('signup-otp-code');
                 if (c) c.focus();
                 return false;
+            }
+
+            const verifyBtn = document.getElementById('btn-verify-otp');
+            if (verifyBtn) {
+                verifyBtn.disabled = true;
+                verifyBtn.innerText = 'Verifying Code...';
             }
 
             try {
@@ -3403,16 +3865,36 @@
 
                 const data = await res.json();
                 if (res.ok && data.success) {
+                    // Save authenticated session
                     localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
                     applyUserSession(data.user);
-                    switchView('home');
-                    showToast(`Gmail Verified! Welcome, ${data.user.name}`, '🎉');
+
+                    // Clear fields
+                    const p = document.getElementById('signup-password');
+                    if (p) p.value = '';
+                    const c = document.getElementById('signup-otp-code');
+                    if (c) c.value = '';
+
+                    // Reset form state
+                    const signupForm = document.getElementById('citizen-signup-form');
+                    const otpSection = document.getElementById('signup-otp-section');
+                    if (signupForm) signupForm.style.display = 'block';
+                    if (otpSection) otpSection.style.display = 'none';
+
+                    // Display confirmation that account is created successfully and transition to Dashboard
+                    showToast('Account is created successfully! Welcome to your Dashboard.', '🎉');
+                    switchView('dashboard');
                 } else {
                     showToast(data.detail || 'Verification failed. Please check the code.', '⚠️');
                 }
             } catch (err) {
                 console.error("Registration error:", err);
                 showToast('Connection error during registration', '⚠️');
+            } finally {
+                if (verifyBtn) {
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerText = '✓ Verify Code & Create Account';
+                }
             }
             return false;
         }
@@ -3431,16 +3913,16 @@
             applyUserSession(authUser);
             closeLoginModal();
             showToast(`Signed in as ${name}`, '✓');
-                        if (role === 'Officer' || role === 'officer') {
+            if (role === 'Officer' || role === 'officer') {
                 switchView('officer');
-                showToast(`Welcome ${name}! Officer Command Center Loaded`, '👨‍💼');
+                showToast(`Welcome ${name}! Officer Dashboard Loaded`, '👨‍💼');
             } else {
-                switchView('home');
+                switchView('dashboard');
                 showToast(`Welcome ${name}! Citizen Dashboard Loaded`, '✓');
             }
         }
 
-        
+
         function userSignOut() {
             localStorage.removeItem('kizuno_auth_user');
             const nameEl = document.getElementById('nav-user-name');
@@ -3470,29 +3952,131 @@
             const navOfficerBtn = document.getElementById('nav-officer');
             const navSubmitBtn = document.getElementById('nav-submit');
             const navMyBtn = document.getElementById('nav-my');
-            const navHomeBtn = document.getElementById('nav-home');
+            const navDashboardBtn = document.getElementById('nav-dashboard') || document.getElementById('nav-home');
             const greetingEl = document.getElementById('home-user-greeting');
+            const dashGreetingEl = document.getElementById('dashboard-user-greeting');
             const citizenStats = document.getElementById('citizen-live-stats');
+            const recentSection = document.getElementById('citizen-dashboard-recent-section');
 
             if (isOfficer) {
                 // Officer View: Show Officer portal, hide citizen submit/my-complaints
                 if (navOfficerBtn) navOfficerBtn.style.display = 'inline-flex';
                 if (navSubmitBtn) navSubmitBtn.style.display = 'none';
                 if (navMyBtn) navMyBtn.style.display = 'none';
-                if (navHomeBtn) navHomeBtn.innerText = 'Citizen View';
+                if (navDashboardBtn) navDashboardBtn.innerText = '👨‍💼 Officer Dashboard';
                 if (greetingEl) greetingEl.innerText = `Municipal Officer: ${user.name || 'Staff'}`;
                 if (citizenStats) citizenStats.style.display = 'none';
+                if (recentSection) recentSection.style.display = 'none';
             } else {
                 // Citizen View: STRICTLY HIDE Officer Portal from citizens
                 if (navOfficerBtn) navOfficerBtn.style.display = 'none';
                 if (navSubmitBtn) navSubmitBtn.style.display = 'inline-flex';
                 if (navMyBtn) navMyBtn.style.display = 'inline-flex';
-                if (navHomeBtn) navHomeBtn.innerText = 'Home';
+                if (navDashboardBtn) navDashboardBtn.innerText = '📊 Dashboard';
                 if (greetingEl) greetingEl.innerText = `Welcome, ${user.name || 'Citizen Kumar'}!`;
+                if (dashGreetingEl) dashGreetingEl.innerText = `Welcome to your Dashboard, ${user.name || 'Citizen Kumar'}!`;
                 if (citizenStats) citizenStats.style.display = 'flex';
+                if (recentSection) recentSection.style.display = 'block';
             }
 
-            updateCitizenDashboardStats();
+            try { updateCitizenDashboardStats(); } catch(e) { console.warn("updateCitizenDashboardStats notice:", e); }
+            try { renderCitizenDashboardRecent(); } catch(e) { console.warn("renderCitizenDashboardRecent notice:", e); }
+        }
+
+        // 1-Click Quick Demo Login Helpers
+        function quickLoginAsCitizen() {
+            const emailInput = document.getElementById('login-email');
+            const passInput = document.getElementById('login-password');
+            if (emailInput) emailInput.value = 'kumar.citizen@gmail.com';
+            if (passInput) passInput.value = 'password123';
+            showToast('Logging in as Demo Citizen...', '⚡');
+            handleCitizenPasswordLogin(new Event('submit'));
+        }
+
+        function quickLoginAsOfficer() {
+            document.getElementById('pp1').value = '1';
+            document.getElementById('pp2').value = '2';
+            document.getElementById('pp3').value = '3';
+            document.getElementById('pp4').value = '4';
+            showToast('Verifying Officer PIN 1234...', '⚡');
+            submitPageOfficerPin();
+        }
+
+        /**
+         * Renders the citizen's recent complaints on the Citizen Dashboard
+         */
+        function renderCitizenDashboardRecent() {
+            const container = document.getElementById('citizen-dashboard-recent-container');
+            if (!container) return;
+
+            const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
+            const userEmail = (authUser.email || 'kumar.citizen@gmail.com').toLowerCase();
+            const userName = (authUser.name || 'Citizen Kumar').toLowerCase();
+
+            // Filter for current citizen or show top complaints
+            let myComplaints = KIZUNO_SQL_DB.complaints.filter(c => {
+                const cEmail = (c.citizenEmail || '').toLowerCase();
+                const cName = (c.citizenName || '').toLowerCase();
+                return cEmail === userEmail || cName === userName || (userEmail.includes('kumar') && (!c.citizenEmail || c.citizenEmail.includes('kumar')));
+            });
+
+            if (myComplaints.length === 0) {
+                myComplaints = KIZUNO_SQL_DB.complaints.slice(0, 2);
+            }
+
+            const recent = myComplaints.slice(0, 3);
+
+            if (recent.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; background: #f8fafc; border-radius: var(--radius-md); border: 1px dashed var(--border-subtle);">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+                        <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">No Grievances Submitted Yet</div>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">You haven't submitted any civic complaints yet. Notice something broken?</p>
+                        <button type="button" class="btn-primary" onclick="switchView('submit')" style="font-size: 0.85rem; padding: 0.55rem 1rem;">
+                            + Submit Your First Grievance
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = recent.map(c => {
+                let statusClass = 'pending';
+                if (c.status === 'Resolved') statusClass = 'resolved';
+                else if (c.status === 'In Progress') statusClass = 'in-progress';
+                else if (c.status === 'Delayed') statusClass = 'delayed';
+
+                return `
+                    <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: 12px; padding: 1.15rem 1.35rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; transition: all 0.2s ease;">
+                        <div style="display: flex; align-items: flex-start; gap: 1rem; flex: 1; min-width: 260px;">
+                            <div style="font-size: 1.75rem; background: #ffffff; border: 1px solid var(--border-light); border-radius: 10px; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: var(--shadow-sm);">
+                                ${c.categoryIcon || '📌'}
+                            </div>
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; flex-wrap: wrap;">
+                                    <span style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--brand-primary); background: #eff6ff; padding: 0.15rem 0.5rem; border-radius: 4px;">${escapeHtml(c.trackingKey || c.id)}</span>
+                                    <span class="status-badge ${statusClass}" style="font-size: 0.725rem;">${escapeHtml(c.status)}</span>
+                                    <span style="font-size: 0.725rem; color: var(--text-muted); font-weight: 600;">${escapeHtml(c.dayLabel || 'Day 1')}</span>
+                                </div>
+                                <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.2rem;">
+                                    ${escapeHtml(c.title)}
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.35rem;">
+                                    <span>📍 ${escapeHtml(c.location || 'Local Ward')}</span>
+                                    <span>•</span>
+                                    <span>${escapeHtml(c.category)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <button type="button" onclick="showComplaintDetails('${escapeHtml(c.trackingKey || c.id)}')" class="btn-primary" style="font-size: 0.825rem; font-weight: 700; padding: 0.55rem 1rem; border-radius: var(--radius-sm); display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+                                <span>Track Journey</span>
+                                <span>→</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function selectRole(role) {
@@ -3516,7 +4100,7 @@
             }
         }
 
-        
+
         /* ========================================================
            PAGE-LEVEL LOGIN ROLE & PIN CONTROLLERS
            ======================================================== */
@@ -3570,9 +4154,9 @@
 
         function submitPageOfficerPin() {
             const pin = (document.getElementById('pp1').value || '') +
-                        (document.getElementById('pp2').value || '') +
-                        (document.getElementById('pp3').value || '') +
-                        (document.getElementById('pp4').value || '');
+                (document.getElementById('pp2').value || '') +
+                (document.getElementById('pp3').value || '') +
+                (document.getElementById('pp4').value || '');
             if (pin === '1234') {
                 simulateGoogleLogin('Officer R. Selvam', 'selvam.officer@gov.in', 'officer');
             } else {
@@ -3608,9 +4192,9 @@
 
         function submitOfficerPin() {
             const pin = (document.getElementById('p1').value || '') +
-                        (document.getElementById('p2').value || '') +
-                        (document.getElementById('p3').value || '') +
-                        (document.getElementById('p4').value || '');
+                (document.getElementById('p2').value || '') +
+                (document.getElementById('p3').value || '') +
+                (document.getElementById('p4').value || '');
             if (pin === '1234') {
                 simulateGoogleLogin('Officer R. Selvam', 'selvam.officer@gov.in', 'officer');
             } else {
@@ -3790,20 +4374,20 @@
                     { label: "Gov Actions", value: `${timeline.length} Transactions` },
                     { label: "Stationary Gaps", value: "0 Detected" },
                     { label: "Closure Status", value: "Audit Completed" }
-                  ]
+                ]
                 : (isDelayed
                     ? [
                         { label: "SLA Deadline", value: "Breached (+48h)" },
                         { label: "Days Elapsed", value: complaint.dayLabel || "Day 5" },
                         { label: "Bottleneck Stage", value: "Ward Operations" },
                         { label: "Risk Level", value: "Elevated Delay" }
-                      ]
+                    ]
                     : [
                         { label: "Target SLA", value: "Day 3 (Active)" },
                         { label: "Days Elapsed", value: complaint.dayLabel || "Day 2" },
                         { label: "Current Stage", value: "Field Team Deployed" },
                         { label: "Risk Level", value: "Normal Pace" }
-                      ]);
+                    ]);
 
             const metricsHtml = metrics.map(m => `
                 <div class="metric-card">
@@ -3951,8 +4535,26 @@
 
         // Overwrite showComplaintDetails to trigger Days As First
         function showComplaintDetails(complaint) {
+            if (typeof complaint === 'string') {
+                const cleanKey = complaint.trim().toUpperCase();
+                const found = KIZUNO_SQL_DB.complaints.find(c =>
+                    (c.trackingKey && c.trackingKey.toUpperCase() === cleanKey) ||
+                    (c.id && c.id.toUpperCase() === cleanKey)
+                );
+                if (found) {
+                    complaint = found;
+                } else {
+                    trackKey(cleanKey);
+                    return;
+                }
+            }
+            if (!complaint) return;
             currentSelectedComplaint = complaint;
-            renderComplaintJourney(complaint);
+            try {
+                renderComplaintJourney(complaint);
+            } catch (err) {
+                console.warn("renderComplaintJourney notice:", err);
+            }
             switchView('details');
         }
 
@@ -4021,8 +4623,8 @@
                 }
             }
 
-            const record = KIZUNO_SQL_DB.complaints.find(c => 
-                c.trackingKey.toUpperCase() === cleanKey || 
+            const record = KIZUNO_SQL_DB.complaints.find(c =>
+                c.trackingKey.toUpperCase() === cleanKey ||
                 c.id.toUpperCase() === cleanKey
             );
 
@@ -4042,7 +4644,7 @@
         /**
          * Form submission handler for new complaints (Saves directly to SQL)
          */
-        
+
         let lastSubmittedComplaint = null;
 
         /**
@@ -4421,6 +5023,8 @@
         }
 
         /**
+         * Updates the KPI counters on the Citizen Dashboard
+         */
         function updateCitizenDashboardStats() {
             const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
             const userEmail = (authUser.email || 'kumar.citizen@gmail.com').toLowerCase();
@@ -4678,9 +5282,9 @@
 
             if (role === 'Officer' || role === 'officer') {
                 switchView('officer');
-                showToast(`Welcome! Officer Command Center Loaded`, '👨‍💼');
+                showToast(`Welcome! Officer Dashboard Loaded`, '👨‍💼');
             } else {
-                switchView('home');
+                switchView('dashboard');
                 showToast(`Welcome! Citizen Dashboard Loaded`, '✓');
             }
         }
@@ -4691,7 +5295,7 @@
             return String(text).replace(/[&<>"']/g, m => map[m]);
         }
 
-                // Initialize on DOM load
+        // Initialize on DOM load
         window.addEventListener('DOMContentLoaded', async () => {
             initGoogleAuth();
             await checkBackendHealth();
@@ -4703,10 +5307,10 @@
                     const u = JSON.parse(savedUser);
                     applyUserSession(u);
                     // If user is already logged in, go directly to their dashboard!
-                    if (u.role === 'Officer') {
+                    if (u.role === 'Officer' || u.role === 'officer') {
                         switchView('officer');
                     } else {
-                        switchView('home');
+                        switchView('dashboard');
                     }
                 } catch (e) {
                     // Invalid session -> show Login start page
