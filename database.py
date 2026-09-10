@@ -288,335 +288,24 @@ def init_db():
         print("Default user seed note:", e)
 
     try:
-        # Check if already seeded
-        existing_count = db.query(Complaint).count()
-        if existing_count > 0:
-            return
-
-        # Seed 1: The flagship Streetlight Case (CIV-2026-1042 / TN-GOV-X7K92P4M)
-        c1 = Complaint(
-            id="CIV-2026-1042",
-            tracking_key="TN-GOV-X7K92P4M",
-            category="Streetlight",
-            category_icon="💡",
-            title="Streetlight not working",
-            description="The streetlight near my house has not been working for the past 3 days. It's very dark at night.",
-            location="Gandhipuram, Coimbatore",
-            photo_url="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80",
-            priority="Medium",
-            status="Delayed",
-            day_label="Day 5",
-            last_updated="Day 5 - 14 Apr 2026",
-            department="Coimbatore Corporation Electrical Wing"
-        )
-        db.add(c1)
-        db.flush()
-
-        # Seed Timeline for Case 1
-        t1_events = [
-            TimelineEvent(
-                complaint_id=c1.id,
-                day_index="Day 0",
-                event_date="Apr 10, 2026",
-                status_type="submitted",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Complaint Submitted",
-                description="Complaint successfully registered in municipal system.",
-                official_node="Node: CM Helpline Central Gateway",
-                evidence_ref="API: TN_HELPLINE_GATEWAY • TxID: 0x8f2a...c31b"
-            ),
-            TimelineEvent(
-                complaint_id=c1.id,
-                day_index="Day 1",
-                event_date="Apr 11, 2026",
-                status_type="forwarded",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Forwarded to Department",
-                description="Sent to Electrical Department for scheduling and allocation.",
-                official_node="Node: Zone 4 Sub-Division Office",
-                evidence_ref="API: CM_PORTAL_ROUTER • DispatchRef: DSP-9428-TN"
-            ),
-            TimelineEvent(
-                complaint_id=c1.id,
-                day_index="Day 2",
-                event_date="Apr 12, 2026",
-                status_type="stationary",
-                tag_type="tag-stationary",
-                tag_text="No Event Logged",
-                title="No Response Recorded",
-                description="No action recorded in municipal grievance servers during this 24-hour cycle.",
-                official_node="Node: Zone 4 Sub-Division",
-                evidence_ref="Audit Checkpoint: 0 updates logged in 24 hrs"
-            ),
-            TimelineEvent(
-                complaint_id=c1.id,
-                day_index="Day 3",
-                event_date="Apr 13, 2026",
-                status_type="stationary",
-                tag_type="tag-stationary",
-                tag_text="No Event Logged",
-                title="No Response Recorded",
-                description="Continued administrative dormancy detected across official channels.",
-                official_node="Node: Zone 4 Sub-Division",
-                evidence_ref="Audit Checkpoint: 48h cumulative silence"
-            ),
-            TimelineEvent(
-                complaint_id=c1.id,
-                day_index="Day 5",
-                event_date="Apr 15, 2026",
-                status_type="delayed",
-                tag_type="tag-ai-inference",
-                tag_text="AI Assessment",
-                title="Delayed",
-                description="Expected response has not been recorded within standard municipal SLA.",
-                official_node="Rule Engine: CivicTrack Inactivity Detector v2.4",
-                evidence_ref="AI SLA Confidence: 85% • Inactivity Threshold >48h Exceeded"
-            ),
-            TimelineEvent(
-                complaint_id=c1.id,
-                day_index="Day 7",
-                event_date="Apr 17, 2026",
-                status_type="escalated",
-                tag_type="tag-escalated",
-                tag_text="Escalation Flag",
-                title="Escalation Recommended",
-                description="Complaint requires immediate attention from Assistant Executive Engineer.",
-                official_node="Rule Engine: CivicTrack Escalation Rule #24",
-                evidence_ref="Level 1 Escalation Draft Prepared"
+        # Seed default Officer if not exists
+        existing_officer = db.query(Officer).first()
+        if not existing_officer:
+            officer1 = Officer(
+                name="R. Selvam",
+                email="officer@gov.in",
+                department="Coimbatore Corporation Electrical Wing",
+                role="Junior Engineer"
             )
-        ]
-        db.add_all(t1_events)
+            db.add(officer1)
+            db.commit()
 
-        # Seed 2: Water Leak (In Progress)
-        c2 = Complaint(
-            id="CIV-2026-1040",
-            tracking_key="TN-GOV-W992014",
-            category="Water Leak",
-            category_icon="💧",
-            title="Main Line Valve Water Leakage",
-            description="Significant drinking water leaking on 4th cross road, flooding sidewalk.",
-            location="Peelamedu, Coimbatore",
-            photo_url="https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=600&auto=format&fit=crop&q=80",
-            priority="High",
-            status="In Progress",
-            day_label="Day 3",
-            last_updated="Day 3 - 12 Apr 2026",
-            department="TWAD Board (Water Supply Division)"
-        )
-        db.add(c2)
-        db.flush()
-
-        t2_events = [
-            TimelineEvent(
-                complaint_id=c2.id,
-                day_index="Day 0",
-                event_date="Apr 09, 2026",
-                status_type="submitted",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Complaint Registered",
-                description="Water leakage intake verified and reference generated.",
-                official_node="Node: TWAD Central Intake",
-                evidence_ref="API: TWAD_GATEWAY_V1"
-            ),
-            TimelineEvent(
-                complaint_id=c2.id,
-                day_index="Day 1",
-                event_date="Apr 10, 2026",
-                status_type="forwarded",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Dispatched to TWAD Team",
-                description="Maintenance crew allocated for pressure valve inspection.",
-                official_node="Node: Peelamedu Operations",
-                evidence_ref="DispatchRef: TWAD-PLM-441"
-            ),
-            TimelineEvent(
-                complaint_id=c2.id,
-                day_index="Day 3",
-                event_date="Apr 12, 2026",
-                status_type="work-started",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Excavation and Valve Work Started",
-                description="Team is actively repairing the cracked underground pipe.",
-                official_node="Officer: R. Selvam (Junior Engineer)",
-                evidence_ref="On-site GPS tag: 11.0268°N, 76.9958°E"
-            )
-        ]
-        db.add_all(t2_events)
-
-        # Seed 3: Transformer Sparking (Resolved)
-        c3 = Complaint(
-            id="CIV-2026-1038",
-            tracking_key="TN-GOV-KA99120",
-            category="Streetlight",
-            category_icon="⚡",
-            title="Transformer Sparking & Streetlight Blackout",
-            description="High tension line sparking and complete blackout of streetlights on 100ft road.",
-            location="Ukkadam, Coimbatore",
-            photo_url="https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&auto=format&fit=crop&q=80",
-            priority="Critical",
-            status="Resolved",
-            day_label="Day 10",
-            last_updated="Day 10 - 08 Apr 2026",
-            department="TANGEDCO / BESCOM Electrical Division"
-        )
-        db.add(c3)
-        db.flush()
-
-        t3_events = [
-            TimelineEvent(
-                complaint_id=c3.id,
-                day_index="Day 0",
-                event_date="Mar 29, 2026",
-                status_type="submitted",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Emergency Safety Complaint Logged",
-                description="Priority 1 ticket created for transformer short circuit.",
-                official_node="Node: Rapid Response Dispatch",
-                evidence_ref="API: POWER_GRID_ALERT"
-            ),
-            TimelineEvent(
-                complaint_id=c3.id,
-                day_index="Day 1",
-                event_date="Mar 30, 2026",
-                status_type="work-started",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Rapid Response Gang Deployed",
-                description="Power isolated and faulty jumper cable replaced.",
-                official_node="Node: Ukkadam Sub-Station Gang #4",
-                evidence_ref="DispatchGang: RRG-UKK-04"
-            ),
-            TimelineEvent(
-                complaint_id=c3.id,
-                day_index="Day 10",
-                event_date="Apr 08, 2026",
-                status_type="resolved",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Resolved & Citizen Sign-Off Verified",
-                description="Streetlights operational, voltage levels certified, case closed.",
-                official_node="Node: Citizen OTP Verification Gateway",
-                evidence_ref="Closure Cert: #CERT-TN-88192"
-            )
-        ]
-        db.add_all(t3_events)
-
-        # Seed 4: Garbage Overflow (Pending)
-        c4 = Complaint(
-            id="CIV-2026-1041",
-            tracking_key="TN-GOV-G771899",
-            category="Garbage",
-            category_icon="🗑️",
-            title="Garbage Dump Overflow on School Road",
-            description="Municipal waste bin overflowing for 4 days, stray animals and foul smell.",
-            location="RS Puram, Coimbatore",
-            photo_url="https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80",
-            priority="Medium",
-            status="Pending",
-            day_label="Day 1",
-            last_updated="Day 1 - 13 Apr 2026",
-            department="Sanitation & Solid Waste Management"
-        )
-        db.add(c4)
-        db.flush()
-
-        t4_events = [
-            TimelineEvent(
-                complaint_id=c4.id,
-                day_index="Day 0",
-                event_date="Apr 12, 2026",
-                status_type="submitted",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Sanitation Grievance Lodged",
-                description="Complaint assigned to Ward 24 Sanitation Inspector.",
-                official_node="Node: Municipal Sanitation Intake",
-                evidence_ref="API: SOLID_WASTE_MGNT"
-            )
-        ]
-        db.add_all(t4_events)
-
-        # Seed 5: Road Potholes (Resolved)
-        c5 = Complaint(
-            id="CIV-2026-1039",
-            tracking_key="TN-GOV-R554210",
-            category="Road Damage",
-            category_icon="🚗",
-            title="Deep Potholes on Main Bus Route",
-            description="Multiple dangerous potholes causing two-wheeler skids near Town Hall signal.",
-            location="Town Hall, Coimbatore",
-            photo_url="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600&auto=format&fit=crop&q=80",
-            priority="High",
-            status="Resolved",
-            day_label="Day 8",
-            last_updated="Day 8 - 05 Apr 2026",
-            department="Highways & Corporation Works Wing"
-        )
-        db.add(c5)
-        db.flush()
-
-        t5_events = [
-            TimelineEvent(
-                complaint_id=c5.id,
-                day_index="Day 0",
-                event_date="Mar 28, 2026",
-                status_type="submitted",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Road Hazard Reported",
-                description="Complaint accepted and routed to Assistant Engineer (Roads).",
-                official_node="Node: Central Roads Wing",
-                evidence_ref="API: HIGHWAYS_PORTAL"
-            ),
-            TimelineEvent(
-                complaint_id=c5.id,
-                day_index="Day 4",
-                event_date="Apr 01, 2026",
-                status_type="work-started",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Cold Bitumen Asphalt Patching Commenced",
-                description="Road repair vehicle deployed with cold asphalt mix.",
-                official_node="Officer: M. Vijay (Assistant Engineer)",
-                evidence_ref="WorkOrder: #WO-RD-9912"
-            ),
-            TimelineEvent(
-                complaint_id=c5.id,
-                day_index="Day 8",
-                event_date="Apr 05, 2026",
-                status_type="resolved",
-                tag_type="tag-verified",
-                tag_text="Verified Event",
-                title="Road Resurfacing Completed & Inspected",
-                description="Potholes filled and leveled flush with asphalt surface.",
-                official_node="Node: Quality Inspection Wing",
-                evidence_ref="Inspection Sign-off #QC-883"
-            )
-        ]
-        db.add_all(t5_events)
-
-        # Seed Officers
-        officer1 = Officer(
-            name="R. Selvam",
-            email="officer@gov.in",
-            department="Coimbatore Corporation Electrical Wing",
-            role="Junior Engineer"
-        )
-        db.add(officer1)
-
-        db.commit()
-        print("SQL Database successfully initialized and seeded with real civic complaints!")
+        # Database starts with 0 complaints by default. Complaints only appear when submitted by users.
+        print("SQL Database successfully initialized. Complaints count reflects real user submissions.")
 
     except Exception as e:
         db.rollback()
-        print(f"Database initialization error: {e}")
-        raise e
+        print(f"Database initialization note: {e}")
     finally:
         db.close()
 
@@ -624,6 +313,7 @@ def init_db():
 def calculate_kpis(db):
     """
     Computes real-time KPI metrics directly from SQL queries.
+    Starts at 0 by default. Accurate to submitted citizen grievances.
     """
     total = db.query(func.count(Complaint.id)).scalar() or 0
     pending = db.query(func.count(Complaint.id)).filter(Complaint.status == "Pending").scalar() or 0
@@ -632,12 +322,11 @@ def calculate_kpis(db):
     delayed = db.query(func.count(Complaint.id)).filter(Complaint.status == "Delayed").scalar() or 0
     escalations = db.query(func.count(Complaint.id)).filter(Complaint.status == "Escalated").scalar() or 0
 
-    # If the database has a small seed count, add historical offset to reflect municipal scope
     return {
-        "total": 248 + total - 5,
-        "pending": 71 + pending - 1,
-        "inProgress": 43 + in_progress - 1,
-        "resolved": 134 + resolved - 2,
-        "delayed": 18 + delayed - 1,
-        "escalations": 6 + escalations
+        "total": total,
+        "pending": pending,
+        "inProgress": in_progress,
+        "resolved": resolved,
+        "delayed": delayed,
+        "escalations": escalations
     }

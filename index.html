@@ -2147,9 +2147,13 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <div id="backend-status-pill" class="backend-pill" title="Python FastAPI Backend Status">
+                <button type="button" onclick="openSyncModal()" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1px solid var(--border-light); background: #ffffff;">
+                    <span>🔄</span>
+                    <span>Sync & Backup</span>
+                </button>
+                <div id="backend-status-pill" class="backend-pill" title="Kizuno-AI Engine Status">
                     <span class="backend-dot"></span>
-                    <span id="backend-status-text">Kizuno-AI Engine & SQLite Active (6 in SQL)</span>
+                    <span id="backend-status-text">Kizuno-AI Engine Active</span>
                 </div>
                 <div class="user-pill" id="nav-user-pill" style="cursor: pointer;">
                     <div class="user-avatar" id="nav-user-initial">C</div>
@@ -2924,7 +2928,7 @@
                             <line x1="16" y1="17" x2="8" y2="17"></line>
                             <polyline points="10 9 9 9 8 9"></polyline>
                         </svg>
-                        Complaints
+                        <span id="side-kpi-total">Complaints (0)</span>
                     </li>
                     <li class="sidebar-item" onclick="filterOfficerStatus('Pending')">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -2932,21 +2936,21 @@
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 14 14"></polyline>
                         </svg>
-                        Pending (71)
+                        <span id="side-kpi-pending">Pending (0)</span>
                     </li>
                     <li class="sidebar-item" onclick="filterOfficerStatus('In Progress')">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
                         </svg>
-                        In Progress (43)
+                        <span id="side-kpi-progress">In Progress (0)</span>
                     </li>
                     <li class="sidebar-item" onclick="filterOfficerStatus('Resolved')">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
-                        Resolved (134)
+                        <span id="side-kpi-resolved">Resolved (0)</span>
                     </li>
                     <li class="sidebar-item" onclick="filterOfficerStatus('Delayed')">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -2957,7 +2961,7 @@
                             <line x1="12" y1="9" x2="12" y2="13"></line>
                             <line x1="12" y1="17" x2="12.01" y2="17"></line>
                         </svg>
-                        Delayed (18)
+                        <span id="side-kpi-delayed">Delayed (0)</span>
                     </li>
                 </ul>
 
@@ -2990,31 +2994,31 @@
                         </span>
                     </div>
 
-                    <!-- 6 KPIs Cards (Exact numbers from design) -->
+                    <!-- 6 KPIs Cards (Default to 0, dynamically populated) -->
                     <div class="kpi-grid">
                         <div class="kpi-card">
                             <div class="kpi-title">Total Complaints</div>
-                            <div class="kpi-number" id="kpi-total">248</div>
+                            <div class="kpi-number" id="kpi-total">0</div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-title">Pending</div>
-                            <div class="kpi-number pending" id="kpi-pending">71</div>
+                            <div class="kpi-number pending" id="kpi-pending">0</div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-title">In Progress</div>
-                            <div class="kpi-number in-progress" id="kpi-progress">43</div>
+                            <div class="kpi-number in-progress" id="kpi-progress">0</div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-title">Resolved</div>
-                            <div class="kpi-number resolved" id="kpi-resolved">134</div>
+                            <div class="kpi-number resolved" id="kpi-resolved">0</div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-title">Delayed</div>
-                            <div class="kpi-number delayed" id="kpi-delayed">18</div>
+                            <div class="kpi-number delayed" id="kpi-delayed">0</div>
                         </div>
                         <div class="kpi-card">
                             <div class="kpi-title">Escalations</div>
-                            <div class="kpi-number escalations" id="kpi-escalations">6</div>
+                            <div class="kpi-number escalations" id="kpi-escalations">0</div>
                         </div>
                     </div>
 
@@ -3231,6 +3235,88 @@
         </div>
     </div>
 
+    <!-- MODAL 2: SYNC / BACKUP / CLOUD DATA BRIDGE -->
+    <div class="modal-backdrop" id="sync-modal" onclick="closeSyncModal(event)" style="display: none;">
+        <div class="login-dialog" onclick="event.stopPropagation()" style="max-width: 520px;">
+            <button type="button" class="modal-close-btn" onclick="closeSyncModal()">✕</button>
+
+            <div class="login-header">
+                <div class="brand-shield" style="margin: 0 auto 0.75rem auto;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                </div>
+                <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary);">Data Sync & Cloud Backup</h2>
+                <p style="font-size: 0.825rem; color: var(--text-muted);">Sync complaints and accounts across Live Server and GitHub Pages</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                <!-- 1. Export Data -->
+                <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: 10px; padding: 1rem; text-align: left;">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.35rem;">
+                        📤 Export Grievance Data (Backup)
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                        Download or copy all registered complaints to import onto GitHub Pages or another device.
+                    </p>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button type="button" class="btn-primary" onclick="exportDataToFile()" style="font-size: 0.8rem; padding: 0.45rem 0.85rem;">
+                            📥 Download JSON File
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="copyDataToClipboard()" style="font-size: 0.8rem; padding: 0.45rem 0.85rem;">
+                            📋 Copy JSON to Clipboard
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Import Data -->
+                <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: 10px; padding: 1rem; text-align: left;">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.35rem;">
+                        📥 Import Grievance Data
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                        Paste exported JSON data below or choose a JSON file to instantly sync complaints:
+                    </p>
+                    <textarea id="import-json-text" class="form-control" rows="3" placeholder='Paste JSON data here (e.g. [{"id": "CIV-2026-..."}])...' style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.5rem; width: 100%; box-sizing: border-box;"></textarea>
+                    <div style="display: flex; gap: 0.5rem; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <button type="button" class="btn-primary" onclick="importDataFromText()" style="font-size: 0.8rem; padding: 0.45rem 0.85rem;">
+                            ✓ Import & Merge Data
+                        </button>
+                        <label class="btn-secondary" style="font-size: 0.8rem; padding: 0.45rem 0.85rem; cursor: pointer; margin: 0;">
+                            Upload File
+                            <input type="file" accept=".json" onchange="handleImportFileInput(event)" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 3. Custom Backend Endpoint (Optional) -->
+                <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: 10px; padding: 1rem; text-align: left;">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.35rem;">
+                        🌐 Custom Cloud API URL (Optional)
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                        Connect GitHub Pages directly to a hosted backend (Render, Railway, or ngrok):
+                    </p>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="url" id="custom-api-input" class="form-control" placeholder="https://your-backend.onrender.com/api" style="font-size: 0.8rem; padding: 0.45rem 0.75rem; flex: 1;">
+                        <button type="button" class="btn-primary" onclick="saveCustomApiUrl()" style="font-size: 0.8rem; padding: 0.45rem 0.85rem; white-space: nowrap;">
+                            Save URL
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. Reset to Zero -->
+                <div style="text-align: center; margin-top: 0.25rem;">
+                    <button type="button" onclick="resetComplaintsRegistryToZero()" style="background: none; border: none; color: var(--brand-red); font-size: 0.8rem; font-weight: 700; cursor: pointer; text-decoration: underline;">
+                        🗑️ Reset All Complaints to 0 (Clear Cache)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Toast -->
     <div class="toast-notify" id="toast-notify">
         <span id="toast-icon">✓</span>
@@ -3246,211 +3332,61 @@
          */
         const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const isFileProtocol = window.location.protocol === 'file:';
-        const API_BASE = ((isLocalHost && window.location.port !== '8000') || isFileProtocol)
-            ? 'http://127.0.0.1:8000/api'
-            : `${window.location.origin}/api`;
+        const customApiUrl = localStorage.getItem('kizuno_custom_api_url');
+        const API_BASE = customApiUrl
+            ? customApiUrl.replace(/\/+$/, '')
+            : (((isLocalHost && window.location.port !== '8000') || isFileProtocol)
+                ? 'http://127.0.0.1:8000/api'
+                : `${window.location.origin}/api`);
 
         let isBackendConnected = false;
 
         /**
-         * IN-MEMORY DATABASE WITH FULL SAMPLE COMPLAINTS
-         * Reflects exact data from Kizuno-AI screens.
+         * IN-MEMORY DATABASE WITH VERIFIED COMPLAINT REGISTRY
+         * Clean start: Zero fake complaints. Only real submitted complaints are retained.
          */
         const KIZUNO_SQL_DB = {
             complaints: [
-                // Case 1: The flagship Streetlight complaint (CIV-2026-1042 / TN-GOV-X7K92P4M)
                 {
-                    id: "CIV-2026-1042",
-                    trackingKey: "TN-GOV-X7K92P4M",
-                    category: "Streetlight",
-                    categoryIcon: "💡",
-                    title: "Streetlight not working",
-                    description: "The streetlight near my house has not been working for the past 3 days. It's very dark at night.",
-                    location: "Gandhipuram, Coimbatore",
-                    photoUrl: "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80",
-                    priority: "Medium",
-                    status: "Delayed", // Delayed, In Progress, Pending, Resolved
-                    dayLabel: "Day 5",
-                    lastUpdated: "Day 5 - 14 Apr 2026",
-                    timeline: [
-                        {
-                            day: "Day 0",
-                            date: "Apr 10, 2026",
-                            statusType: "submitted",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Complaint Submitted",
-                            desc: "Complaint successfully registered in municipal system."
-                        },
-                        {
-                            day: "Day 1",
-                            date: "Apr 11, 2026",
-                            statusType: "forwarded",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Forwarded to Department",
-                            desc: "Sent to Electrical Department for scheduling and allocation."
-                        },
-                        {
-                            day: "Day 2",
-                            date: "Apr 12, 2026",
-                            statusType: "stationary",
-                            tagType: "tag-stationary",
-                            tagText: "No Event Logged",
-                            title: "No Response Recorded",
-                            desc: "No action recorded in our system."
-                        },
-                        {
-                            day: "Day 3",
-                            date: "Apr 13, 2026",
-                            statusType: "stationary",
-                            tagType: "tag-stationary",
-                            tagText: "No Event Logged",
-                            title: "No Response Recorded",
-                            desc: "No action recorded in our system."
-                        },
-                        {
-                            day: "Day 5",
-                            date: "Apr 15, 2026",
-                            statusType: "delayed",
-                            tagType: "tag-ai-inference",
-                            tagText: "AI Assessment",
-                            title: "Delayed",
-                            desc: "Expected response has not been recorded within standard SLA."
-                        },
-                        {
-                            day: "Day 7",
-                            date: "Apr 17, 2026",
-                            statusType: "escalated",
-                            tagType: "tag-escalated",
-                            tagText: "Escalation Flag",
-                            title: "Escalation Recommended",
-                            desc: "Complaint requires attention from higher-level officer."
-                        }
-                    ]
-                },
-                // Case 2: Water Leak (In Progress)
-                {
-                    id: "CIV-2026-1040",
-                    trackingKey: "TN-GOV-W992014",
-                    category: "Water Leak",
-                    categoryIcon: "💧",
-                    title: "Main Line Valve Water Leakage",
-                    description: "Significant drinking water leaking on 4th cross road, flooding sidewalk.",
-                    location: "Peelamedu, Coimbatore",
-                    photoUrl: "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=600&auto=format&fit=crop&q=80",
+                    id: "CIV-2026-1493",
+                    trackingKey: "TN-GOV-XE291F0",
+                    category: "Drainage",
+                    categoryIcon: "🌊",
+                    title: "blocked drain nage",
+                    description: "The streetlight near my house has been blocked for severel days",
+                    location: "irugur , Coimbatore",
+                    photoUrl: "./complaint_CIV-2026-1493.png",
                     priority: "High",
-                    status: "In Progress",
-                    dayLabel: "Day 3",
-                    lastUpdated: "Day 3 - 12 Apr 2026",
-                    timeline: [
-                        {
-                            day: "Day 0",
-                            date: "Apr 09, 2026",
-                            statusType: "submitted",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Complaint Registered",
-                            desc: "Water leakage intake verified and reference generated."
-                        },
-                        {
-                            day: "Day 1",
-                            date: "Apr 10, 2026",
-                            statusType: "forwarded",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Dispatched to TWAD Team",
-                            desc: "Maintenance crew allocated for pressure inspection."
-                        },
-                        {
-                            day: "Day 3",
-                            date: "Apr 12, 2026",
-                            statusType: "work-started",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Excavation and Valve Work Started",
-                            desc: "Team is actively repairing the cracked underground pipe."
-                        }
-                    ]
-                },
-                // Case 3: Transformer Sparking (Fully Resolved)
-                {
-                    id: "CIV-2026-1038",
-                    trackingKey: "TN-GOV-KA99120",
-                    category: "Streetlight",
-                    categoryIcon: "⚡",
-                    title: "Transformer Sparking & Streetlight Blackout",
-                    description: "High tension line sparking and complete blackout of streetlights on 100ft road.",
-                    location: "Ukkadam, Coimbatore",
-                    photoUrl: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&auto=format&fit=crop&q=80",
-                    priority: "Critical",
-                    status: "Resolved",
-                    dayLabel: "Day 10",
-                    lastUpdated: "Day 10 - 08 Apr 2026",
-                    timeline: [
-                        {
-                            day: "Day 0",
-                            date: "Mar 29, 2026",
-                            statusType: "submitted",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Emergency Safety Complaint Logged",
-                            desc: "Priority 1 ticket created for transformer short circuit."
-                        },
-                        {
-                            day: "Day 1",
-                            date: "Mar 30, 2026",
-                            statusType: "work-started",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Rapid Response Gang Deployed",
-                            desc: "Power isolated and faulty jumper cable replaced."
-                        },
-                        {
-                            day: "Day 10",
-                            date: "Apr 08, 2026",
-                            statusType: "resolved",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Resolved & Citizen Sign-Off Verified",
-                            desc: "Streetlights operational, voltage levels certified, case closed."
-                        }
-                    ]
-                },
-                // Case 4: Garbage Overflow (Pending)
-                {
-                    id: "CIV-2026-1041",
-                    trackingKey: "TN-GOV-G771899",
-                    category: "Garbage",
-                    categoryIcon: "🗑️",
-                    title: "Garbage Dump Overflow on School Road",
-                    description: "Municipal waste bin overflowing for 4 days, stray dogs and foul smell.",
-                    location: "RS Puram, Coimbatore",
-                    photoUrl: "https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80",
-                    priority: "Medium",
                     status: "Pending",
-                    dayLabel: "Day 1",
-                    lastUpdated: "Day 1 - 13 Apr 2026",
+                    dayLabel: "Day 0",
+                    lastUpdated: "Day 0 - Sep 10, 2026",
+                    department: "Drainage Division, Coimbatore Corporation",
+                    assignedOfficer: null,
+                    citizenEmail: "dilippalanisamy09@gmail.com",
+                    citizenName: "dilip",
                     timeline: [
                         {
+                            id: 25,
                             day: "Day 0",
-                            date: "Apr 12, 2026",
+                            date: "Sep 10, 2026",
                             statusType: "submitted",
                             tagType: "tag-verified",
                             tagText: "Verified Event",
-                            title: "Sanitation Grievance Lodged",
-                            desc: "Complaint assigned to Ward 24 Sanitation Inspector."
+                            title: "Complaint Submitted & Ingested",
+                            desc: "Grievance accepted into municipal SQL intake repository. Cryptographic tracking receipt generated.",
+                            officialNode: "Node: CM Helpline Central Gateway",
+                            evidenceRef: "SQL Record ID: #CIV-2026-1493 • Status: VERIFIED"
                         }
                     ]
                 }
             ],
             kpis: {
-                total: 248,
-                pending: 71,
-                inProgress: 43,
-                resolved: 134,
-                delayed: 18,
-                escalations: 6
+                total: 1,
+                pending: 1,
+                inProgress: 0,
+                resolved: 0,
+                delayed: 0,
+                escalations: 0
             },
             currentActiveActionId: null,
             selectedActionType: null
@@ -3470,18 +3406,21 @@
         }
 
         /**
-         * Loads complaints from localStorage on startup so user complaints are permanently available
+         * Loads complaints from localStorage on startup and purges obsolete dummy data
          */
         function loadComplaintsFromStorage() {
             try {
                 const saved = localStorage.getItem('kizuno_saved_complaints');
+                const DUMMY_IDS = new Set(['CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041']);
                 if (saved) {
-                    const parsed = JSON.parse(saved);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
+                    let parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed)) {
+                        // Purge any legacy dummy complaints
+                        parsed = parsed.filter(c => c && c.id && !DUMMY_IDS.has(c.id));
                         const existingMap = new Map();
                         parsed.forEach(c => { if (c && c.id) existingMap.set(c.id, c); });
                         (KIZUNO_SQL_DB.complaints || []).forEach(c => {
-                            if (c && c.id && !existingMap.has(c.id)) {
+                            if (c && c.id && !DUMMY_IDS.has(c.id) && !existingMap.has(c.id)) {
                                 existingMap.set(c.id, c);
                             }
                         });
@@ -3491,10 +3430,164 @@
             } catch (e) {
                 console.warn("loadComplaintsFromStorage notice:", e);
             }
+            try { updateKpiCounters(); } catch(e) {}
         }
 
         // Initialize local persistence cache immediately
         loadComplaintsFromStorage();
+
+        /* ========================================================
+         * SYNC / BACKUP / CLOUD MODAL LOGIC
+         * ======================================================== */
+        function openSyncModal() {
+            const modal = document.getElementById('sync-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                const input = document.getElementById('custom-api-input');
+                if (input) input.value = localStorage.getItem('kizuno_custom_api_url') || '';
+            }
+        }
+
+        function closeSyncModal(e) {
+            if (e && e.target && e.target !== e.currentTarget && !e.target.classList.contains('modal-close-btn')) return;
+            const modal = document.getElementById('sync-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function exportDataToFile() {
+            try {
+                const payload = {
+                    version: "2.0",
+                    exportedAt: new Date().toISOString(),
+                    complaints: KIZUNO_SQL_DB.complaints || [],
+                    registeredUsers: JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]'),
+                    currentUser: JSON.parse(localStorage.getItem('kizuno_auth_user') || 'null')
+                };
+                const jsonStr = JSON.stringify(payload, null, 2);
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `kizuno_complaints_backup_${Date.now()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast("Backup exported successfully! File downloaded.", "📥");
+            } catch (err) {
+                console.error("Export error:", err);
+                showToast("Could not export data: " + err.message, "⚠️");
+            }
+        }
+
+        function copyDataToClipboard() {
+            try {
+                const payload = {
+                    version: "2.0",
+                    exportedAt: new Date().toISOString(),
+                    complaints: KIZUNO_SQL_DB.complaints || [],
+                    registeredUsers: JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]'),
+                    currentUser: JSON.parse(localStorage.getItem('kizuno_auth_user') || 'null')
+                };
+                navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
+                showToast("Complaints JSON copied to clipboard! Ready to paste on GitHub Pages.", "📋");
+            } catch (err) {
+                showToast("Copy failed. Please use 'Download JSON File' instead.", "⚠️");
+            }
+        }
+
+        function importDataFromText() {
+            const textarea = document.getElementById('import-json-text');
+            const text = textarea ? textarea.value.trim() : '';
+            if (!text) {
+                showToast("Please paste JSON backup data into the text box", "⚠️");
+                return;
+            }
+            processImportJson(text);
+        }
+
+        function handleImportFileInput(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                processImportJson(e.target.result);
+            };
+            reader.readAsText(file);
+        }
+
+        function processImportJson(rawJson) {
+            try {
+                const parsed = JSON.parse(rawJson);
+                let incomingComplaints = [];
+                if (Array.isArray(parsed)) {
+                    incomingComplaints = parsed;
+                } else if (parsed && Array.isArray(parsed.complaints)) {
+                    incomingComplaints = parsed.complaints;
+                    if (Array.isArray(parsed.registeredUsers)) {
+                        localStorage.setItem('kizuno_registered_users', JSON.stringify(parsed.registeredUsers));
+                    }
+                    if (parsed.currentUser && !localStorage.getItem('kizuno_auth_user')) {
+                        localStorage.setItem('kizuno_auth_user', JSON.stringify(parsed.currentUser));
+                        applyUserSession(parsed.currentUser);
+                    }
+                } else {
+                    throw new Error("Invalid format: expected array of complaints or backup payload.");
+                }
+
+                const DUMMY_IDS = new Set(['CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041']);
+                const mergedMap = new Map();
+                // Add existing
+                (KIZUNO_SQL_DB.complaints || []).forEach(c => {
+                    if (c && c.id && !DUMMY_IDS.has(c.id)) mergedMap.set(c.id, c);
+                });
+                // Merge incoming
+                incomingComplaints.forEach(c => {
+                    if (c && c.id && !DUMMY_IDS.has(c.id)) mergedMap.set(c.id, c);
+                });
+
+                KIZUNO_SQL_DB.complaints = Array.from(mergedMap.values());
+                persistComplaintsToStorage();
+                updateKpiCounters();
+                renderOfficerTable();
+                renderMyComplaints();
+                renderCitizenDashboardRecent();
+                updateCitizenDashboardStats();
+
+                closeSyncModal();
+                showToast(`Success! Imported ${incomingComplaints.length} complaints into registry.`, "✓");
+            } catch (err) {
+                console.error("Import parse error:", err);
+                showToast("Import error: " + err.message, "⚠️");
+            }
+        }
+
+        function saveCustomApiUrl() {
+            const input = document.getElementById('custom-api-input');
+            const url = input ? input.value.trim() : '';
+            if (url) {
+                localStorage.setItem('kizuno_custom_api_url', url);
+                showToast("Custom Cloud API URL saved! Reloading to connect...", "💾");
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                localStorage.removeItem('kizuno_custom_api_url');
+                showToast("Custom API URL cleared. Reset to default.", "ℹ️");
+                setTimeout(() => window.location.reload(), 1000);
+            }
+        }
+
+        function resetComplaintsRegistryToZero() {
+            if (!confirm("Are you sure you want to reset all complaints to 0? This will clear all cached grievances.")) return;
+            KIZUNO_SQL_DB.complaints = [];
+            persistComplaintsToStorage();
+            updateKpiCounters();
+            renderOfficerTable();
+            renderMyComplaints();
+            renderCitizenDashboardRecent();
+            updateCitizenDashboardStats();
+            closeSyncModal();
+            showToast("All complaints have been reset to 0.", "🗑️");
+        }
 
         /**
          * Allows an officer to delete a complaint from the active console
@@ -3734,7 +3827,7 @@
             if (e && e.preventDefault) e.preventDefault();
             const emailInput = document.getElementById('login-email');
             const passwordInput = document.getElementById('login-password');
-            const email = emailInput ? emailInput.value.trim() : '';
+            const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
             const password = passwordInput ? passwordInput.value : '';
 
             if (!email || !password) {
@@ -3742,26 +3835,65 @@
                 return;
             }
 
-            try {
-                const res = await fetch(`${API_BASE}/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
+            // Live SQL authentication if server is connected
+            if (isBackendConnected) {
+                try {
+                    const res = await fetch(`${API_BASE}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
 
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
-                    applyUserSession(data.user);
-                    switchView('dashboard');
-                    showToast(data.message || `Welcome back, ${data.user.name}! Citizen Dashboard Loaded`, '✓');
-                } else {
-                    showToast(data.detail || 'Invalid Gmail address or password', '⚠️');
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
+                        const registeredUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                        if (!registeredUsers.some(u => (u.email || '').toLowerCase() === email)) {
+                            registeredUsers.push(data.user);
+                            localStorage.setItem('kizuno_registered_users', JSON.stringify(registeredUsers));
+                        }
+                        applyUserSession(data.user);
+                        switchView('dashboard');
+                        showToast(data.message || `Welcome back, ${data.user.name}! Citizen Dashboard Loaded`, '✓');
+                        return;
+                    } else {
+                        showToast(data.detail || 'Invalid Gmail address or password', '⚠️');
+                        return;
+                    }
+                } catch (err) {
+                    console.warn("Backend auth failed, evaluating client offline session:", err);
                 }
-            } catch (err) {
-                console.error("Login error:", err);
-                showToast('Unable to connect to authentication server. Please ensure server is online.', '⚠️');
             }
+
+            // GitHub Pages / Cloud Fallback authentication
+            const registeredUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+            const defaultAccounts = [
+                { email: 'dilippalanisamy09@gmail.com', name: 'dilip', role: 'Citizen', picture: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80' },
+                { email: 'kumar.citizen@gmail.com', name: 'Citizen Kumar', role: 'Citizen', picture: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80' }
+            ];
+            const allUsers = [...registeredUsers, ...defaultAccounts];
+            const matched = allUsers.find(u => (u.email || '').toLowerCase() === email);
+
+            const authUser = matched ? {
+                id: matched.id || 1,
+                name: matched.name || email.split('@')[0],
+                email: email,
+                role: matched.role || 'Citizen',
+                picture: matched.picture || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                authProvider: 'Kizuno Client Cache'
+            } : {
+                id: Date.now(),
+                name: email.split('@')[0],
+                email: email,
+                role: 'Citizen',
+                picture: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                authProvider: 'Kizuno Client Cache'
+            };
+
+            localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
+            applyUserSession(authUser);
+            switchView('dashboard');
+            showToast(`Welcome back, ${authUser.name}! Citizen Dashboard Loaded`, '✓');
         }
 
         async function requestGmailVerificationCode(eOrResend = false, isResend = false) {
@@ -3773,7 +3905,7 @@
             }
 
             const username = document.getElementById('signup-username').value.trim();
-            const email = document.getElementById('signup-email').value.trim();
+            const email = document.getElementById('signup-email').value.trim().toLowerCase();
             const password = document.getElementById('signup-password').value;
 
             if (!username) {
@@ -3801,61 +3933,88 @@
                 btn.innerText = resend ? 'Resending Code...' : 'Sending Verification Code...';
             }
 
-            try {
-                const res = await fetch(`${API_BASE}/auth/send-verification`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, username })
-                });
+            if (isBackendConnected) {
+                try {
+                    const res = await fetch(`${API_BASE}/auth/send-verification`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, username })
+                    });
 
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    // Hide signup form completely so password is NOT displayed during verification
-                    const signupForm = document.getElementById('citizen-signup-form');
-                    if (signupForm) signupForm.style.display = 'none';
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        const signupForm = document.getElementById('citizen-signup-form');
+                        if (signupForm) signupForm.style.display = 'none';
 
-                    // Reveal OTP verification section
-                    const otpSection = document.getElementById('signup-otp-section');
-                    if (otpSection) otpSection.style.display = 'block';
+                        const otpSection = document.getElementById('signup-otp-section');
+                        if (otpSection) otpSection.style.display = 'block';
 
-                    const targetEmailSpan = document.getElementById('otp-target-email');
-                    if (targetEmailSpan) targetEmailSpan.innerText = email;
+                        const targetEmailSpan = document.getElementById('otp-target-email');
+                        if (targetEmailSpan) targetEmailSpan.innerText = email;
 
-                    const statusText = document.getElementById('otp-sent-status');
-                    if (statusText) {
-                        statusText.innerHTML = `A 6-digit verification code has been dispatched to <strong style="color: #1d4ed8; word-break: break-all;">${email}</strong>. Please check your email inbox and enter it below:`;
+                        const statusText = document.getElementById('otp-sent-status');
+                        if (statusText) {
+                            statusText.innerHTML = `A 6-digit verification code has been dispatched to <strong style="color: #1d4ed8; word-break: break-all;">${email}</strong>. Please check your email inbox and enter it below:`;
+                        }
+
+                        const codeInput = document.getElementById('signup-otp-code');
+                        if (codeInput) {
+                            codeInput.value = '';
+                            codeInput.focus();
+                        }
+
+                        showToast(`Verification code sent to ${email}. Check your email inbox!`, '✉️');
+                        return false;
+                    } else {
+                        showToast(data.detail || 'Failed to send verification code', '⚠️');
                     }
-
-                    const codeInput = document.getElementById('signup-otp-code');
-                    if (codeInput) {
-                        codeInput.value = '';
-                        codeInput.focus();
+                } catch (err) {
+                    console.warn("Backend verification call failed, switching to local client verification flow:", err);
+                } finally {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerText = 'Send Gmail Verification Code';
                     }
-
-                    // Ensure no developer hints or passwords are shown on screen
-                    const hintBox = document.getElementById('otp-dev-hint');
-                    if (hintBox) hintBox.style.display = 'none';
-
-                    showToast(`Verification code sent to ${email}. Check your email inbox!`, '✉️');
-                } else {
-                    showToast(data.detail || 'Failed to send verification code', '⚠️');
-                }
-            } catch (err) {
-                console.error("Verification dispatch error:", err);
-                showToast('Unable to connect to backend server. Please verify backend is online.', '⚠️');
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = 'Send Gmail Verification Code';
                 }
             }
+
+            // GitHub Pages / Client offline fallback OTP generation
+            const mockCode = String(Math.floor(100000 + Math.random() * 900000));
+            window._localPendingOtp = { email, username, password, code: mockCode };
+
+            const signupForm = document.getElementById('citizen-signup-form');
+            if (signupForm) signupForm.style.display = 'none';
+
+            const otpSection = document.getElementById('signup-otp-section');
+            if (otpSection) otpSection.style.display = 'block';
+
+            const targetEmailSpan = document.getElementById('otp-target-email');
+            if (targetEmailSpan) targetEmailSpan.innerText = email;
+
+            const statusText = document.getElementById('otp-sent-status');
+            if (statusText) {
+                statusText.innerHTML = `Verification Code generated for <strong style="color: #1d4ed8; word-break: break-all;">${email}</strong>: <br><span style="font-size: 1.35rem; font-weight: 800; color: #1e40af; font-family: 'JetBrains Mono', monospace; display: inline-block; margin-top: 0.35rem; letter-spacing: 0.15em;">${mockCode}</span>`;
+            }
+
+            const codeInput = document.getElementById('signup-otp-code');
+            if (codeInput) {
+                codeInput.value = '';
+                codeInput.focus();
+            }
+
+            if (btn) {
+                btn.disabled = false;
+                btn.innerText = 'Send Gmail Verification Code';
+            }
+
+            showToast(`Verification code ready! Enter ${mockCode} to verify`, '✉️');
             return false;
         }
 
         async function completeCitizenRegistration(e) {
             if (e && e.preventDefault) e.preventDefault();
             const username = document.getElementById('signup-username').value.trim();
-            const email = document.getElementById('signup-email').value.trim();
+            const email = document.getElementById('signup-email').value.trim().toLowerCase();
             const password = document.getElementById('signup-password').value;
             const code = document.getElementById('signup-otp-code').value.trim();
 
@@ -3869,53 +4028,95 @@
             const verifyBtn = document.getElementById('btn-verify-otp');
             if (verifyBtn) {
                 verifyBtn.disabled = true;
-                verifyBtn.innerText = 'Verifying Code...';
+                verifyBtn.innerText = 'Verifying...';
             }
 
-            try {
-                const res = await fetch(`${API_BASE}/auth/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username,
-                        email,
-                        password,
-                        verification_code: code
-                    })
-                });
+            if (isBackendConnected) {
+                try {
+                    const res = await fetch(`${API_BASE}/auth/verify-and-register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            username,
+                            email,
+                            password,
+                            verification_code: code
+                        })
+                    });
 
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    // Save authenticated session
-                    localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
-                    applyUserSession(data.user);
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
+                        const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                        if (!regUsers.some(u => (u.email || '').toLowerCase() === email)) {
+                            regUsers.push(data.user);
+                            localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+                        }
+                        applyUserSession(data.user);
 
-                    // Clear fields
-                    const p = document.getElementById('signup-password');
-                    if (p) p.value = '';
-                    const c = document.getElementById('signup-otp-code');
-                    if (c) c.value = '';
+                        // Clear fields
+                        const p = document.getElementById('signup-password');
+                        if (p) p.value = '';
+                        const c = document.getElementById('signup-otp-code');
+                        if (c) c.value = '';
 
-                    // Reset form state
-                    const signupForm = document.getElementById('citizen-signup-form');
-                    const otpSection = document.getElementById('signup-otp-section');
-                    if (signupForm) signupForm.style.display = 'block';
-                    if (otpSection) otpSection.style.display = 'none';
+                        const signupForm = document.getElementById('citizen-signup-form');
+                        const otpSection = document.getElementById('signup-otp-section');
+                        if (signupForm) signupForm.style.display = 'block';
+                        if (otpSection) otpSection.style.display = 'none';
 
-                    // Display confirmation that account is created successfully and transition to Dashboard
-                    showToast('Account is created successfully! Welcome to your Dashboard.', '🎉');
-                    switchView('dashboard');
-                } else {
-                    showToast(data.detail || 'Verification failed. Please check the code.', '⚠️');
+                        showToast('Account is created successfully! Welcome to your Dashboard.', '🎉');
+                        switchView('dashboard');
+                        return false;
+                    } else {
+                        showToast(data.detail || 'Verification failed. Please check the code.', '⚠️');
+                    }
+                } catch (err) {
+                    console.warn("Backend register error, evaluating client offline verification:", err);
+                } finally {
+                    if (verifyBtn) {
+                        verifyBtn.disabled = false;
+                        verifyBtn.innerText = '✓ Verify Code & Create Account';
+                    }
                 }
-            } catch (err) {
-                console.error("Registration error:", err);
-                showToast('Connection error during registration', '⚠️');
-            } finally {
-                if (verifyBtn) {
-                    verifyBtn.disabled = false;
-                    verifyBtn.innerText = '✓ Verify Code & Create Account';
-                }
+            }
+
+            // GitHub Pages / Client fallback verification
+            if (window._localPendingOtp && window._localPendingOtp.code === code) {
+                const newUser = {
+                    id: Date.now(),
+                    name: username,
+                    email: email,
+                    role: 'Citizen',
+                    isVerified: true,
+                    picture: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                    authProvider: 'Kizuno Client Cache'
+                };
+                localStorage.setItem('kizuno_auth_user', JSON.stringify(newUser));
+                const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                regUsers.push(newUser);
+                localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+                applyUserSession(newUser);
+
+                const p = document.getElementById('signup-password');
+                if (p) p.value = '';
+                const c = document.getElementById('signup-otp-code');
+                if (c) c.value = '';
+
+                const signupForm = document.getElementById('citizen-signup-form');
+                const otpSection = document.getElementById('signup-otp-section');
+                if (signupForm) signupForm.style.display = 'block';
+                if (otpSection) otpSection.style.display = 'none';
+
+                showToast('Account is created successfully! Welcome to your Dashboard.', '🎉');
+                switchView('dashboard');
+            } else {
+                showToast('Incorrect verification code. Please check and try again.', '⚠️');
+            }
+
+            if (verifyBtn) {
+                verifyBtn.disabled = false;
+                verifyBtn.innerText = '✓ Verify Code & Create Account';
             }
             return false;
         }
@@ -4012,20 +4213,15 @@
             if (!container) return;
 
             const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
-            const userEmail = (authUser.email || 'kumar.citizen@gmail.com').toLowerCase();
-            const userName = (authUser.name || 'Citizen Kumar').toLowerCase();
+            const userEmail = (authUser.email || '').toLowerCase();
+            const userName = (authUser.name || '').toLowerCase();
 
-            // Filter for current citizen or show top complaints
-            let myComplaints = KIZUNO_SQL_DB.complaints.filter(c => {
+            // Filter for current authenticated citizen
+            let myComplaints = userEmail ? KIZUNO_SQL_DB.complaints.filter(c => {
                 const cEmail = (c.citizenEmail || '').toLowerCase();
                 const cName = (c.citizenName || '').toLowerCase();
-                return cEmail === userEmail || cName === userName || (userEmail.includes('kumar') && (!c.citizenEmail || c.citizenEmail.includes('kumar')));
-            });
-
-            const isGuestOrDemo = !authUser.email || userEmail.includes('kumar');
-            if (myComplaints.length === 0 && isGuestOrDemo) {
-                myComplaints = KIZUNO_SQL_DB.complaints.slice(0, 2);
-            }
+                return cEmail === userEmail || (userName && cName === userName);
+            }) : [];
 
             const recent = myComplaints.slice(0, 3);
 
@@ -4586,22 +4782,28 @@
                 ]);
                 if (complaintsRes.ok) {
                     const sqlComplaints = await complaintsRes.json();
-                    // Merge so locally submitted complaints are never lost
-                    const sqlIds = new Set(sqlComplaints.map(c => c.id));
-                    const pendingLocal = (KIZUNO_SQL_DB.complaints || []).filter(c => !sqlIds.has(c.id));
-                    KIZUNO_SQL_DB.complaints = [...pendingLocal, ...sqlComplaints];
+                    const DUMMY_IDS = new Set(['CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041']);
+                    const cleanSql = sqlComplaints.filter(c => c && c.id && !DUMMY_IDS.has(c.id));
+                    const sqlIds = new Set(cleanSql.map(c => c.id));
+                    const pendingLocal = (KIZUNO_SQL_DB.complaints || []).filter(c => c && c.id && !sqlIds.has(c.id) && !DUMMY_IDS.has(c.id));
+                    KIZUNO_SQL_DB.complaints = [...cleanSql, ...pendingLocal];
                     persistComplaintsToStorage();
+                    updateKpiCounters();
                     renderOfficerTable();
                     renderMyComplaints();
                     renderCitizenDashboardRecent();
                     updateCitizenDashboardStats();
                 }
                 if (kpisRes.ok) {
-                    KIZUNO_SQL_DB.kpis = await kpisRes.json();
+                    const kpiData = await kpisRes.json();
+                    if (kpiData && typeof kpiData.total === 'number') {
+                        KIZUNO_SQL_DB.kpis = kpiData;
+                    }
                     updateKpiCounters();
                 }
             } catch (e) {
                 console.error('SQL Sync error:', e);
+                updateKpiCounters();
             }
         }
 
@@ -4838,8 +5040,6 @@
 
             KIZUNO_SQL_DB.complaints.unshift(newComplaint);
             persistComplaintsToStorage();
-            KIZUNO_SQL_DB.kpis.total += 1;
-            KIZUNO_SQL_DB.kpis.pending += 1;
             updateKpiCounters();
             renderCitizenDashboardRecent();
             updateCitizenDashboardStats();
@@ -4856,10 +5056,24 @@
          */
         function renderOfficerTable(filterStatus = 'All') {
             const tbody = document.getElementById('officer-table-body');
-            let list = KIZUNO_SQL_DB.complaints;
+            if (!tbody) return;
+            let list = KIZUNO_SQL_DB.complaints || [];
 
             if (filterStatus !== 'All') {
                 list = list.filter(c => c.status === filterStatus);
+            }
+
+            if (list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+                            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">No Complaints Found (0 Records)</div>
+                            <div style="font-size: 0.8rem;">Complaints will appear here once citizens submit grievances.</div>
+                        </td>
+                    </tr>
+                `;
+                return;
             }
 
             tbody.innerHTML = list.map(c => `
@@ -5052,14 +5266,14 @@
          */
         function updateCitizenDashboardStats() {
             const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
-            const userEmail = (authUser.email || 'kumar.citizen@gmail.com').toLowerCase();
-            const userName = (authUser.name || 'Citizen Kumar').toLowerCase();
+            const userEmail = (authUser.email || '').toLowerCase();
+            const userName = (authUser.name || '').toLowerCase();
 
-            const myComplaints = KIZUNO_SQL_DB.complaints.filter(c => {
+            const myComplaints = userEmail ? KIZUNO_SQL_DB.complaints.filter(c => {
                 const cEmail = (c.citizenEmail || '').toLowerCase();
                 const cName = (c.citizenName || '').toLowerCase();
-                return cEmail === userEmail || cName === userName || (userEmail.includes('kumar') && (!c.citizenEmail || c.citizenEmail.includes('kumar')));
-            });
+                return cEmail === userEmail || (userName && cName === userName);
+            }) : [];
 
             const activeCount = myComplaints.filter(c => c.status !== 'Resolved').length;
             const reviewCount = myComplaints.filter(c => c.status === 'Pending' || c.status === 'In Progress').length;
@@ -5085,15 +5299,15 @@
             if (activeTab) activeTab.classList.add('active');
 
             const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
-            const userEmail = (authUser.email || 'kumar.citizen@gmail.com').toLowerCase();
-            const userName = (authUser.name || 'Citizen Kumar').toLowerCase();
+            const userEmail = (authUser.email || '').toLowerCase();
+            const userName = (authUser.name || '').toLowerCase();
 
             // Filter to show ONLY complaints owned by this citizen
-            let list = KIZUNO_SQL_DB.complaints.filter(c => {
+            let list = userEmail ? KIZUNO_SQL_DB.complaints.filter(c => {
                 const cEmail = (c.citizenEmail || '').toLowerCase();
                 const cName = (c.citizenName || '').toLowerCase();
-                return cEmail === userEmail || cName === userName || (userEmail.includes('kumar') && (!c.citizenEmail || c.citizenEmail.includes('kumar')));
-            });
+                return cEmail === userEmail || (userName && cName === userName);
+            }) : [];
 
             if (filter !== 'All') {
                 list = list.filter(c => c.status === filter);
@@ -5195,7 +5409,6 @@
             // Local fallback
             KIZUNO_SQL_DB.complaints = KIZUNO_SQL_DB.complaints.filter(c => c.id !== id && c.trackingKey !== trackingKey);
             persistComplaintsToStorage();
-            if (KIZUNO_SQL_DB.kpis.total > 0) KIZUNO_SQL_DB.kpis.total -= 1;
             updateKpiCounters();
             renderMyComplaints();
             renderCitizenDashboardRecent();
@@ -5209,12 +5422,35 @@
         }
 
         function updateKpiCounters() {
-            document.getElementById('kpi-total').innerText = KIZUNO_SQL_DB.kpis.total;
-            document.getElementById('kpi-pending').innerText = KIZUNO_SQL_DB.kpis.pending;
-            document.getElementById('kpi-progress').innerText = KIZUNO_SQL_DB.kpis.inProgress;
-            document.getElementById('kpi-resolved').innerText = KIZUNO_SQL_DB.kpis.resolved;
-            document.getElementById('kpi-delayed').innerText = KIZUNO_SQL_DB.kpis.delayed;
-            document.getElementById('kpi-escalations').innerText = KIZUNO_SQL_DB.kpis.escalations;
+            const list = (KIZUNO_SQL_DB && KIZUNO_SQL_DB.complaints) ? KIZUNO_SQL_DB.complaints : [];
+            const total = list.length;
+            const pending = list.filter(c => c && c.status === 'Pending').length;
+            const inProgress = list.filter(c => c && c.status === 'In Progress').length;
+            const resolved = list.filter(c => c && c.status === 'Resolved').length;
+            const delayed = list.filter(c => c && c.status === 'Delayed').length;
+            const escalations = list.filter(c => c && (c.status === 'Delayed' || c.status === 'Escalated' || c.escalated)).length;
+
+            KIZUNO_SQL_DB.kpis = { total, pending, inProgress, resolved, delayed, escalations };
+
+            const setTxt = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
+
+            // Officer Dashboard 6 KPI cards
+            setTxt('kpi-total', total);
+            setTxt('kpi-pending', pending);
+            setTxt('kpi-progress', inProgress);
+            setTxt('kpi-resolved', resolved);
+            setTxt('kpi-delayed', delayed);
+            setTxt('kpi-escalations', escalations);
+
+            // Officer Sidebar counters
+            setTxt('side-kpi-total', `Complaints (${total})`);
+            setTxt('side-kpi-pending', `Pending (${pending})`);
+            setTxt('side-kpi-progress', `In Progress (${inProgress})`);
+            setTxt('side-kpi-resolved', `Resolved (${resolved})`);
+            setTxt('side-kpi-delayed', `Delayed (${delayed})`);
         }
 
         function getStatusPillClass(status) {
