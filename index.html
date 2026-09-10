@@ -10,6 +10,13 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
         rel="stylesheet">
+    <script>
+        // Apply saved theme immediately to prevent any visual flash
+        (function() {
+            const saved = localStorage.getItem('kizuno_active_theme') || 'grey-green';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+    </script>
     <style>
         :root {
             --bg-canvas: #f8fafc;
@@ -20,10 +27,18 @@
             --border-light: #e2e8f0;
             --border-subtle: #cbd5e1;
 
-            /* Brand & Action Colors */
-            --brand-primary: #2563eb;
-            --brand-primary-hover: #1d4ed8;
-            --brand-primary-subtle: #eff6ff;
+            /* Main Project Theme: Grey & Given Green (#16a34a) */
+            --brand-primary: #16a34a;
+            --brand-primary-hover: #15803d;
+            --brand-primary-subtle: #f0fdf4;
+            --brand-primary-border: #bbf7d0;
+            --brand-primary-text: #166534;
+            --brand-primary-shadow: rgba(22, 163, 74, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #16a34a 0%, #334155 100%);
+            --hero-card-1: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            --hero-card-2: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            --hero-card-3: linear-gradient(135deg, #475569 0%, #334155 100%);
+
             --brand-green: #16a34a;
             --brand-green-hover: #15803d;
             --brand-green-subtle: #f0fdf4;
@@ -48,6 +63,192 @@
             --radius-lg: 16px;
             --radius-md: 10px;
             --radius-sm: 6px;
+        }
+
+        /* -------------------------------------------------------------
+           THEME VARIATIONS (SWITCHABLE VIA THEME MENU)
+           ------------------------------------------------------------- */
+        /* Theme 1 (Default): Grey & Given Green (#16a34a) */
+        [data-theme="grey-green"], :root:not([data-theme]) {
+            --bg-canvas: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-light: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --brand-primary: #16a34a;
+            --brand-primary-hover: #15803d;
+            --brand-primary-subtle: #f0fdf4;
+            --brand-primary-border: #bbf7d0;
+            --brand-primary-text: #166534;
+            --brand-primary-shadow: rgba(22, 163, 74, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #16a34a 0%, #334155 100%);
+            --hero-card-1: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            --hero-card-2: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            --hero-card-3: linear-gradient(135deg, #475569 0%, #334155 100%);
+        }
+
+        /* Theme 2: Classic Civic Blue & Slate */
+        [data-theme="classic-blue"] {
+            --bg-canvas: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-light: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --brand-primary: #2563eb;
+            --brand-primary-hover: #1d4ed8;
+            --brand-primary-subtle: #eff6ff;
+            --brand-primary-border: #bfdbfe;
+            --brand-primary-text: #1e40af;
+            --brand-primary-shadow: rgba(37, 99, 235, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            --hero-card-1: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            --hero-card-2: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            --hero-card-3: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        /* Theme 3: Dark Charcoal & Vivid Green */
+        [data-theme="dark-green"] {
+            --bg-canvas: #090d16;
+            --card-bg: #111827;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-light: #1e293b;
+            --border-subtle: #334155;
+            --brand-primary: #22c55e;
+            --brand-primary-hover: #16a34a;
+            --brand-primary-subtle: rgba(34, 197, 94, 0.12);
+            --brand-primary-border: #166534;
+            --brand-primary-text: #4ade80;
+            --brand-primary-shadow: rgba(34, 197, 94, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #22c55e 0%, #0f172a 100%);
+            --hero-card-1: linear-gradient(135deg, #15803d 0%, #14532d 100%);
+            --hero-card-2: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --hero-card-3: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+        }
+
+        /* Theme 4: Executive Slate Monochrome */
+        [data-theme="mono-slate"] {
+            --bg-canvas: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border-light: #cbd5e1;
+            --border-subtle: #94a3b8;
+            --brand-primary: #334155;
+            --brand-primary-hover: #1e293b;
+            --brand-primary-subtle: #e2e8f0;
+            --brand-primary-border: #cbd5e1;
+            --brand-primary-text: #0f172a;
+            --brand-primary-shadow: rgba(51, 65, 85, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #475569 0%, #0f172a 100%);
+            --hero-card-1: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            --hero-card-2: linear-gradient(135deg, #475569 0%, #334155 100%);
+            --hero-card-3: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        }
+
+        /* Theme 5: Forest Emerald & Warm Stone */
+        [data-theme="forest-emerald"] {
+            --bg-canvas: #f4f4f5;
+            --card-bg: #ffffff;
+            --text-primary: #18181b;
+            --text-secondary: #52525b;
+            --text-muted: #a1a1aa;
+            --border-light: #e4e4e7;
+            --border-subtle: #d4d4d8;
+            --brand-primary: #059669;
+            --brand-primary-hover: #047857;
+            --brand-primary-subtle: #ecfdf5;
+            --brand-primary-border: #a7f3d0;
+            --brand-primary-text: #065f46;
+            --brand-primary-shadow: rgba(5, 150, 105, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #059669 0%, #27272a 100%);
+            --hero-card-1: linear-gradient(135deg, #059669 0%, #047857 100%);
+            --hero-card-2: linear-gradient(135deg, #3f3f46 0%, #27272a 100%);
+            --hero-card-3: linear-gradient(135deg, #52525b 0%, #3f3f46 100%);
+        }
+
+        /* Dark Mode overrides for inputs, cards, and tables */
+        [data-theme="dark-green"] .form-control {
+            background: #1e293b;
+            color: #f8fafc;
+            border-color: #334155;
+        }
+        [data-theme="dark-green"] .content-card,
+        [data-theme="dark-green"] .app-nav,
+        [data-theme="dark-green"] .login-card-standalone,
+        [data-theme="dark-green"] .login-dialog,
+        [data-theme="dark-green"] .officer-sidebar,
+        [data-theme="dark-green"] .kpi-card,
+        [data-theme="dark-green"] .theme-dropdown-menu {
+            background: #111827;
+            color: #f8fafc;
+            border-color: #1e293b;
+        }
+        [data-theme="dark-green"] .btn-secondary {
+            background: #1e293b;
+            color: #f8fafc;
+            border-color: #334155;
+        }
+        [data-theme="dark-green"] .btn-secondary:hover {
+            background: #334155;
+        }
+        [data-theme="dark-green"] .officer-table th {
+            background: #1e293b;
+            color: #94a3b8;
+        }
+        [data-theme="dark-green"] .officer-table td {
+            border-color: #1e293b;
+            color: #e2e8f0;
+        }
+        [data-theme="dark-green"] .officer-table tr:hover {
+            background: #1a2333;
+        }
+
+        /* Theme Option Dropdown Menu Styling */
+        .theme-option-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.45rem 0.65rem;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s ease;
+        }
+        .theme-option-btn:hover {
+            background: var(--brand-primary-subtle);
+            color: var(--brand-primary);
+        }
+        .theme-option-btn.active {
+            background: var(--brand-primary-subtle);
+            color: var(--brand-primary);
+            font-weight: 700;
+        }
+        .theme-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1.5px solid rgba(0,0,0,0.15);
+            flex-shrink: 0;
+        }
+        .theme-check {
+            margin-left: auto;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--brand-primary);
         }
 
         * {
@@ -98,13 +299,13 @@
         .brand-shield {
             width: 38px;
             height: 38px;
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            background: var(--brand-shield-gradient, var(--brand-primary));
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #ffffff;
-            box-shadow: 0 3px 6px rgba(37, 99, 235, 0.25);
+            box-shadow: 0 3px 6px var(--brand-primary-shadow);
         }
 
         .brand-text {
@@ -187,7 +388,7 @@
             width: 26px;
             height: 26px;
             border-radius: 50%;
-            background: #2563eb;
+            background: var(--brand-primary);
             color: #ffffff;
             display: flex;
             align-items: center;
@@ -326,15 +527,15 @@
         }
 
         .action-card.blue {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            background: var(--hero-card-1, linear-gradient(135deg, #16a34a 0%, #15803d 100%));
         }
 
         .action-card.green {
-            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            background: var(--hero-card-2, linear-gradient(135deg, #334155 0%, #1e293b 100%));
         }
 
         .action-card.purple {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            background: var(--hero-card-3, linear-gradient(135deg, #475569 0%, #334155 100%));
         }
 
         .action-card-icon {
@@ -449,7 +650,7 @@
         .form-control:focus {
             background: #ffffff;
             border-color: var(--brand-primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 0 0 3px var(--brand-primary-shadow);
         }
 
         textarea.form-control {
@@ -705,7 +906,7 @@
         .track-search-input:focus {
             background: #ffffff;
             border-color: var(--brand-primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 0 0 3px var(--brand-primary-shadow);
         }
 
         .sample-search-chips {
@@ -1262,7 +1463,7 @@
             border-color: var(--brand-primary);
             background: var(--brand-primary-subtle);
             color: var(--brand-primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 0 0 3px var(--brand-primary-shadow);
         }
 
         /* ----------------------------------------------------
@@ -1615,7 +1816,7 @@
             background: var(--brand-primary);
             color: #ffffff;
             border-color: var(--brand-primary);
-            box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 0 5px var(--brand-primary-shadow);
         }
 
         .step.delayed-step.active .step-icon {
@@ -1734,7 +1935,7 @@
         .timeline-event.verified::before {
             border-color: var(--brand-primary);
             background: var(--brand-primary);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 0 0 4px var(--brand-primary-shadow);
         }
 
         .timeline-event.stationary::before {
@@ -2083,7 +2284,7 @@
         .pin-digit:focus {
             border-color: var(--brand-primary);
             background: #ffffff;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            box-shadow: 0 0 0 3px var(--brand-primary-shadow);
         }
 
 
@@ -2147,6 +2348,45 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <!-- THEME SWITCHER DROPDOWN -->
+                <div style="position: relative;" id="theme-switcher-container">
+                    <button type="button" id="theme-toggle-btn" onclick="toggleThemeMenu(event)" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; border: 1px solid var(--border-light); background: #ffffff;" title="Switch color theme">
+                        <span id="theme-btn-icon">🌿</span>
+                        <span id="theme-btn-label">Grey & Green</span>
+                        <span style="font-size: 0.65rem; opacity: 0.7;">▼</span>
+                    </button>
+                    <div id="theme-dropdown" class="theme-dropdown-menu" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); min-width: 230px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; box-shadow: var(--shadow-lg); padding: 0.5rem; z-index: 200;">
+                        <div style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.35rem 0.5rem 0.25rem;">
+                            Color Palettes
+                        </div>
+                        <button type="button" class="theme-option-btn active" onclick="setAppTheme('grey-green')" data-theme-target="grey-green">
+                            <span class="theme-dot" style="background: linear-gradient(135deg, #16a34a 50%, #334155 50%);"></span>
+                            <span>Grey & Green (Main)</span>
+                            <span class="theme-check" id="check-grey-green">✓</span>
+                        </button>
+                        <button type="button" class="theme-option-btn" onclick="setAppTheme('classic-blue')" data-theme-target="classic-blue">
+                            <span class="theme-dot" style="background: linear-gradient(135deg, #2563eb 50%, #1e293b 50%);"></span>
+                            <span>Classic Civic Blue</span>
+                            <span class="theme-check" id="check-classic-blue"></span>
+                        </button>
+                        <button type="button" class="theme-option-btn" onclick="setAppTheme('dark-green')" data-theme-target="dark-green">
+                            <span class="theme-dot" style="background: linear-gradient(135deg, #22c55e 50%, #090d16 50%);"></span>
+                            <span>Dark Slate & Green</span>
+                            <span class="theme-check" id="check-dark-green"></span>
+                        </button>
+                        <button type="button" class="theme-option-btn" onclick="setAppTheme('mono-slate')" data-theme-target="mono-slate">
+                            <span class="theme-dot" style="background: linear-gradient(135deg, #334155 50%, #64748b 50%);"></span>
+                            <span>Executive Slate</span>
+                            <span class="theme-check" id="check-mono-slate"></span>
+                        </button>
+                        <button type="button" class="theme-option-btn" onclick="setAppTheme('forest-emerald')" data-theme-target="forest-emerald">
+                            <span class="theme-dot" style="background: linear-gradient(135deg, #059669 50%, #27272a 50%);"></span>
+                            <span>Forest Emerald</span>
+                            <span class="theme-check" id="check-forest-emerald"></span>
+                        </button>
+                    </div>
+                </div>
+
                 <button type="button" onclick="openSyncModal()" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1px solid var(--border-light); background: #ffffff;">
                     <span>🔄</span>
                     <span>Sync & Backup</span>
@@ -2175,10 +2415,17 @@
          VIEW 0: LOGIN & AUTHENTICATION LANDING SCREEN (START PAGE)
          ======================================================== -->
     <main class="app-view active" id="view-login">
-        <div class="login-card-standalone">
+        <div class="login-card-standalone" style="position: relative;">
+            <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
+                <button type="button" onclick="cycleNextTheme()" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-secondary);" title="Click to cycle theme color">
+                    <span id="login-theme-icon">🌿</span>
+                    <span id="login-theme-label">Grey & Green</span>
+                    <span>↻</span>
+                </button>
+            </div>
             <div style="text-align: center; margin-bottom: 2rem;">
                 <div class="brand-shield"
-                    style="margin: 0 auto 1rem auto; width: 50px; height: 50px; border-radius: 12px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
+                    style="margin: 0 auto 1rem auto; width: 50px; height: 50px; border-radius: 12px; box-shadow: 0 4px 12px var(--brand-primary-shadow);">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                         stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
@@ -2313,22 +2560,22 @@
 
                     <!-- Real 6-Digit Verification Code Section (Revealed after Requesting Code, form is hidden) -->
                     <div id="signup-otp-section"
-                        style="display: none; margin-top: 1.25rem; padding: 1.5rem 1.25rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); text-align: center;">
+                        style="display: none; margin-top: 1.25rem; padding: 1.5rem 1.25rem; background: var(--brand-primary-subtle); border: 1px solid var(--brand-primary-border); border-radius: var(--radius-md); text-align: center;">
                         <div
                             style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                             <span style="font-size: 1.35rem;">✉️</span>
-                            <span style="font-size: 1rem; font-weight: 800; color: #1e40af;">Check Your Email Inbox</span>
+                            <span style="font-size: 1rem; font-weight: 800; color: var(--brand-primary-text);">Check Your Email Inbox</span>
                         </div>
-                        <p id="otp-sent-status" style="font-size: 0.825rem; color: #1e3a8a; margin-bottom: 1.15rem; line-height: 1.45;">
-                            A 6-digit verification code has been dispatched to <strong id="otp-target-email" style="color: #1d4ed8; word-break: break-all;">your Gmail address</strong>. Please check your inbox and enter it below.
+                        <p id="otp-sent-status" style="font-size: 0.825rem; color: var(--text-secondary); margin-bottom: 1.15rem; line-height: 1.45;">
+                            A 6-digit verification code has been dispatched to <strong id="otp-target-email" style="color: var(--brand-primary); word-break: break-all;">your Gmail address</strong>. Please check your inbox and enter it below.
                         </p>
 
                         <div style="margin-bottom: 1.15rem; text-align: left;">
-                            <label for="signup-otp-code" style="font-size: 0.775rem; font-weight: 700; color: #1e40af; display: block; margin-bottom: 0.35rem; text-align: center;">
+                            <label for="signup-otp-code" style="font-size: 0.775rem; font-weight: 700; color: var(--brand-primary-text); display: block; margin-bottom: 0.35rem; text-align: center;">
                                 Enter 6-Digit Code from Email:
                             </label>
                             <input type="text" maxlength="6" id="signup-otp-code" class="form-control" placeholder="••••••"
-                                style="text-align: center; font-size: 1.6rem; font-weight: 800; letter-spacing: 0.35em; font-family: 'JetBrains Mono', monospace; padding: 0.65rem 1rem; background: #ffffff; border: 1.5px solid #93c5fd; border-radius: var(--radius-sm); width: 100%; box-sizing: border-box;">
+                                style="text-align: center; font-size: 1.6rem; font-weight: 800; letter-spacing: 0.35em; font-family: 'JetBrains Mono', monospace; padding: 0.65rem 1rem; background: #ffffff; border: 1.5px solid var(--brand-primary-border); border-radius: var(--radius-sm); width: 100%; box-sizing: border-box;">
                         </div>
 
                         <button type="button" id="btn-verify-otp" class="btn-primary" onclick="completeCitizenRegistration(event)"
@@ -2391,7 +2638,7 @@
     <main class="app-view" id="view-dashboard">
         <div class="hero-banner" style="max-width: 1050px; margin: 0 auto;">
             <div id="citizen-dashboard-badge"
-                style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.2); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.825rem; font-weight: 700; color: var(--brand-primary); margin-bottom: 0.85rem;">
+                style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--brand-primary-subtle); border: 1px solid var(--brand-primary-border); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.825rem; font-weight: 700; color: var(--brand-primary); margin-bottom: 0.85rem;">
                 <span>📊 Citizen Dashboard</span>
                 <span>•</span>
                 <span id="home-user-greeting">Welcome, Citizen Kumar!</span>
@@ -2788,7 +3035,7 @@
 
                     <button type="button" class="btn-primary" id="btn-track-process"
                         onclick="trackLastSubmittedComplaint()"
-                        style="flex: 1; min-width: 220px; justify-content: center; padding: 0.95rem 1.25rem; font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);">
+                        style="flex: 1; min-width: 220px; justify-content: center; padding: 0.95rem 1.25rem; font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; box-shadow: 0 4px 14px var(--brand-primary-shadow);">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"></circle>
@@ -3954,7 +4201,7 @@
 
                         const statusText = document.getElementById('otp-sent-status');
                         if (statusText) {
-                            statusText.innerHTML = `A 6-digit verification code has been dispatched to <strong style="color: #1d4ed8; word-break: break-all;">${email}</strong>. Please check your email inbox and enter it below:`;
+                            statusText.innerHTML = `A 6-digit verification code has been dispatched to <strong style="color: var(--brand-primary); word-break: break-all;">${email}</strong>. Please check your email inbox and enter it below:`;
                         }
 
                         const codeInput = document.getElementById('signup-otp-code');
@@ -3993,7 +4240,7 @@
 
             const statusText = document.getElementById('otp-sent-status');
             if (statusText) {
-                statusText.innerHTML = `Verification Code generated for <strong style="color: #1d4ed8; word-break: break-all;">${email}</strong>: <br><span style="font-size: 1.35rem; font-weight: 800; color: #1e40af; font-family: 'JetBrains Mono', monospace; display: inline-block; margin-top: 0.35rem; letter-spacing: 0.15em;">${mockCode}</span>`;
+                statusText.innerHTML = `Verification Code generated for <strong style="color: var(--brand-primary); word-break: break-all;">${email}</strong>: <br><span style="font-size: 1.35rem; font-weight: 800; color: var(--brand-primary); font-family: 'JetBrains Mono', monospace; display: inline-block; margin-top: 0.35rem; letter-spacing: 0.15em;">${mockCode}</span>`;
             }
 
             const codeInput = document.getElementById('signup-otp-code');
@@ -5593,8 +5840,86 @@
             return String(text).replace(/[&<>"']/g, m => map[m]);
         }
 
+        // ========================================================
+        // THEME MANAGEMENT (Grey & Given Green Main Theme + Switcher)
+        // ========================================================
+        const THEMES = [
+            { id: 'grey-green', name: 'Grey & Given Green', shortName: 'Grey & Green', icon: '🌿' },
+            { id: 'classic-blue', name: 'Classic Civic Blue', shortName: 'Civic Blue', icon: '🌊' },
+            { id: 'dark-green', name: 'Dark Slate & Green', shortName: 'Dark Green', icon: '🌑' },
+            { id: 'mono-slate', name: 'Executive Slate', shortName: 'Mono Slate', icon: '🏛️' },
+            { id: 'forest-emerald', name: 'Forest Emerald', shortName: 'Emerald', icon: '🌲' }
+        ];
+
+        function setAppTheme(themeId, notify = false) {
+            const found = THEMES.find(t => t.id === themeId) || THEMES[0];
+            document.documentElement.setAttribute('data-theme', found.id);
+            localStorage.setItem('kizuno_active_theme', found.id);
+
+            // Update Dropdown UI checks
+            THEMES.forEach(t => {
+                const checkEl = document.getElementById(`check-${t.id}`);
+                const btnEl = document.querySelector(`[data-theme-target="${t.id}"]`);
+                if (checkEl) checkEl.innerText = (t.id === found.id) ? '✓' : '';
+                if (btnEl) {
+                    if (t.id === found.id) btnEl.classList.add('active');
+                    else btnEl.classList.remove('active');
+                }
+            });
+
+            // Update Navbar button
+            const navBtnIcon = document.getElementById('theme-btn-icon');
+            const navBtnLabel = document.getElementById('theme-btn-label');
+            if (navBtnIcon) navBtnIcon.innerText = found.icon;
+            if (navBtnLabel) navBtnLabel.innerText = found.shortName;
+
+            // Update Login screen button
+            const loginBtnIcon = document.getElementById('login-theme-icon');
+            const loginBtnLabel = document.getElementById('login-theme-label');
+            if (loginBtnIcon) loginBtnIcon.innerText = found.icon;
+            if (loginBtnLabel) loginBtnLabel.innerText = found.shortName;
+
+            // Close dropdown if open
+            const dropdown = document.getElementById('theme-dropdown');
+            if (dropdown) dropdown.style.display = 'none';
+
+            if (notify) {
+                showToast(`Theme changed to ${found.name}`, found.icon);
+            }
+        }
+
+        function toggleThemeMenu(e) {
+            if (e) e.stopPropagation();
+            const dropdown = document.getElementById('theme-dropdown');
+            if (dropdown) {
+                dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+            }
+        }
+
+        function cycleNextTheme() {
+            const current = localStorage.getItem('kizuno_active_theme') || 'grey-green';
+            const currentIndex = THEMES.findIndex(t => t.id === current);
+            const nextIndex = (currentIndex + 1) % THEMES.length;
+            setAppTheme(THEMES[nextIndex].id, true);
+        }
+
+        function initAppTheme() {
+            const saved = localStorage.getItem('kizuno_active_theme') || 'grey-green';
+            setAppTheme(saved, false);
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                const container = document.getElementById('theme-switcher-container');
+                const dropdown = document.getElementById('theme-dropdown');
+                if (dropdown && container && !container.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
+        }
+
         // Initialize on DOM load
         window.addEventListener('DOMContentLoaded', async () => {
+            initAppTheme();
             initGoogleAuth();
             await checkBackendHealth();
 
