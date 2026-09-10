@@ -2234,19 +2234,6 @@
                             style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.925rem; font-weight: 700; border-radius: var(--radius-md);">
                             Login
                         </button>
-
-                        <!-- 1-Click Quick Demo Citizen Login -->
-                        <div style="margin-top: 0.85rem; padding: 0.75rem 0.85rem; background: #f0fdf4; border: 1px dashed #86efac; border-radius: var(--radius-md); text-align: center;">
-                            <div style="font-size: 0.75rem; font-weight: 700; color: #166534; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                                <span>⚡</span><span>Quick Demo Access (1-Click)</span>
-                            </div>
-                            <button type="button" onclick="quickLoginAsCitizen()" class="btn-secondary" style="width: 100%; justify-content: center; padding: 0.55rem 0.75rem; font-size: 0.825rem; font-weight: 700; color: #15803d; border-color: #86efac; background: #ffffff; cursor: pointer; border-radius: var(--radius-sm);">
-                                Login as Demo Citizen (Citizen Kumar)
-                            </button>
-                            <div style="font-size: 0.7rem; color: #166534; margin-top: 0.3rem; font-family: 'JetBrains Mono', monospace;">
-                                kumar.citizen@gmail.com / password123
-                            </div>
-                        </div>
                     </form>
 
                     <!-- OR CONTINUE WITH DIVIDER -->
@@ -2390,19 +2377,6 @@
                             style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; border-radius: var(--radius-md);">
                             Verify & Enter Console
                         </button>
-
-                        <!-- 1-Click Quick Demo Officer Login -->
-                        <div style="margin-top: 1rem; padding: 0.75rem 0.85rem; background: #eff6ff; border: 1px dashed #93c5fd; border-radius: var(--radius-md); text-align: center;">
-                            <div style="font-size: 0.75rem; font-weight: 700; color: #1e40af; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                                <span>⚡</span><span>Official Demo Access (1-Click)</span>
-                            </div>
-                            <button type="button" onclick="quickLoginAsOfficer()" class="btn-secondary" style="width: 100%; justify-content: center; padding: 0.55rem 0.75rem; font-size: 0.825rem; font-weight: 700; color: #1d4ed8; border-color: #93c5fd; background: #ffffff; cursor: pointer; border-radius: var(--radius-sm);">
-                                Login as Municipal Officer (PIN: 1234)
-                            </button>
-                            <div style="font-size: 0.7rem; color: #1e40af; margin-top: 0.3rem; font-family: 'JetBrains Mono', monospace;">
-                                Officer R. Selvam • Electrical Wing
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -2847,12 +2821,12 @@
 
                 <form class="track-search-form" onsubmit="handleTrackFormSubmit(event)">
                     <input type="text" class="track-search-input" id="track-key-input"
-                        placeholder="e.g. TN-GOV-X7K92P4M" value="TN-GOV-X7K92P4M" required autocomplete="off">
+                        placeholder="e.g. TN-GOV-X7K92P4M" required autocomplete="off">
                     <button type="submit" class="btn-primary" style="width: auto; padding: 0.9rem 2rem;">Track</button>
                 </form>
 
                 <div class="sample-search-chips">
-                    <span style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600;">Demo Keys:</span>
+                    <span style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600;">Sample Keys:</span>
                     <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-X7K92P4M')">💡 TN-GOV-X7K92P4M
                         (Streetlight • Delayed)</button>
                     <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-KA99120')">✓ TN-GOV-KA99120
@@ -3729,17 +3703,7 @@
                 }
             } catch (err) {
                 console.error("Login error:", err);
-                // Local fallback simulation if server is unreachable
-                const fallbackUser = {
-                    name: email.split('@')[0],
-                    email: email,
-                    role: 'Citizen',
-                    authProvider: 'Email & Password (Offline)'
-                };
-                localStorage.setItem('kizuno_auth_user', JSON.stringify(fallbackUser));
-                applyUserSession(fallbackUser);
-                switchView('dashboard');
-                showToast(`Logged in as ${fallbackUser.name}! Citizen Dashboard Loaded`, '✓');
+                showToast('Unable to connect to authentication server. Please ensure server is online.', '⚠️');
             }
         }
 
@@ -3983,25 +3947,6 @@
             try { renderCitizenDashboardRecent(); } catch(e) { console.warn("renderCitizenDashboardRecent notice:", e); }
         }
 
-        // 1-Click Quick Demo Login Helpers
-        function quickLoginAsCitizen() {
-            const emailInput = document.getElementById('login-email');
-            const passInput = document.getElementById('login-password');
-            if (emailInput) emailInput.value = 'kumar.citizen@gmail.com';
-            if (passInput) passInput.value = 'password123';
-            showToast('Logging in as Demo Citizen...', '⚡');
-            handleCitizenPasswordLogin(new Event('submit'));
-        }
-
-        function quickLoginAsOfficer() {
-            document.getElementById('pp1').value = '1';
-            document.getElementById('pp2').value = '2';
-            document.getElementById('pp3').value = '3';
-            document.getElementById('pp4').value = '4';
-            showToast('Verifying Officer PIN 1234...', '⚡');
-            submitPageOfficerPin();
-        }
-
         /**
          * Renders the citizen's recent complaints on the Citizen Dashboard
          */
@@ -4144,14 +4089,6 @@
             }
         }
 
-        function fillPageOfficerDemoPin() {
-            document.getElementById('pp1').value = '1';
-            document.getElementById('pp2').value = '2';
-            document.getElementById('pp3').value = '3';
-            document.getElementById('pp4').value = '4';
-            submitPageOfficerPin();
-        }
-
         function submitPageOfficerPin() {
             const pin = (document.getElementById('pp1').value || '') +
                 (document.getElementById('pp2').value || '') +
@@ -4160,7 +4097,7 @@
             if (pin === '1234') {
                 simulateGoogleLogin('Officer R. Selvam', 'selvam.officer@gov.in', 'officer');
             } else {
-                showToast('Invalid PIN! Try 1234 for demo', '⚠️');
+                showToast('Invalid PIN. Please enter your 4-digit authorization PIN.', '⚠️');
                 ['pp1', 'pp2', 'pp3', 'pp4'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.value = '';
@@ -4182,14 +4119,6 @@
             }
         }
 
-        function fillOfficerDemoPin() {
-            document.getElementById('p1').value = '1';
-            document.getElementById('p2').value = '2';
-            document.getElementById('p3').value = '3';
-            document.getElementById('p4').value = '4';
-            submitOfficerPin();
-        }
-
         function submitOfficerPin() {
             const pin = (document.getElementById('p1').value || '') +
                 (document.getElementById('p2').value || '') +
@@ -4198,7 +4127,7 @@
             if (pin === '1234') {
                 simulateGoogleLogin('Officer R. Selvam', 'selvam.officer@gov.in', 'officer');
             } else {
-                showToast('Invalid PIN! Try 1234 for demo', '⚠️');
+                showToast('Invalid PIN. Please enter your 4-digit authorization PIN.', '⚠️');
                 ['p1', 'p2', 'p3', 'p4'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.value = '';

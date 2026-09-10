@@ -482,41 +482,28 @@ def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
 def login_with_password(payload: LoginUserDTO, db: Session = Depends(get_db)):
     """
     Authenticates citizen using verified Gmail and Password from SQL.
-    Auto-onboards new users if they haven't registered yet so login seamlessly succeeds.
+    Requires prior email verification through the Create Account flow.
     """
     clean_email = payload.email.strip().lower()
     user = db.query(User).filter(User.email == clean_email).first()
 
     if not user:
-        # Seamless Auto-Onboarding: Create account automatically so users are never blocked
-        name_part = clean_email.split('@')[0].replace('.', ' ').title()
-        hashed_pw = hash_password(payload.password)
-        user = User(
-            email=clean_email,
-            name=name_part if name_part else "Citizen",
-            password_hash=hashed_pw,
-            is_verified=True,
-            role="citizen",
-            auth_provider="email"
+        raise HTTPException(
+            status_code=404,
+            detail="No account found with this Gmail address. Please click 'Create Account' to register and verify your email."
         )
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        return {
-            "success": True,
-            "message": f"Welcome, {user.name}! Account created and logged in.",
-            "user": user.to_dict()
-        }
+
+    if not user.is_verified:
+        raise HTTPException(
+            status_code=403,
+            detail="Your Gmail address has not been verified yet. Please complete verification."
+        )
 
     if user.password_hash and not verify_password(payload.password, user.password_hash):
-        if payload.password in ["password123", "admin123", "123456"]:
-            user.password_hash = hash_password(payload.password)
-            db.commit()
-        else:
-            raise HTTPException(
-                status_code=401,
-                detail="Incorrect password. Please verify and try again, or use demo password 'password123'."
-            )
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect password. Please verify and try again."
+        )
 
     user.last_login = datetime.utcnow()
     db.commit()
