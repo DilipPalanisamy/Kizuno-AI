@@ -12,36 +12,37 @@
         rel="stylesheet">
     <script>
         // Apply saved theme immediately to prevent any visual flash
+        // Apply saved theme immediately to prevent any visual flash (Default: dark-green)
         (function() {
-            const saved = localStorage.getItem('kizuno_active_theme') || 'grey-green';
+            const saved = localStorage.getItem('kizuno_active_theme') || 'dark-green';
             document.documentElement.setAttribute('data-theme', saved);
         })();
     </script>
     <style>
         :root {
-            --bg-canvas: #f8fafc;
-            --card-bg: #ffffff;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-muted: #94a3b8;
-            --border-light: #e2e8f0;
-            --border-subtle: #cbd5e1;
+            /* Default #1 Main Theme: Dark Slate & Vivid Green */
+            --bg-canvas: #090d16;
+            --card-bg: #111827;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-light: #1e293b;
+            --border-subtle: #334155;
 
-            /* Main Project Theme: Grey & Given Green (#16a34a) */
-            --brand-primary: #16a34a;
-            --brand-primary-hover: #15803d;
-            --brand-primary-subtle: #f0fdf4;
-            --brand-primary-border: #bbf7d0;
-            --brand-primary-text: #166534;
-            --brand-primary-shadow: rgba(22, 163, 74, 0.25);
-            --brand-shield-gradient: linear-gradient(135deg, #16a34a 0%, #334155 100%);
-            --hero-card-1: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-            --hero-card-2: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-            --hero-card-3: linear-gradient(135deg, #475569 0%, #334155 100%);
+            --brand-primary: #22c55e;
+            --brand-primary-hover: #16a34a;
+            --brand-primary-subtle: rgba(34, 197, 94, 0.12);
+            --brand-primary-border: #166534;
+            --brand-primary-text: #4ade80;
+            --brand-primary-shadow: rgba(34, 197, 94, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #22c55e 0%, #0f172a 100%);
+            --hero-card-1: linear-gradient(135deg, #15803d 0%, #14532d 100%);
+            --hero-card-2: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --hero-card-3: linear-gradient(135deg, #334155 0%, #1e293b 100%);
 
-            --brand-green: #16a34a;
-            --brand-green-hover: #15803d;
-            --brand-green-subtle: #f0fdf4;
+            --brand-green: #22c55e;
+            --brand-green-hover: #16a34a;
+            --brand-green-subtle: rgba(34, 197, 94, 0.12);
             --brand-purple: #8b5cf6;
             --brand-purple-hover: #7c3aed;
             --brand-purple-subtle: #f5f3ff;
@@ -51,15 +52,15 @@
             --brand-red-subtle: #fef2f2;
 
             /* Status Theme */
-            --status-green: #16a34a;
-            --status-blue: #2563eb;
-            --status-amber: #d97706;
-            --status-red: #dc2626;
+            --status-green: #22c55e;
+            --status-blue: #3b82f6;
+            --status-amber: #f59e0b;
+            --status-red: #ef4444;
             --status-gray: #64748b;
 
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
             --radius-lg: 16px;
             --radius-md: 10px;
             --radius-sm: 6px;
@@ -68,8 +69,29 @@
         /* -------------------------------------------------------------
            THEME VARIATIONS (SWITCHABLE VIA THEME MENU)
            ------------------------------------------------------------- */
-        /* Theme 1 (Default): Grey & Given Green (#16a34a) */
-        [data-theme="grey-green"], :root:not([data-theme]) {
+        /* Theme 1 (Default / First): Dark Slate & Vivid Green */
+        [data-theme="dark-green"], :root:not([data-theme]) {
+            --bg-canvas: #090d16;
+            --card-bg: #111827;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-light: #1e293b;
+            --border-subtle: #334155;
+            --brand-primary: #22c55e;
+            --brand-primary-hover: #16a34a;
+            --brand-primary-subtle: rgba(34, 197, 94, 0.12);
+            --brand-primary-border: #166534;
+            --brand-primary-text: #4ade80;
+            --brand-primary-shadow: rgba(34, 197, 94, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #22c55e 0%, #0f172a 100%);
+            --hero-card-1: linear-gradient(135deg, #15803d 0%, #14532d 100%);
+            --hero-card-2: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --hero-card-3: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+        }
+
+        /* Theme 2: Grey & Given Green (#16a34a) */
+        [data-theme="grey-green"] {
             --bg-canvas: #f8fafc;
             --card-bg: #ffffff;
             --text-primary: #0f172a;
@@ -89,7 +111,7 @@
             --hero-card-3: linear-gradient(135deg, #475569 0%, #334155 100%);
         }
 
-        /* Theme 2: Classic Civic Blue & Slate */
+        /* Theme 3: Classic Civic Blue & Slate */
         [data-theme="classic-blue"] {
             --bg-canvas: #f8fafc;
             --card-bg: #ffffff;
@@ -108,27 +130,6 @@
             --hero-card-1: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             --hero-card-2: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
             --hero-card-3: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-        }
-
-        /* Theme 3: Dark Charcoal & Vivid Green */
-        [data-theme="dark-green"] {
-            --bg-canvas: #090d16;
-            --card-bg: #111827;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --border-light: #1e293b;
-            --border-subtle: #334155;
-            --brand-primary: #22c55e;
-            --brand-primary-hover: #16a34a;
-            --brand-primary-subtle: rgba(34, 197, 94, 0.12);
-            --brand-primary-border: #166534;
-            --brand-primary-text: #4ade80;
-            --brand-primary-shadow: rgba(34, 197, 94, 0.25);
-            --brand-shield-gradient: linear-gradient(135deg, #22c55e 0%, #0f172a 100%);
-            --hero-card-1: linear-gradient(135deg, #15803d 0%, #14532d 100%);
-            --hero-card-2: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            --hero-card-3: linear-gradient(135deg, #334155 0%, #1e293b 100%);
         }
 
         /* Theme 4: Executive Slate Monochrome */
@@ -186,17 +187,27 @@
         [data-theme="dark-green"] .officer-sidebar,
         [data-theme="dark-green"] .kpi-card,
         [data-theme="dark-green"] .theme-dropdown-menu {
-            background: #111827;
-            color: #f8fafc;
-            border-color: #1e293b;
+            background: #111827 !important;
+            color: #f8fafc !important;
+            border-color: #1e293b !important;
         }
         [data-theme="dark-green"] .btn-secondary {
-            background: #1e293b;
-            color: #f8fafc;
-            border-color: #334155;
+            background: #1e293b !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
         }
         [data-theme="dark-green"] .btn-secondary:hover {
-            background: #334155;
+            background: #334155 !important;
+        }
+        [data-theme="dark-green"] .user-pill {
+            background: #1e293b !important;
+            color: #f8fafc !important;
+            border: 1px solid #334155 !important;
+        }
+        [data-theme="dark-green"] .backend-pill.online {
+            background: rgba(34, 197, 94, 0.15) !important;
+            color: #4ade80 !important;
+            border-color: rgba(34, 197, 94, 0.3) !important;
         }
         [data-theme="dark-green"] .officer-table th {
             background: #1e293b;
@@ -211,44 +222,89 @@
         }
 
         /* Theme Option Dropdown Menu Styling */
+        .theme-dropdown-menu {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border-subtle) !important;
+            color: var(--text-primary) !important;
+            box-shadow: 0 14px 30px -4px rgba(0, 0, 0, 0.45), 0 8px 12px -6px rgba(0, 0, 0, 0.3) !important;
+            border-radius: 14px;
+            padding: 0.6rem;
+            min-width: 300px;
+        }
+
         .theme-option-btn {
             width: 100%;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            padding: 0.45rem 0.65rem;
-            border: none;
+            gap: 0.75rem;
+            padding: 0.6rem 0.75rem;
+            border: 1.5px solid transparent;
             background: transparent;
-            color: var(--text-primary);
-            font-size: 0.8rem;
-            font-weight: 600;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             text-align: left;
-            transition: all 0.15s ease;
+            transition: all 0.18s ease;
+            margin-bottom: 0.35rem;
         }
         .theme-option-btn:hover {
             background: var(--brand-primary-subtle);
-            color: var(--brand-primary);
+            border-color: var(--brand-primary-border);
+            transform: translateX(2px);
         }
         .theme-option-btn.active {
             background: var(--brand-primary-subtle);
-            color: var(--brand-primary);
-            font-weight: 700;
+            border-color: var(--brand-primary);
         }
-        .theme-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            display: inline-block;
-            border: 1.5px solid rgba(0,0,0,0.15);
+        .theme-swatch-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid rgba(255,255,255,0.25);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.25);
             flex-shrink: 0;
+            font-size: 0.95rem;
+        }
+        .theme-info-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            flex-grow: 1;
+        }
+        .theme-name-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            line-height: 1.2;
+        }
+        .theme-color-subtext {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
         }
         .theme-check {
             margin-left: auto;
-            font-size: 0.8rem;
-            font-weight: 800;
+            font-size: 0.9rem;
+            font-weight: 900;
             color: var(--brand-primary);
+        }
+        .theme-badge-default {
+            font-size: 0.6rem;
+            font-weight: 800;
+            padding: 0.1rem 0.4rem;
+            border-radius: 9999px;
+            background: rgba(34, 197, 94, 0.22);
+            color: #4ade80;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         * {
@@ -2350,44 +2406,108 @@
             <div style="display: flex; align-items: center; gap: 0.75rem;">
                 <!-- THEME SWITCHER DROPDOWN -->
                 <div style="position: relative;" id="theme-switcher-container">
-                    <button type="button" id="theme-toggle-btn" onclick="toggleThemeMenu(event)" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; border: 1px solid var(--border-light); background: #ffffff;" title="Switch color theme">
-                        <span id="theme-btn-icon">🌿</span>
-                        <span id="theme-btn-label">Grey & Green</span>
+                    <button type="button" id="theme-toggle-btn" onclick="toggleThemeMenu(event)" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-primary);" title="Switch color theme">
+                        <span id="theme-btn-icon">🌑</span>
+                        <span id="theme-btn-label">Dark Green</span>
                         <span style="font-size: 0.65rem; opacity: 0.7;">▼</span>
                     </button>
-                    <div id="theme-dropdown" class="theme-dropdown-menu" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); min-width: 230px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; box-shadow: var(--shadow-lg); padding: 0.5rem; z-index: 200;">
-                        <div style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.35rem 0.5rem 0.25rem;">
-                            Color Palettes
+                    <div id="theme-dropdown" class="theme-dropdown-menu" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); min-width: 315px; z-index: 200;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.35rem 0.5rem 0.5rem; border-bottom: 1px solid var(--border-light); margin-bottom: 0.45rem;">
+                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;">
+                                Choose Project Palette
+                            </span>
+                            <span style="font-size: 0.65rem; font-weight: 700; color: #4ade80;">5 Themes</span>
                         </div>
-                        <button type="button" class="theme-option-btn active" onclick="setAppTheme('grey-green')" data-theme-target="grey-green">
-                            <span class="theme-dot" style="background: linear-gradient(135deg, #16a34a 50%, #334155 50%);"></span>
-                            <span>Grey & Green (Main)</span>
-                            <span class="theme-check" id="check-grey-green">✓</span>
+
+                        <!-- 1. Dark Slate & Green (DEFAULT / FIRST) -->
+                        <button type="button" class="theme-option-btn active" onclick="setAppTheme('dark-green')" data-theme-target="dark-green">
+                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #22c55e 50%, #090d16 50%); border-color: #22c55e;">
+                                🌑
+                            </span>
+                            <div class="theme-info-box">
+                                <div class="theme-name-title" style="color: #4ade80;">
+                                    <span>Dark Slate & Green</span>
+                                    <span class="theme-badge-default">Default</span>
+                                </div>
+                                <div class="theme-color-subtext">
+                                    <span style="color: #22c55e; font-weight: 700;">● #22c55e Neon Green</span>
+                                    <span>+ #090d16 Slate</span>
+                                </div>
+                            </div>
+                            <span class="theme-check" id="check-dark-green" style="color: #4ade80;">✓</span>
                         </button>
+
+                        <!-- 2. Grey & Given Green -->
+                        <button type="button" class="theme-option-btn" onclick="setAppTheme('grey-green')" data-theme-target="grey-green">
+                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #16a34a 50%, #334155 50%); border-color: #16a34a;">
+                                🌿
+                            </span>
+                            <div class="theme-info-box">
+                                <div class="theme-name-title" style="color: #16a34a;">
+                                    <span>Grey & Given Green</span>
+                                </div>
+                                <div class="theme-color-subtext">
+                                    <span style="color: #16a34a; font-weight: 700;">● #16a34a Given Green</span>
+                                    <span>+ #334155 Slate</span>
+                                </div>
+                            </div>
+                            <span class="theme-check" id="check-grey-green"></span>
+                        </button>
+
+                        <!-- 3. Classic Civic Blue -->
                         <button type="button" class="theme-option-btn" onclick="setAppTheme('classic-blue')" data-theme-target="classic-blue">
-                            <span class="theme-dot" style="background: linear-gradient(135deg, #2563eb 50%, #1e293b 50%);"></span>
-                            <span>Classic Civic Blue</span>
+                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #2563eb 50%, #1e293b 50%); border-color: #2563eb;">
+                                🌊
+                            </span>
+                            <div class="theme-info-box">
+                                <div class="theme-name-title" style="color: #3b82f6;">
+                                    <span>Classic Civic Blue</span>
+                                </div>
+                                <div class="theme-color-subtext">
+                                    <span style="color: #3b82f6; font-weight: 700;">● #2563eb Civic Blue</span>
+                                    <span>+ #f8fafc Canvas</span>
+                                </div>
+                            </div>
                             <span class="theme-check" id="check-classic-blue"></span>
                         </button>
-                        <button type="button" class="theme-option-btn" onclick="setAppTheme('dark-green')" data-theme-target="dark-green">
-                            <span class="theme-dot" style="background: linear-gradient(135deg, #22c55e 50%, #090d16 50%);"></span>
-                            <span>Dark Slate & Green</span>
-                            <span class="theme-check" id="check-dark-green"></span>
-                        </button>
+
+                        <!-- 4. Executive Slate -->
                         <button type="button" class="theme-option-btn" onclick="setAppTheme('mono-slate')" data-theme-target="mono-slate">
-                            <span class="theme-dot" style="background: linear-gradient(135deg, #334155 50%, #64748b 50%);"></span>
-                            <span>Executive Slate</span>
+                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #475569 50%, #1e293b 50%); border-color: #64748b;">
+                                🏛️
+                            </span>
+                            <div class="theme-info-box">
+                                <div class="theme-name-title" style="color: #cbd5e1; font-family: 'JetBrains Mono', monospace;">
+                                    <span>Executive Slate</span>
+                                </div>
+                                <div class="theme-color-subtext">
+                                    <span style="color: #cbd5e1; font-weight: 700;">● #475569 Deep Slate</span>
+                                    <span>+ Monochrome</span>
+                                </div>
+                            </div>
                             <span class="theme-check" id="check-mono-slate"></span>
                         </button>
+
+                        <!-- 5. Forest Emerald -->
                         <button type="button" class="theme-option-btn" onclick="setAppTheme('forest-emerald')" data-theme-target="forest-emerald">
-                            <span class="theme-dot" style="background: linear-gradient(135deg, #059669 50%, #27272a 50%);"></span>
-                            <span>Forest Emerald</span>
+                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #059669 50%, #27272a 50%); border-color: #059669;">
+                                🌲
+                            </span>
+                            <div class="theme-info-box">
+                                <div class="theme-name-title" style="color: #10b981;">
+                                    <span>Forest Emerald</span>
+                                </div>
+                                <div class="theme-color-subtext">
+                                    <span style="color: #10b981; font-weight: 700;">● #059669 Emerald</span>
+                                    <span>+ Warm Stone</span>
+                                </div>
+                            </div>
                             <span class="theme-check" id="check-forest-emerald"></span>
                         </button>
                     </div>
                 </div>
 
-                <button type="button" onclick="openSyncModal()" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1px solid var(--border-light); background: #ffffff;">
+                <button type="button" onclick="openSyncModal()" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-primary);">
                     <span>🔄</span>
                     <span>Sync & Backup</span>
                 </button>
@@ -2418,8 +2538,8 @@
         <div class="login-card-standalone" style="position: relative;">
             <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
                 <button type="button" onclick="cycleNextTheme()" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-secondary);" title="Click to cycle theme color">
-                    <span id="login-theme-icon">🌿</span>
-                    <span id="login-theme-label">Grey & Green</span>
+                    <span id="login-theme-icon">🌑</span>
+                    <span id="login-theme-label">Dark Green</span>
                     <span>↻</span>
                 </button>
             </div>
@@ -2650,7 +2770,7 @@
             <div id="citizen-live-stats"
                 style="display: flex; justify-content: center; gap: 1rem; margin: 1.5rem 0 2rem 0; flex-wrap: wrap;">
                 <div
-                    style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
+                    style="background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
                     <div
                         style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em;">
                         My Active Issues</div>
@@ -2659,7 +2779,7 @@
                         1</div>
                 </div>
                 <div
-                    style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
+                    style="background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
                     <div
                         style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em;">
                         Under Inspection</div>
@@ -2668,7 +2788,7 @@
                         1</div>
                 </div>
                 <div
-                    style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
+                    style="background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
                     <div
                         style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em;">
                         Resolved for Me</div>
@@ -2677,7 +2797,7 @@
                         0</div>
                 </div>
                 <div
-                    style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
+                    style="background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
                     <div
                         style="font-size: 0.725rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em;">
                         Avg Resolution</div>
@@ -5841,12 +5961,12 @@
         }
 
         // ========================================================
-        // THEME MANAGEMENT (Grey & Given Green Main Theme + Switcher)
+        // THEME MANAGEMENT (Dark Slate & Vivid Green Main + 5 Palettes)
         // ========================================================
         const THEMES = [
+            { id: 'dark-green', name: 'Dark Slate & Green (Default)', shortName: 'Dark Green', icon: '🌑' },
             { id: 'grey-green', name: 'Grey & Given Green', shortName: 'Grey & Green', icon: '🌿' },
             { id: 'classic-blue', name: 'Classic Civic Blue', shortName: 'Civic Blue', icon: '🌊' },
-            { id: 'dark-green', name: 'Dark Slate & Green', shortName: 'Dark Green', icon: '🌑' },
             { id: 'mono-slate', name: 'Executive Slate', shortName: 'Mono Slate', icon: '🏛️' },
             { id: 'forest-emerald', name: 'Forest Emerald', shortName: 'Emerald', icon: '🌲' }
         ];
@@ -5897,14 +6017,14 @@
         }
 
         function cycleNextTheme() {
-            const current = localStorage.getItem('kizuno_active_theme') || 'grey-green';
+            const current = localStorage.getItem('kizuno_active_theme') || 'dark-green';
             const currentIndex = THEMES.findIndex(t => t.id === current);
             const nextIndex = (currentIndex + 1) % THEMES.length;
             setAppTheme(THEMES[nextIndex].id, true);
         }
 
         function initAppTheme() {
-            const saved = localStorage.getItem('kizuno_active_theme') || 'grey-green';
+            const saved = localStorage.getItem('kizuno_active_theme') || 'dark-green';
             setAppTheme(saved, false);
 
             // Close dropdown when clicking outside
