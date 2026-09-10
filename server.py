@@ -5,6 +5,7 @@ managing real SQL operations, and serving the frontend interface.
 """
 
 import os
+import ssl
 import json
 import base64
 import random
@@ -12,9 +13,13 @@ import hashlib
 import hmac
 import smtplib
 from datetime import datetime, timedelta
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+from email.message import EmailMessage
 from typing import Optional, List
+
+from dotenv import load_dotenv
+
+# Load local environment variables from .env if present
+load_dotenv()
 
 import uvicorn
 from fastapi import FastAPI, Depends, HTTPException, Query
@@ -36,14 +41,6 @@ from database import (
     DB_DIALECT
 )
 
-# SMTP Email Configuration for Real Gmail Verification
-SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
-SMTP_PORT = int(os.environ.get("SMTP_PORT", 587))
-SMTP_USERNAME = os.environ.get("SMTP_USERNAME")
-SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
-SMTP_FROM = os.environ.get("SMTP_FROM", SMTP_USERNAME or "noreply@kizuno-ai.gov.in")
-
-
 def hash_password(password: str) -> str:
     """Creates a secure salted PBKDF2-SHA256 password hash"""
     salt = os.urandom(16).hex()
@@ -63,55 +60,165 @@ def verify_password(password: str, stored_hash: str) -> bool:
         return False
 
 
+# -------------------------------------------------------------
+# SMTP EMAIL CONFIGURATION FOR REAL GMAIL VERIFICATION
+# Supports SMTP_EMAIL & SMTP_APP_PASSWORD configured on Render
+# -------------------------------------------------------------
+
+def get_smtp_credentials():
+    """
+    Dynamically loads SMTP credentials from environment.
+    Supports SMTP_EMAIL / SMTP_APP_PASSWORD (Render standard) as well
+    as SMTP_USERNAME / SMTP_PASSWORD.
+    Cleans Google App Passwords by removing spaces.
+    """
+    load_dotenv(override=True)
+    sender_email = (
+        os.environ.get("SMTP_EMAIL")
+        or os.environ.get("SMTP_USERNAME")
+        or os.environ.get("GMAIL_USER")
+    )
+    app_password = (
+        os.environ.get("SMTP_APP_PASSWORD")
+        or os.environ.get("SMTP_PASSWORD")
+        or os.environ.get("GMAIL_APP_PASSWORD")
+    )
+    
+    if sender_email:
+        sender_email = sender_email.strip()
+    if app_password:
+        # Google App Passwords often have spaces (e.g. 'xxxx yyyy zzzz wwww')
+        app_password = app_password.strip().replace(" ", "")
+
+    server = os.environ.get("SMTP_SERVER", "smtp.gmail.com").strip()
+    port_str = os.environ.get("SMTP_PORT", "465").strip()
+    port = int(port_str) if port_str.isdigit() else 465
+
+    return {
+        "sender_email": sender_email,
+        "app_password": app_password,
+        "server": server,
+        "port": port
+    }
+
+
 def send_real_email_verification(to_email: str, code: str, user_name: str = "Citizen") -> dict:
     """
-    Sends real Gmail verification email via SMTP if credentials are configured.
-    Returns delivery diagnostics.
+    Sends real Gmail verification email via SMTP (SSL port 465 or STARTTLS port 587)
+    using SMTP_EMAIL and SMTP_APP_PASSWORD configured on Render or in .env.
+    Includes automatic port fallback for maximum cloud reliability.
     """
-    if not SMTP_USERNAME or not SMTP_PASSWORD:
-        print(f"[Kizuno-AI Auth] Real SMTP credentials not set in environment. Generated SQL OTP for {to_email} is: {code}")
+    config = get_smtp_credentials()
+    sender_email = config["sender_email"]
+    app_password = config["app_password"]
+    smtp_server = config["server"]
+    smtp_port = config["port"]
+
+    if not sender_email or not app_password:
+        print(f"[Kizuna-AI Auth] SMTP credentials not set (SMTP_EMAIL / SMTP_APP_PASSWORD). Generated SQL OTP for {to_email} is: {code}")
         return {
             "sent": False,
             "simulated": True,
-            "message": f"Verification code {code} generated in SQL database."
+            "message": f"SMTP not configured in environment. Verification code {code} generated in SQL database."
         }
 
-    try:
-        msg = MIMEMultipart("alternative")
-        msg["Subject"] = f"Kizuno-AI Verification Code: {code}"
-        msg["From"] = f"Kizuno-AI Citizen Portal <{SMTP_FROM}>"
-        msg["To"] = to_email
+    # Construct modern EmailMessage
+    msg = EmailMessage()
+    msg["Subject"] = f"Kizuna-AI Verification Code: {code}"
+    msg["From"] = f"Kizuna-AI Citizen Portal <{sender_email}>"
+    msg["To"] = to_email
 
-        text_content = f"Hello {user_name},\n\nYour Kizuno-AI citizen verification code is: {code}\n\nThis code expires in 10 minutes.\n\nThank you,\nKizuno-AI Municipal Engine"
-        html_content = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <h2 style="color: #2563eb; margin: 0; font-size: 22px;">Kizuno-AI Citizen Portal</h2>
-                <p style="color: #64748b; font-size: 13px; margin-top: 4px;">Evidence-Based Grievance Redressal Engine</p>
-            </div>
-            <p style="font-size: 15px; color: #1e293b;">Hello <strong>{user_name}</strong>,</p>
-            <p style="font-size: 14px; color: #475569;">Your official 6-digit verification code to confirm your Gmail account is:</p>
-            <div style="text-align: center; margin: 25px 0;">
-                <span style="font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #2563eb; background: #eff6ff; padding: 12px 28px; border-radius: 8px; border: 1px dashed #bfdbfe; font-family: monospace;">
-                    {code}
-                </span>
-            </div>
-            <p style="color: #64748b; font-size: 13px; line-height: 1.5;">This verification code is valid for <strong>10 minutes</strong>. If you did not create a Kizuno-AI account, you can safely disregard this email.</p>
+    text_content = f"""Hello {user_name},
+
+This is an official verification email from Kizuna-AI.
+
+Your 6-digit citizen verification code is: {code}
+
+This code is valid for 10 minutes. Please enter it in the portal to verify your Gmail account.
+
+If you did not request this code, you can safely ignore this email.
+
+Best regards,
+Kizuna-AI Municipal Redressal Engine
+"""
+
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 520px; margin: 0 auto; padding: 28px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <h2 style="color: #2563eb; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">Kizuna-AI Citizen Portal</h2>
+            <p style="color: #64748b; font-size: 13px; margin-top: 6px;">Evidence-Based Grievance Redressal Engine</p>
         </div>
-        """
-        msg.attach(MIMEText(text_content, "plain"))
-        msg.attach(MIMEText(html_content, "html"))
+        <p style="font-size: 15px; color: #1e293b;">Hello <strong>{user_name}</strong>,</p>
+        <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+            Thank you for registering on Kizuna-AI. Your official 6-digit verification code to confirm your Gmail account is:
+        </p>
+        <div style="text-align: center; margin: 28px 0;">
+            <span style="font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #2563eb; background: #eff6ff; padding: 14px 32px; border-radius: 10px; border: 1.5px dashed #93c5fd; font-family: monospace; display: inline-block;">
+                {code}
+            </span>
+        </div>
+        <p style="color: #64748b; font-size: 13px; line-height: 1.6;">
+            This verification code is valid for <strong>10 minutes</strong>.<br>
+            If you did not request this email, please disregard it.
+        </p>
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">
+        <p style="font-size: 12px; color: #94a3b8; text-align: center; margin: 0;">
+            Kizuna-AI Municipal Intelligence Platform &bull; Automated Verification Service
+        </p>
+    </div>
+    """
 
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10) as server:
-            server.starttls()
-            server.login(SMTP_USERNAME, SMTP_PASSWORD)
-            server.sendmail(SMTP_FROM, [to_email], msg.as_string())
+    msg.set_content(text_content)
+    msg.add_alternative(html_content, subtype="html")
 
-        print(f"[Kizuno-AI Auth] Real email sent to {to_email} via {SMTP_SERVER}:{SMTP_PORT}")
-        return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
-    except Exception as e:
-        print(f"[Kizuno-AI Auth] SMTP dispatch error: {e}")
-        return {"sent": False, "error": str(e), "message": "Failed to send email via SMTP, fallback available"}
+    context = ssl.create_default_context()
+    errors = []
+
+    # Attempt primary method (SSL port 465 or STARTTLS based on config)
+    if smtp_port == 465:
+        try:
+            with smtplib.SMTP_SSL(smtp_server, 465, context=context, timeout=6) as server:
+                server.login(sender_email, app_password)
+                server.send_message(msg)
+            print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:465 (SSL)")
+            return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
+        except Exception as e:
+            err = f"Port 465 (SSL) error: {e}"
+            print(f"[Kizuna-AI Auth] {err}. Attempting fallback to Port 587 (STARTTLS)...")
+            errors.append(err)
+            try:
+                with smtplib.SMTP(smtp_server, 587, timeout=6) as server:
+                    server.starttls(context=context)
+                    server.login(sender_email, app_password)
+                    server.send_message(msg)
+                print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:587 (STARTTLS fallback)")
+                return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
+            except Exception as e2:
+                errors.append(f"Port 587 fallback error: {e2}")
+    else:
+        try:
+            with smtplib.SMTP(smtp_server, smtp_port, timeout=6) as server:
+                server.starttls(context=context)
+                server.login(sender_email, app_password)
+                server.send_message(msg)
+            print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:{smtp_port}")
+            return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
+        except Exception as e:
+            err = f"Port {smtp_port} (STARTTLS) error: {e}"
+            print(f"[Kizuna-AI Auth] {err}. Attempting fallback to Port 465 (SSL)...")
+            errors.append(err)
+            try:
+                with smtplib.SMTP_SSL(smtp_server, 465, context=context, timeout=6) as server:
+                    server.login(sender_email, app_password)
+                    server.send_message(msg)
+                print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:465 (SSL fallback)")
+                return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
+            except Exception as e2:
+                errors.append(f"Port 465 fallback error: {e2}")
+
+    full_error = " | ".join(errors)
+    print(f"[Kizuna-AI Auth] SMTP dispatch failed completely: {full_error}")
+    return {"sent": False, "error": full_error, "message": "Failed to send email via SMTP"}
 
 # Verified Google OAuth 2.0 Client ID for Kizuno-AI
 GOOGLE_CLIENT_ID = "485227555296-5jqikr8c4ruddifkp7uj2k3h82sfivd1.apps.googleusercontent.com"
@@ -253,6 +360,45 @@ def send_verification_code(payload: SendVerificationDTO, db: Session = Depends(g
         "smtpStatus": smtp_res,
         # dev_code provides seamless testing when SMTP is not configured locally
         "devCode": code if not smtp_res.get("sent") else None
+    }
+
+
+class TestEmailDTO(BaseModel):
+    email: str
+
+
+@app.post("/api/auth/test-email")
+def test_email_endpoint(payload: TestEmailDTO):
+    """
+    Sends an instant test email to verify SMTP configuration on Render or locally.
+    Matches the user's test script and confirms Gmail App Password delivery.
+    """
+    clean_email = payload.email.strip().lower()
+    if not clean_email or "@" not in clean_email:
+        raise HTTPException(status_code=400, detail="Please enter a valid Gmail address.")
+
+    config = get_smtp_credentials()
+    if not config["sender_email"] or not config["app_password"]:
+        raise HTTPException(
+            status_code=400,
+            detail="SMTP credentials not configured. Please set SMTP_EMAIL and SMTP_APP_PASSWORD in your Render environment variables."
+        )
+
+    test_code = f"{random.randint(100000, 999999)}"
+    smtp_res = send_real_email_verification(clean_email, test_code, "Kizuna-AI Citizen")
+    if not smtp_res.get("sent"):
+        raise HTTPException(
+            status_code=500,
+            detail=f"Email delivery failed: {smtp_res.get('error', 'Unknown SMTP error')}"
+        )
+
+    return {
+        "success": True,
+        "message": f"Test email sent successfully to {clean_email}!",
+        "sender": config["sender_email"],
+        "server": config["server"],
+        "port": config["port"],
+        "testCode": test_code
     }
 
 

@@ -2851,9 +2851,11 @@
         /**
          * REAL PYTHON REST API & SQL CLIENT BRIDGE
          */
-        const API_BASE = (window.location.origin.includes(':8000') || window.location.port === '8000')
-            ? `${window.location.origin}/api`
-            : 'http://127.0.0.1:8000/api';
+        const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const isFileProtocol = window.location.protocol === 'file:';
+        const API_BASE = ((isLocalHost && window.location.port !== '8000') || isFileProtocol)
+            ? 'http://127.0.0.1:8000/api'
+            : `${window.location.origin}/api`;
 
         let isBackendConnected = false;
 
@@ -3354,16 +3356,16 @@
                         }
                         showToast(`Verification code: ${data.devCode}`, '✉️');
                     } else {
-                        showToast(`Verification code sent to ${email}`, '✉️');
+                        const hintBox = document.getElementById('otp-dev-hint');
+                        if (hintBox) hintBox.style.display = 'none';
+                        showToast(`Verification code sent to ${email}. Check your Gmail!`, '✉️');
                     }
                 } else {
                     showToast(data.detail || 'Failed to send verification code', '⚠️');
                 }
             } catch (err) {
                 console.error("Verification dispatch error:", err);
-                const otpSection = document.getElementById('signup-otp-section');
-                if (otpSection) otpSection.style.display = 'block';
-                showToast('Verification service active: Enter 6-digit code', 'ℹ️');
+                showToast('Unable to connect to backend server. Please verify backend is online.', '⚠️');
             } finally {
                 if (btn) {
                     btn.disabled = false;
