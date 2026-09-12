@@ -901,9 +901,95 @@
         @media (max-width: 960px) {
             .officer-layout {
                 grid-template-columns: 1fr;
+                padding: 1rem 0.85rem;
+                gap: 1.25rem;
             }
+
             .officer-sidebar {
                 position: static;
+                width: 100%;
+            }
+
+            .sidebar-menu {
+                display: flex;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                gap: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+
+            .sidebar-item {
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0.75rem 0.85rem !important;
+                flex-wrap: wrap !important;
+                gap: 0.5rem !important;
+            }
+
+            .brand-tagline {
+                display: none !important;
+            }
+
+            #officer-sync-status-badge {
+                font-size: 0.72rem !important;
+                padding: 0.3rem 0.5rem !important;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.75rem !important;
+            }
+
+            .kpi-card {
+                padding: 1rem !important;
+            }
+
+            .kpi-number {
+                font-size: 1.65rem !important;
+            }
+
+            .toolbar-grid {
+                flex-direction: column !important;
+                align-items: stretch !important;
+            }
+
+            .search-box-wrapper {
+                min-width: 100% !important;
+            }
+
+            .search-input {
+                font-size: 16px !important;
+            }
+
+            .filter-select {
+                flex: 1 !important;
+                font-size: 16px !important;
+            }
+
+            .table-responsive {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+
+            .modal-container {
+                padding: 1.25rem !important;
+                max-width: 95vw !important;
+                max-height: 92vh !important;
+            }
+
+            .action-console-card {
+                padding: 1.25rem 1rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .kpi-grid {
+                grid-template-columns: 1fr 1fr !important;
             }
         }
     </style>
@@ -1282,25 +1368,44 @@
 
     <!-- NETWORK WI-FI SHARING MODAL -->
     <div class="modal-backdrop" id="network-modal">
-        <div class="modal-container">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem;">
-                <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary);">📱 Multi-Device Wi-Fi Network Access</h3>
+        <div class="modal-container" style="text-align: center; max-width: 480px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.75rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary);">📱 Mobile Phone & Wi-Fi Access</h3>
                 <button type="button" class="btn-secondary" onclick="closeNetworkModal()" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;">✕ Close</button>
             </div>
-            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
-                Any citizen or peer connected to the same Wi-Fi network can submit grievances directly from their mobile phones or laptops straight into this Officer Dashboard!
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.15rem;">
+                Scan with your phone camera or open the link below to submit and manage grievances directly on mobile:
             </p>
-            <div style="background: var(--bg-canvas); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem;">
-                <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Citizen Portal Mobile URL:</div>
-                <div style="font-size: 1.2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--brand-primary); margin: 0.4rem 0;" id="net-share-url">
+
+            <!-- QR CODE BOX -->
+            <div style="display: flex; justify-content: center; margin-bottom: 1.15rem;">
+                <div style="background: #ffffff; padding: 0.75rem; border-radius: 12px; border: 1.5px solid var(--border-light); box-shadow: var(--shadow-sm); display: inline-block;">
+                    <img id="officer-qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://kizuno-ai.onrender.com" alt="Mobile QR Code" style="width: 165px; height: 165px; display: block; border-radius: 6px;">
+                </div>
+            </div>
+
+            <div style="background: var(--bg-canvas); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; text-align: left;">
+                <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">📶 Local Wi-Fi Address:</div>
+                <div style="font-size: 1.05rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--brand-primary); margin: 0.35rem 0;" id="net-share-url">
                     http://localhost:8000/
                 </div>
-                <button type="button" class="btn-secondary" onclick="copyShareUrl()" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; margin-top: 0.3rem;">
-                    📋 Copy URL to Clipboard
+                <button type="button" class="btn-secondary" onclick="copyShareUrl()" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; margin-top: 0.2rem;">
+                    📋 Copy Local Wi-Fi Link
                 </button>
             </div>
-            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 1rem; font-size: 0.85rem; color: #166534;">
-                ✅ <strong>Real-time Sync Active:</strong> Grievances submitted by any phone immediately update this dashboard without manual page refreshes.
+
+            <div style="background: var(--bg-canvas); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; text-align: left;">
+                <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">☁️ Global Cloud Live Address:</div>
+                <div style="font-size: 1.05rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--brand-primary); margin: 0.35rem 0;" id="cloud-share-url">
+                    https://kizuno-ai.onrender.com
+                </div>
+                <button type="button" class="btn-secondary" onclick="copyCloudOfficerUrl()" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; margin-top: 0.2rem;">
+                    📋 Copy Cloud Link
+                </button>
+            </div>
+
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 0.85rem; font-size: 0.82rem; color: #166534; text-align: left;">
+                ✅ <strong>Real-time Sync Active:</strong> Grievances submitted from any mobile phone update this console immediately.
             </div>
         </div>
     </div>
@@ -1884,6 +1989,11 @@
                     const shareUrl = data.network_url || `http://${window.location.hostname}:8000/`;
                     const el = document.getElementById('net-share-url');
                     if (el) el.innerText = shareUrl;
+                    const qrImg = document.getElementById('officer-qr-code-img');
+                    if (qrImg) {
+                        const targetUrl = (window.location.hostname.includes('render.com')) ? 'https://kizuno-ai.onrender.com' : shareUrl;
+                        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(targetUrl)}`;
+                    }
                 }
             } catch (e) { }
         }
@@ -1900,7 +2010,14 @@
         function copyShareUrl() {
             const url = document.getElementById('net-share-url')?.innerText || window.location.origin;
             navigator.clipboard.writeText(url).then(() => {
-                showToast('Network URL copied! Share with friends/citizens.', '📋');
+                showToast('Local Wi-Fi link copied!', '📱');
+            });
+        }
+
+        function copyCloudOfficerUrl() {
+            const url = document.getElementById('cloud-share-url')?.innerText || 'https://kizuno-ai.onrender.com';
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('Cloud link copied!', '☁️');
             });
         }
 

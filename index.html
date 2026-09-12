@@ -1879,7 +1879,56 @@
             }
         }
 
-        /* Responsive Breakpoints */
+        /* ========================================================
+           RESPONSIVE MOBILE BREAKPOINTS & TOUCH ENHANCEMENTS
+           ======================================================== */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-light);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            padding: 0.4rem 0.25rem;
+            justify-content: space-around;
+            align-items: center;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.68rem;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0.35rem 0.45rem;
+            border-radius: 8px;
+            min-width: 52px;
+            transition: all 0.2s ease;
+            gap: 2px;
+            text-decoration: none;
+            touch-action: manipulation;
+        }
+
+        .mobile-nav-item.active {
+            color: var(--brand-primary);
+            background: var(--brand-primary-subtle);
+        }
+
+        .mob-nav-icon {
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+
         @media (max-width: 900px) {
             .public-view-grid {
                 grid-template-columns: 1fr;
@@ -1894,25 +1943,122 @@
             }
         }
 
-        @media (max-width: 640px) {
-            .hero-title {
-                font-size: 2rem;
+        @media (max-width: 768px) {
+            body {
+                padding-bottom: 78px !important;
             }
 
-            .action-cards-grid {
-                grid-template-columns: 1fr;
+            .mobile-bottom-nav {
+                display: flex !important;
             }
 
             .nav-links {
-                display: none;
+                display: none !important;
+            }
+
+            .nav-container {
+                padding: 0.65rem 0.85rem !important;
+            }
+
+            .brand-tagline {
+                display: none !important;
+            }
+
+            .desktop-only-label {
+                display: none !important;
+            }
+
+            #theme-btn-label {
+                display: none !important;
+            }
+
+            #theme-toggle-btn {
+                padding: 0.4rem 0.6rem !important;
+            }
+
+            .app-view {
+                padding: 1rem 0.75rem !important;
+            }
+
+            .hero-section {
+                padding: 1.8rem 1.15rem !important;
+                border-radius: 16px !important;
+            }
+
+            .hero-title {
+                font-size: 1.6rem !important;
+                line-height: 1.25 !important;
+            }
+
+            .hero-lead {
+                font-size: 0.88rem !important;
+            }
+
+            .hero-cta-buttons {
+                flex-direction: column !important;
+                width: 100% !important;
+                gap: 0.65rem !important;
+            }
+
+            .hero-cta-buttons button {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+
+            .action-cards-grid {
+                grid-template-columns: 1fr !important;
+                gap: 0.85rem !important;
+            }
+
+            .citizen-dashboard-kpis {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.75rem !important;
+            }
+
+            .form-card {
+                padding: 1.25rem 0.95rem !important;
+                border-radius: 16px !important;
+            }
+
+            .form-control {
+                font-size: 16px !important;
+                padding: 0.75rem 0.85rem !important;
+            }
+
+            .login-dialog {
+                padding: 1.5rem 1.15rem !important;
+                border-radius: 16px !important;
+                max-width: 94vw !important;
+            }
+
+            .stepper-header {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 0.5rem !important;
+            }
+
+            .stepper-track {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                padding-bottom: 0.5rem !important;
+            }
+
+            .table-responsive {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+
+            .theme-dropdown-menu {
+                max-width: 90vw !important;
+                min-width: 260px !important;
             }
 
             .track-search-form {
-                flex-direction: column;
+                flex-direction: column !important;
             }
 
             .keys-actions {
-                flex-direction: column;
+                flex-direction: column !important;
             }
         }
 
@@ -2552,7 +2698,13 @@
                 </a>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <!-- MOBILE ACCESS BUTTON -->
+                <button type="button" id="mobile-share-btn" onclick="openNetworkShareModal()" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-primary);" title="Open on Mobile Phone">
+                    <span>📱</span>
+                    <span class="desktop-only-label">Mobile</span>
+                </button>
+
                 <!-- THEME SWITCHER DROPDOWN -->
                 <div style="position: relative;" id="theme-switcher-container">
                     <button type="button" id="theme-toggle-btn" onclick="toggleThemeMenu(event)" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-primary);" title="Switch color theme">
@@ -3928,39 +4080,50 @@
 
     <!-- MODAL 3: CONNECT CITIZENS & MULTI-DEVICE WI-FI ACCESS -->
     <div class="modal-backdrop" id="network-share-modal" onclick="closeNetworkShareModal(event)" style="display: none;">
-        <div class="login-dialog" onclick="event.stopPropagation()" style="max-width: 520px; border-radius: 16px; padding: 1.75rem;">
+        <div class="login-dialog" onclick="event.stopPropagation()" style="max-width: 480px; border-radius: 18px; padding: 1.75rem; text-align: center;">
             <button type="button" class="modal-close-btn" onclick="closeNetworkShareModal()">✕</button>
 
-            <div class="login-header" style="text-align: center; margin-bottom: 1.25rem;">
-                <div class="brand-shield" style="margin: 0 auto 0.65rem auto; width: 44px; height: 44px; background: rgba(59, 130, 246, 0.12); color: #3b82f6; display: flex; align-items: center; justify-content: center; font-size: 1.35rem;">
-                    📱
+            <div style="font-size: 2.2rem; margin-bottom: 0.35rem;">📱</div>
+            <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.35rem;">Open on Mobile Phone</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1.25rem;">
+                Scan with your phone camera or open the address below to access Kizuno-AI from your mobile device!
+            </p>
+
+            <!-- SCAN QR CODE BOX -->
+            <div style="display: flex; justify-content: center; margin-bottom: 1.25rem;">
+                <div style="background: #ffffff; padding: 0.75rem; border-radius: 14px; border: 1.5px solid var(--border-light); box-shadow: var(--shadow-sm); display: inline-block;">
+                    <img id="share-qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://kizuno-ai.onrender.com" alt="Scan Mobile QR Code" style="width: 170px; height: 170px; display: block; border-radius: 6px;">
                 </div>
-                <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">Share Portal with Friends & Citizens</h2>
-                <p style="font-size: 0.825rem; color: var(--text-muted); line-height: 1.4;">
-                    Allow 1, 10, or 100 members to submit issues from their phones or laptops directly into your Officer Portal.
-                </p>
             </div>
 
-            <div style="background: var(--bg-canvas); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 1.15rem; margin-bottom: 1rem;">
-                <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem;">
-                    🌐 Citizen Grievance Submission URL:
+            <!-- WI-FI URL BOX -->
+            <div style="background: var(--bg-canvas); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; text-align: left;">
+                <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.35rem;">
+                    📶 Local Wi-Fi Network Link:
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
                     <input type="text" id="share-network-url-input" class="form-control" readonly style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700; background: var(--card-bg); flex: 1;" value="Loading...">
-                    <button type="button" class="btn-primary" onclick="copyShareNetworkUrl()" style="white-space: nowrap; padding: 0.55rem 0.95rem; font-size: 0.8rem;">
-                        📋 Copy Link
+                    <button type="button" class="btn-primary" onclick="copyShareNetworkUrl()" style="white-space: nowrap; padding: 0.55rem 0.85rem; font-size: 0.8rem;">
+                        📋 Copy
                     </button>
                 </div>
             </div>
 
-            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 0.9rem; font-size: 0.8rem; color: #166534; line-height: 1.5;">
-                <div style="font-weight: 800; margin-bottom: 0.35rem;">💡 How multiple citizens submit to your portal:</div>
-                <ul style="margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.25rem;">
-                    <li>Ensure your computer and your friends' devices are on the <strong>same Wi-Fi network</strong>.</li>
-                    <li>Make sure your backend server is running (<code>python server.py</code>).</li>
-                    <li>Send this link to your friends (via WhatsApp, SMS, or Telegram).</li>
-                    <li>When any member submits an issue, it <strong>instantly appears in your Officer Portal in real-time</strong>!</li>
-                </ul>
+            <!-- GLOBAL CLOUD URL BOX -->
+            <div style="background: var(--bg-canvas); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 1rem; margin-bottom: 1.15rem; text-align: left;">
+                <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.35rem;">
+                    ☁️ Global Cloud Live URL (Works Anywhere):
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="text" id="share-cloud-url-input" class="form-control" readonly style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700; background: var(--card-bg); flex: 1;" value="https://kizuno-ai.onrender.com">
+                    <button type="button" class="btn-secondary" onclick="copyCloudShareUrl()" style="white-space: nowrap; padding: 0.55rem 0.85rem; font-size: 0.8rem;">
+                        📋 Copy
+                    </button>
+                </div>
+            </div>
+
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 0.85rem; font-size: 0.8rem; color: #166534; text-align: left; line-height: 1.5;">
+                ✅ <strong>Real-time Sync Active:</strong> Grievances submitted from your mobile phone appear immediately in the Officer Portal in real-time!
             </div>
 
             <button type="button" class="btn-secondary" onclick="closeNetworkShareModal()" style="margin-top: 1.25rem; width: 100%; justify-content: center; padding: 0.65rem; font-weight: 700; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-primary); cursor: pointer; border-radius: 8px;">
@@ -4399,6 +4562,20 @@
                     (viewId === 'dashboard' ? (document.getElementById('nav-dashboard') || document.getElementById('nav-home')) : null) ||
                     (viewId === 'home' ? (document.getElementById('nav-dashboard') || document.getElementById('nav-home')) : null);
                 if (activeNavBtn) activeNavBtn.classList.add('active');
+
+                // Update mobile dock buttons
+                document.querySelectorAll('.mobile-nav-item').forEach(btn => btn.classList.remove('active'));
+                const activeMobBtn = document.getElementById(`mob-nav-${viewId}`) ||
+                    (viewId === 'my-complaints' ? document.getElementById('mob-nav-my') : null) ||
+                    (viewId === 'dashboard' ? document.getElementById('mob-nav-dashboard') : null) ||
+                    (viewId === 'home' ? document.getElementById('mob-nav-dashboard') : null);
+                if (activeMobBtn) activeMobBtn.classList.add('active');
+
+                // Bottom dock visibility: hide on login view
+                const mobDock = document.getElementById('mobile-bottom-dock');
+                if (mobDock) {
+                    mobDock.style.display = (viewId === 'login') ? 'none' : 'flex';
+                }
 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -5131,9 +5308,23 @@
             if (navSubmitBtn) {
                 navSubmitBtn.style.display = isDilipAdmin ? 'none' : 'inline-flex';
             }
+            const mobSubmitBtn = document.getElementById('mob-nav-submit');
+            if (mobSubmitBtn) {
+                mobSubmitBtn.style.display = isDilipAdmin ? 'none' : 'flex';
+            }
+
             const dashSubmitCard = document.getElementById('dashboard-submit-card');
             if (dashSubmitCard) {
                 dashSubmitCard.style.display = isDilipAdmin ? 'none' : 'block';
+            }
+
+            const mobAdminBtn = document.getElementById('mob-nav-admin');
+            if (mobAdminBtn) {
+                mobAdminBtn.style.display = isDilipAdmin ? 'flex' : 'none';
+            }
+            const mobOfficerBtn = document.getElementById('mob-nav-officer');
+            if (mobOfficerBtn) {
+                mobOfficerBtn.style.display = isDilipAdmin ? 'flex' : 'none';
             }
 
             if (isOfficer && isDilipAdmin) {
@@ -5758,13 +5949,24 @@
                 const res = await fetch(`${API_BASE}/network-info`);
                 if (res.ok) {
                     const info = await res.json();
-                    input.value = info.network_url || `${window.location.protocol}//${window.location.host}`;
+                    const netUrl = info.network_url || `${window.location.protocol}//${window.location.host}`;
+                    input.value = netUrl;
+                    const qrImg = document.getElementById('share-qr-code-img');
+                    if (qrImg) {
+                        const targetUrl = (window.location.hostname.includes('render.com')) ? 'https://kizuno-ai.onrender.com' : netUrl;
+                        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(targetUrl)}`;
+                    }
                     return;
                 }
             } catch (e) { }
 
             // Fallback to window location host
-            input.value = `${window.location.protocol}//${window.location.host}`;
+            const fallbackUrl = `${window.location.protocol}//${window.location.host}`;
+            input.value = fallbackUrl;
+            const qrImg = document.getElementById('share-qr-code-img');
+            if (qrImg) {
+                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(fallbackUrl)}`;
+            }
         }
 
         function closeNetworkShareModal(e) {
@@ -5777,11 +5979,23 @@
             const input = document.getElementById('share-network-url-input');
             if (!input) return;
             navigator.clipboard.writeText(input.value).then(() => {
-                showToast('Citizen Portal Link copied! Share with friends on same Wi-Fi.', '📋');
+                showToast('Wi-Fi Portal Link copied to clipboard!', '📱');
             }).catch(() => {
                 input.select();
                 document.execCommand('copy');
-                showToast('Citizen Portal Link copied!', '📋');
+                showToast('Link copied!', '📋');
+            });
+        }
+
+        function copyCloudShareUrl() {
+            const input = document.getElementById('share-cloud-url-input');
+            if (!input) return;
+            navigator.clipboard.writeText(input.value).then(() => {
+                showToast('Cloud Production Link copied to clipboard!', '☁️');
+            }).catch(() => {
+                input.select();
+                document.execCommand('copy');
+                showToast('Cloud Link copied!', '☁️');
             });
         }
 
@@ -6836,6 +7050,34 @@
             }
         });
     </script>
+
+    <!-- MOBILE BOTTOM NAVIGATION DOCK (App-Like Native Feel for Smartphones) -->
+    <nav class="mobile-bottom-nav" id="mobile-bottom-dock">
+        <button type="button" class="mobile-nav-item active" id="mob-nav-dashboard" onclick="switchView('dashboard')">
+            <span class="mob-nav-icon">📊</span>
+            <span class="mob-nav-text">Dashboard</span>
+        </button>
+        <button type="button" class="mobile-nav-item" id="mob-nav-track" onclick="switchView('track')">
+            <span class="mob-nav-icon">🔍</span>
+            <span class="mob-nav-text">Track</span>
+        </button>
+        <button type="button" class="mobile-nav-item" id="mob-nav-submit" onclick="switchView('submit')">
+            <span class="mob-nav-icon">✍️</span>
+            <span class="mob-nav-text">Submit</span>
+        </button>
+        <button type="button" class="mobile-nav-item" id="mob-nav-my" onclick="switchView('my-complaints')">
+            <span class="mob-nav-icon">📂</span>
+            <span class="mob-nav-text">Grievances</span>
+        </button>
+        <button type="button" class="mobile-nav-item" id="mob-nav-officer" onclick="switchView('officer')" style="display: none;">
+            <span class="mob-nav-icon">👨‍💼</span>
+            <span class="mob-nav-text">Officer</span>
+        </button>
+        <a href="admin.html" class="mobile-nav-item" id="mob-nav-admin" style="display: none; text-decoration: none;">
+            <span class="mob-nav-icon">🛡️</span>
+            <span class="mob-nav-text">Admin</span>
+        </a>
+    </nav>
 </body>
 
 </html>

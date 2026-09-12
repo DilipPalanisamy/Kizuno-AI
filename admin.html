@@ -839,18 +839,99 @@
         }
 
         @media (max-width: 768px) {
+            .nav-inner {
+                padding: 0.75rem 0.85rem !important;
+                flex-wrap: wrap !important;
+                gap: 0.5rem !important;
+            }
+
+            .brand-sub {
+                display: none !important;
+            }
+
+            .nav-actions {
+                flex-wrap: wrap !important;
+                gap: 0.4rem !important;
+            }
+
+            .live-status-pill {
+                font-size: 0.72rem !important;
+                padding: 0.3rem 0.5rem !important;
+            }
+
+            .btn {
+                padding: 0.45rem 0.75rem !important;
+                font-size: 0.8rem !important;
+            }
+
             .admin-main {
-                padding: 1rem;
+                padding: 1rem 0.75rem !important;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 0.75rem !important;
+                margin-bottom: 1.25rem !important;
+            }
+
+            .stat-card {
+                padding: 1rem !important;
+            }
+
+            .stat-value {
+                font-size: 1.5rem !important;
             }
 
             .panel-header,
             .panel-toolbar {
-                padding: 1rem;
+                padding: 1rem 0.85rem !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 0.75rem !important;
+            }
+
+            .search-container {
+                min-width: 100% !important;
+                max-width: 100% !important;
+            }
+
+            .search-input {
+                font-size: 16px !important;
+            }
+
+            .filter-group {
+                width: 100% !important;
+                display: flex !important;
+                flex-wrap: wrap !important;
+            }
+
+            .filter-btn {
+                flex: 1 !important;
+                text-align: center !important;
+                padding: 0.5rem 0.4rem !important;
+                font-size: 0.75rem !important;
+            }
+
+            .table-container {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+
+            .modal-box {
+                width: 95vw !important;
+                max-height: 90vh !important;
+                padding: 1.25rem !important;
             }
 
             .detail-item-grid {
-                grid-template-columns: 1fr;
-                gap: 0.25rem;
+                grid-template-columns: 1fr !important;
+                gap: 0.25rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr !important;
             }
         }
     </style>
@@ -890,6 +971,11 @@
                         title="Download live users as CSV">
                         📥 Export Users to CSV
                     </button>
+
+                    <!-- LINK TO CITIZEN DASHBOARD -->
+                    <a href="index.html" class="btn btn-secondary" id="admin-citizen-btn" title="Switch to Citizen Portal">
+                        🏠 Citizen Portal
+                    </a>
 
                     <!-- LINK TO OFFICER DASHBOARD -->
                     <a href="officer.html" class="btn btn-secondary" id="admin-officer-btn" style="display: none;" title="Switch to Officer Console">
