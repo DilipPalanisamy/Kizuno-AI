@@ -18,5 +18,5 @@ services:
       - key: SMTP_PORT
         value: "465"
       - key: ADMIN_PIN
-        value: "1234"
+        value: "9812"
 

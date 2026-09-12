@@ -12,7 +12,7 @@ import time
 import requests
 
 BASE_URL = "http://localhost:8000"
-ADMIN_PIN = "1234"
+ADMIN_PIN = "9812"
 
 def make_mock_google_jwt(sub: str, email: str, name: str) -> str:
     header = {"alg": "none", "typ": "JWT"}

@@ -51,7 +51,7 @@ from database import (
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "").strip()
 SUPABASE_KEY = (os.environ.get("SUPABASE_KEY") or os.environ.get("SUPABASE_ANON_KEY") or "").strip()
 SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()
-ADMIN_PIN = os.environ.get("ADMIN_PIN", "1234").strip()
+ADMIN_PIN = os.environ.get("ADMIN_PIN", "9812").strip()
 
 supabase_client = None
 if SUPABASE_URL and (SUPABASE_SERVICE_ROLE_KEY or SUPABASE_KEY):

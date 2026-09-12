@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard — Kizuno-AI Live User Management</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <!-- Supabase JS Client for Realtime Subscriptions -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -42,9 +45,9 @@
             --radius-lg: 14px;
             --radius-xl: 18px;
 
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.09), 0 4px 6px -4px rgba(0,0,0,0.04);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.09), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
         }
 
         * {
@@ -161,7 +164,9 @@
         }
 
         @keyframes pulse {
-            to { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            to {
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+            }
         }
 
         .btn {
@@ -270,11 +275,30 @@
             font-size: 1rem;
         }
 
-        .icon-total { background: #f1f5f9; color: #0f172a; }
-        .icon-google { background: #eff6ff; color: #2563eb; }
-        .icon-email { background: #fef3c7; color: #d97706; }
-        .icon-verified { background: #ecfdf5; color: #16a34a; }
-        .icon-today { background: #fdf2f8; color: #db2777; }
+        .icon-total {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .icon-google {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .icon-email {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .icon-verified {
+            background: #ecfdf5;
+            color: #16a34a;
+        }
+
+        .icon-today {
+            background: #fdf2f8;
+            color: #db2777;
+        }
 
         .stat-value {
             font-size: 2.2rem;
@@ -608,7 +632,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Modal Overlay & Card */
@@ -629,8 +655,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .modal-card {
@@ -645,8 +676,15 @@
         }
 
         @keyframes modalSlide {
-            from { opacity: 0; transform: translateY(12px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .modal-header {
@@ -789,17 +827,27 @@
         }
 
         @keyframes toastIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 768px) {
             .admin-main {
                 padding: 1rem;
             }
-            .panel-header, .panel-toolbar {
+
+            .panel-header,
+            .panel-toolbar {
                 padding: 1rem;
             }
+
             .detail-item-grid {
                 grid-template-columns: 1fr;
                 gap: 0.25rem;
@@ -807,6 +855,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- TOP EXECUTIVE NAVIGATION BAR -->
@@ -814,7 +863,8 @@
         <div class="nav-inner">
             <a class="brand-group" href="admin.html">
                 <div class="brand-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                     </svg>
                 </div>
@@ -829,13 +879,15 @@
             <div class="nav-actions">
                 <div id="adminAuthorizedNav" style="display: none; align-items: center; gap: 0.5rem;">
                     <!-- LIVE SUPABASE PULSE BADGE -->
-                    <div class="live-status-pill" id="live-pulse-badge" title="Live connection active with PostgreSQL Supabase">
+                    <div class="live-status-pill" id="live-pulse-badge"
+                        title="Live connection active with PostgreSQL Supabase">
                         <div class="pulse-dot"></div>
                         <span id="live-status-text">Supabase Live Sync</span>
                     </div>
 
                     <!-- EXPORT USERS TO CSV BUTTON -->
-                    <button type="button" class="btn btn-export" onclick="exportUsersToCSV()" title="Download live users as CSV">
+                    <button type="button" class="btn btn-export" onclick="exportUsersToCSV()"
+                        title="Download live users as CSV">
                         📥 Export Users to CSV
                     </button>
 
@@ -924,7 +976,8 @@
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <button type="button" class="btn btn-secondary" onclick="loadDashboardData(true)" style="padding: 0.45rem 0.85rem;" title="Refresh list from Supabase">
+                    <button type="button" class="btn btn-secondary" onclick="loadDashboardData(true)"
+                        style="padding: 0.45rem 0.85rem;" title="Refresh list from Supabase">
                         🔄 Refresh
                     </button>
                 </div>
@@ -934,20 +987,25 @@
             <div class="panel-toolbar">
                 <!-- Search bar -->
                 <div class="search-container">
-                    <svg class="search-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg class="search-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5">
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
-                    <input type="text" id="adminUserSearch" class="search-input" placeholder="🔍 Search users by name or email..." oninput="handleSearchInput(event)">
+                    <input type="text" id="adminUserSearch" class="search-input"
+                        placeholder="🔍 Search users by name or email..." oninput="handleSearchInput(event)">
                 </div>
 
                 <!-- Toolbar controls -->
                 <div class="toolbar-controls">
                     <!-- Method Pill Filters -->
                     <div class="method-pills">
-                        <button type="button" class="method-pill-btn active" onclick="setMethodFilter('all', this)">All</button>
-                        <button type="button" class="method-pill-btn" onclick="setMethodFilter('google', this)">Google</button>
-                        <button type="button" class="method-pill-btn" onclick="setMethodFilter('email', this)">Email</button>
+                        <button type="button" class="method-pill-btn active"
+                            onclick="setMethodFilter('all', this)">All</button>
+                        <button type="button" class="method-pill-btn"
+                            onclick="setMethodFilter('google', this)">Google</button>
+                        <button type="button" class="method-pill-btn"
+                            onclick="setMethodFilter('email', this)">Email</button>
                     </div>
 
                     <!-- Sort Select Dropdown -->
@@ -994,14 +1052,17 @@
     </main>
 
     <!-- USER DETAILS MODAL -->
-    <div id="userDetailsModal" class="modal-overlay" style="display: none;" onclick="closeModalOnBackdrop(event, 'userDetailsModal')">
+    <div id="userDetailsModal" class="modal-overlay" style="display: none;"
+        onclick="closeModalOnBackdrop(event, 'userDetailsModal')">
         <div class="modal-card" onclick="event.stopPropagation()">
             <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <div id="modal-avatar" class="avatar-circle">?</div>
                     <div>
                         <h3 class="modal-title" id="modal-user-name">User Details</h3>
-                        <span id="modal-user-id" style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">ID: #0</span>
+                        <span id="modal-user-id"
+                            style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">ID:
+                            #0</span>
                     </div>
                 </div>
                 <button type="button" class="modal-close-btn" onclick="closeUserDetailsModal()">&times;</button>
@@ -1030,7 +1091,8 @@
 
                 <div class="detail-item-grid">
                     <span class="detail-label">Joined</span>
-                    <span class="detail-value mono" id="modal-field-joined" style="font-weight: 700; color: #0f172a;">—</span>
+                    <span class="detail-value mono" id="modal-field-joined"
+                        style="font-weight: 700; color: #0f172a;">—</span>
                 </div>
 
                 <div class="detail-item-grid">
@@ -1041,17 +1103,20 @@
                 <div class="detail-item-grid" style="border-bottom: none; margin-bottom: 0.5rem;">
                     <span class="detail-label">Complaints</span>
                     <span class="detail-value" id="modal-field-complaints-count">
-                        <span class="badge-method badge-google" style="background: #f1f5f9; color: #0f172a; border-color: #cbd5e1;">0 Submitted</span>
+                        <span class="badge-method badge-google"
+                            style="background: #f1f5f9; color: #0f172a; border-color: #cbd5e1;">0 Submitted</span>
                     </span>
                 </div>
 
                 <!-- Complaints List Container -->
                 <div class="complaints-box" id="modal-complaints-box">
-                    <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
+                    <div
+                        style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
                         Connected Grievances
                     </div>
                     <div id="modal-complaints-list">
-                        <p style="font-size: 0.8rem; color: var(--text-muted);">No complaints recorded for this user.</p>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">No complaints recorded for this user.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -1060,34 +1125,47 @@
 
     <!-- ADMIN PIN LOGIN MODAL / ACCESS GATE -->
     <div id="adminAuthModal" class="modal-overlay" style="display: flex; background: #0b1120;">
-        <div class="modal-card" style="max-width: 440px; text-align: center; padding: 2.25rem 2rem; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);">
-            <div style="width: 60px; height: 60px; border-radius: 16px; background: #0f172a; border: 2px solid #3b82f6; color: #3b82f6; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.75rem; box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);">
+        <div class="modal-card"
+            style="max-width: 440px; text-align: center; padding: 2.25rem 2rem; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);">
+            <div
+                style="width: 60px; height: 60px; border-radius: 16px; background: #0f172a; border: 2px solid #3b82f6; color: #3b82f6; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.75rem; box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);">
                 🛡️
             </div>
 
-            <div id="authUserBadge" style="display: none; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #2563eb; font-size: 0.78rem; font-weight: 700; padding: 0.35rem 0.85rem; border-radius: 9999px; margin-bottom: 1rem;"></div>
+            <div id="authUserBadge"
+                style="display: none; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #2563eb; font-size: 0.78rem; font-weight: 700; padding: 0.35rem 0.85rem; border-radius: 9999px; margin-bottom: 1rem;">
+            </div>
 
-            <h3 id="authModalHeader" style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.45rem;">Admin Authorization</h3>
-            <p id="authModalDesc" style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5;">
+            <h3 id="authModalHeader"
+                style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.45rem;">Admin
+                Authorization</h3>
+            <p id="authModalDesc"
+                style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5;">
                 Enter your Kizuno-AI Administrator Security PIN to access live Supabase user management.
             </p>
 
             <form id="adminPinForm" onsubmit="handlePinSubmit(event)">
                 <div class="pin-input-box">
-                    <input type="password" id="adminPinInput" class="pin-input" maxlength="8" placeholder="••••" autocomplete="new-password" autofocus required value="">
+                    <input type="password" id="adminPinInput" class="pin-input" maxlength="8" placeholder="••••"
+                        autocomplete="new-password" autofocus required value="">
                 </div>
-                <div id="pinErrorMsg" style="color: #dc2626; font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem; display: none;"></div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;">
+                <div id="pinErrorMsg"
+                    style="color: #dc2626; font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem; display: none;">
+                </div>
+                <button type="submit" class="btn btn-primary"
+                    style="width: 100%; padding: 0.8rem; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;">
                     <span>🛡️ Unlock Admin Dashboard</span>
                 </button>
             </form>
 
-            <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 0.65rem;">
-                <a href="index.html" class="btn btn-secondary" style="width: 100%; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.825rem;">
+            <div
+                style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 0.65rem;">
+                <a href="index.html" class="btn btn-secondary"
+                    style="width: 100%; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.825rem;">
                     ← Return to Citizen Portal
                 </a>
                 <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">
-                    Default Admin PIN: <code>1234</code> (Configurable via <code>ADMIN_PIN</code>)
+                    Default Admin PIN: <code>9812</code> (Configurable via <code>ADMIN_PIN</code>)
                 </p>
             </div>
         </div>
@@ -1190,7 +1268,7 @@
             const userRaw = localStorage.getItem('kizuno_auth_user');
             let user = null;
             if (userRaw) {
-                try { user = JSON.parse(userRaw); } catch(e){}
+                try { user = JSON.parse(userRaw); } catch (e) { }
             }
 
             const isDilip = Boolean(
@@ -1633,4 +1711,5 @@
         });
     </script>
 </body>
+
 </html>
