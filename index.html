@@ -3556,19 +3556,11 @@
                 <p class="track-search-desc">Enter the tracking key you received after submitting your complaint to view
                     its verified day-by-day journal.</p>
 
-                <form class="track-search-form" onsubmit="handleTrackFormSubmit(event)">
+                <form class="track-search-form" onsubmit="handleTrackFormSubmit(event)" style="margin-bottom: 2rem;">
                     <input type="text" class="track-search-input" id="track-key-input"
-                        placeholder="e.g. TN-GOV-X7K92P4M" required autocomplete="off">
+                        placeholder="Enter Tracking Key (e.g. TN-GOV-X4892)" required autocomplete="off">
                     <button type="submit" class="btn-primary" style="width: auto; padding: 0.9rem 2rem;">Track</button>
                 </form>
-
-                <div class="sample-search-chips">
-                    <span style="font-size: 0.775rem; color: var(--text-muted); font-weight: 600;">Sample Keys:</span>
-                    <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-X7K92P4M')">💡 TN-GOV-X7K92P4M
-                        (Streetlight • Delayed)</button>
-                    <button type="button" class="chip-btn" onclick="trackKey('TN-GOV-KA99120')">✓ TN-GOV-KA99120
-                        (Transformer • Resolved)</button>
-                </div>
 
                 <div class="alert-box" style="text-align: left; margin: 0 auto; max-width: 580px;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -6136,7 +6128,7 @@
             if (record) {
                 showComplaintDetails(record);
             } else {
-                showToast('Key not found in SQL database. Try TN-GOV-X7K92P4M', '⚠️');
+                showToast('Tracking key not found. Please check and re-enter your key.', '⚠️');
             }
         }
 
