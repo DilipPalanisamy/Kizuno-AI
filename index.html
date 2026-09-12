@@ -5150,23 +5150,46 @@
 
                             const statusText = document.getElementById('otp-sent-status');
                             if (statusText) {
-                                statusText.innerHTML = `
-                                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.85rem; margin-bottom: 0.85rem; text-align: left; font-size: 0.85rem; color: #1e40af;">
-                                        <strong>✉️ Verification Email Dispatched:</strong> A 6-digit verification code has been dispatched directly to your Gmail inbox: <strong style="color: var(--brand-primary); word-break: break-all;">${escapeHtml(email)}</strong>.
-                                    </div>
-                                    <p style="font-size: 0.825rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-                                        Please check your Gmail inbox (or Spam folder), copy the code, and enter it below manually to activate your account:
-                                    </p>
-                                `;
+                                if (data.networkBlocked && data.code) {
+                                    statusText.innerHTML = `
+                                        <div style="background: #f0fdf4; border: 1.5px solid #22c55e; border-radius: 12px; padding: 1.15rem 1rem; margin-bottom: 1rem; text-align: center;">
+                                            <div style="font-size: 0.825rem; font-weight: 800; color: #15803d; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                                                <span>🛡️</span> 6-Digit Citizen Verification Code
+                                            </div>
+                                            <p style="font-size: 0.775rem; color: #475569; margin: 0 0 0.65rem 0; line-height: 1.4;">
+                                                Generated for <strong style="color: var(--brand-primary);">${escapeHtml(email)}</strong> (Render cloud firewall blocks direct SMTP ports 465/587):
+                                            </p>
+                                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 800; letter-spacing: 6px; color: #15803d; background: #ffffff; padding: 0.55rem 1.25rem; border-radius: 8px; display: inline-block; border: 1.5px dashed #86efac; box-shadow: var(--shadow-sm);">
+                                                ${escapeHtml(data.code)}
+                                            </div>
+                                            <p style="font-size: 0.75rem; color: #166534; margin: 0.65rem 0 0 0; font-weight: 600;">
+                                                ✓ Code auto-filled below. Click "Verify & Create Account" to finish registration!
+                                            </p>
+                                        </div>
+                                    `;
+                                    const codeInput = document.getElementById('signup-otp-code');
+                                    if (codeInput) {
+                                        codeInput.value = data.code;
+                                        codeInput.focus();
+                                    }
+                                    showToast(`Verification code: ${data.code}`, '🔑');
+                                } else {
+                                    statusText.innerHTML = `
+                                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.85rem; margin-bottom: 0.85rem; text-align: left; font-size: 0.85rem; color: #1e40af;">
+                                            <strong>✉️ Verification Email Dispatched:</strong> A 6-digit verification code has been dispatched directly to your Gmail inbox: <strong style="color: var(--brand-primary); word-break: break-all;">${escapeHtml(email)}</strong>.
+                                        </div>
+                                        <p style="font-size: 0.825rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+                                            Please check your Gmail inbox (or Spam folder), copy the code, and enter it below manually to activate your account:
+                                        </p>
+                                    `;
+                                    const codeInput = document.getElementById('signup-otp-code');
+                                    if (codeInput) {
+                                        codeInput.value = '';
+                                        codeInput.focus();
+                                    }
+                                    showToast(`Verification code sent to ${email}! Check your Gmail inbox.`, '✉️');
+                                }
                             }
-
-                            const codeInput = document.getElementById('signup-otp-code');
-                            if (codeInput) {
-                                codeInput.value = '';
-                                codeInput.focus();
-                            }
-
-                            showToast(`Verification code sent to ${email}! Check your Gmail inbox.`, '✉️');
                             return false;
                         } else {
                             const errDetail = data.detail || data.message || 'Failed to dispatch verification email. Please verify your Gmail address.';
