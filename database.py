@@ -6,7 +6,7 @@ day-wise timeline audit events, and municipal officer actions.
 
 import os
 import shutil
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 from sqlalchemy import (
     create_engine,
@@ -82,7 +82,7 @@ class Complaint(Base):
     assigned_officer = Column(String(128), nullable=True)
     citizen_email = Column(String(128), nullable=True, default="")
     citizen_name = Column(String(128), nullable=True, default="Citizen")
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone(timedelta(hours=5, minutes=30))))
 
     # Relational link to User
     user = relationship("User", back_populates="complaints", foreign_keys=[user_id])
@@ -144,7 +144,7 @@ class TimelineEvent(Base):
     description = Column(Text, nullable=False)
     official_node = Column(String(255), nullable=True)
     evidence_ref = Column(String(255), nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone(timedelta(hours=5, minutes=30))))
 
     complaint = relationship("Complaint", back_populates="timeline_events")
 
@@ -177,7 +177,7 @@ class Officer(Base):
     department = Column(String(128), nullable=False)
     role = Column(String(64), default="Field Officer")
     pin_hash = Column(String(255), nullable=True)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone(timedelta(hours=5, minutes=30))))
 
     def to_dict(self):
         return {
@@ -216,8 +216,8 @@ class User(Base):
     registration_method = Column(String(32), default="email", nullable=False)
     email_verified = Column(Boolean, default=True, nullable=False)
     password_hash = Column(String(255), nullable=True)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
-    last_login = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone(timedelta(hours=5, minutes=30))), nullable=False)
+    last_login = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone(timedelta(hours=5, minutes=30))), nullable=False)
 
     # Relational link to submitted complaints
     complaints = relationship("Complaint", back_populates="user")
@@ -278,7 +278,7 @@ class EmailVerification(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(128), nullable=False, index=True)
     code = Column(String(6), nullable=False)
-    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone(timedelta(hours=5, minutes=30))))
     expires_at = Column(DateTime, nullable=False)
     is_used = Column(Boolean, default=False)
 

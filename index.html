@@ -5920,7 +5920,7 @@
             const timeEl = document.getElementById('submitted-complaint-timestamp');
             if (timeEl) {
                 const now = new Date();
-                timeEl.innerText = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) + ' • ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                timeEl.innerText = now.toLocaleDateString('en-IN', { month: 'short', day: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }) + ' • ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Kolkata' });
             }
 
             const slaEl = document.getElementById('submitted-complaint-sla');
@@ -6055,7 +6055,7 @@
                 timeline: [
                     {
                         day: "Day 0",
-                        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+                        date: new Date().toLocaleDateString('en-IN', { month: 'short', day: '2-digit', year: 'numeric', timeZone: 'Asia/Kolkata' }),
                         statusType: "submitted",
                         tagType: "tag-verified",
                         tagText: "Verified Event",

@@ -399,7 +399,7 @@ def record_user_to_csv(
             final_user_id = str(max_id + 1)
 
         # Generate timestamps
-        dt = created_at if isinstance(created_at, datetime) else datetime.now()
+        dt = created_at if isinstance(created_at, datetime) else datetime.now(timezone(timedelta(hours=5, minutes=30)))
         created_date = dt.strftime("%Y-%m-%d")
         created_time = dt.strftime("%H:%M:%S")
         created_at_str = dt.strftime("%Y-%m-%d %H:%M:%S")
@@ -550,7 +550,7 @@ def save_complaint_to_csv(complaint) -> dict:
     dept = str(complaint.department or "").strip()
     day_lbl = str(complaint.day_label or "Day 0").strip()
     l_upd = str(complaint.last_updated or "").strip()
-    created_at_str = complaint.created_at.strftime("%Y-%m-%d %H:%M:%S") if (hasattr(complaint, 'created_at') and complaint.created_at) else datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    created_at_str = complaint.created_at.strftime("%Y-%m-%d %H:%M:%S") if (hasattr(complaint, 'created_at') and complaint.created_at) else datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%Y-%m-%d %H:%M:%S")
 
     row_data = {
         "complaint_id": cid,
@@ -657,7 +657,7 @@ def record_deleted_complaint_to_csv(complaint, deleted_by: str = "Citizen Owner"
     prio = str(complaint.priority or "Medium").strip()
     stat = str(complaint.status or "Pending").strip()
     dept = str(complaint.department or "").strip()
-    deleted_at_str = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    deleted_at_str = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%Y-%m-%d %H:%M:%S")
 
     row_data = {
         "complaint_id": cid,
@@ -836,7 +836,7 @@ def send_verification_code(payload: SendVerificationDTO, db: Session = Depends(g
 
     # Generate 6-digit numeric OTP code
     code = f"{random.randint(100000, 999999)}"
-    expires = datetime.utcnow() + timedelta(minutes=10)
+    expires = datetime.now(timezone(timedelta(hours=5, minutes=30))) + timedelta(minutes=10)
 
     # Invalidate any existing unused codes for this email
     db.query(EmailVerification).filter(
@@ -935,7 +935,7 @@ def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
         EmailVerification.email == clean_email,
         EmailVerification.code == clean_code,
         EmailVerification.is_used == False,
-        EmailVerification.expires_at >= datetime.utcnow()
+        EmailVerification.expires_at >= datetime.now(timezone(timedelta(hours=5, minutes=30)))
     ).first()
 
     if not verif:
@@ -950,7 +950,7 @@ def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
     # Check if user already exists in SQL / Supabase
     existing_user = db.query(User).filter(User.email == clean_email).first()
     hashed = hash_password(payload.password)
-    now_utc = datetime.now(timezone.utc)
+    now_ist = datetime.now(timezone(timedelta(hours=5, minutes=30)))
 
     if existing_user:
         if existing_user.password_hash:
@@ -964,7 +964,7 @@ def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
         existing_user.email_verified = True
         existing_user.registration_method = existing_user.registration_method or "email"
         existing_user.role = "citizen"
-        existing_user.last_login = now_utc
+        existing_user.last_login = now_ist
         # Note: created_at is permanently untouched!
         db.commit()
         db.refresh(existing_user)
@@ -978,8 +978,8 @@ def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
             email_verified=True,
             role="citizen",
             registration_method="email",
-            created_at=now_utc,
-            last_login=now_utc
+            created_at=now_ist,
+            last_login=now_ist
         )
         db.add(user)
         db.commit()
@@ -1031,7 +1031,7 @@ def login_with_password(payload: LoginUserDTO, db: Session = Depends(get_db)):
         )
 
     # Update last_login only (created_at remains completely unchanged)
-    user.last_login = datetime.now(timezone.utc)
+    user.last_login = datetime.now(timezone(timedelta(hours=5, minutes=30)))
     db.commit()
     db.refresh(user)
 
@@ -1078,7 +1078,7 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
     name = (token_data.get("name") or email.split("@")[0]).strip()
     avatar_url = token_data.get("picture")
     role = payload.role or ("officer" if "officer" in email else "citizen")
-    now_utc = datetime.now(timezone.utc)
+    now_ist = datetime.now(timezone(timedelta(hours=5, minutes=30)))
 
     # Search for existing user by google_id or email (case-insensitive) to prevent duplicates
     user = db.query(User).filter((User.google_id == google_id) | (User.email == email)).first()
@@ -1089,7 +1089,7 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
         user.role = role or user.role
         user.email_verified = True
         user.registration_method = user.registration_method or "google"
-        user.last_login = now_utc
+        user.last_login = now_ist
     else:
         # New user: store with permanent creation timestamp
         user = User(
@@ -1100,8 +1100,8 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
             role=role,
             registration_method="google",
             email_verified=True,
-            created_at=now_utc,
-            last_login=now_utc
+            created_at=now_ist,
+            last_login=now_ist
         )
         db.add(user)
 
@@ -1189,8 +1189,8 @@ def get_admin_user_stats(
     email_users = db.query(User).filter(User.registration_method == "email").count()
     verified_users = db.query(User).filter(User.email_verified == True).count()
 
-    now_utc = datetime.now(timezone.utc)
-    today_start = datetime(now_utc.year, now_utc.month, now_utc.day, tzinfo=timezone.utc)
+    now_ist = datetime.now(timezone(timedelta(hours=5, minutes=30)))
+    today_start = datetime(now_ist.year, now_ist.month, now_ist.day, tzinfo=timezone(timedelta(hours=5, minutes=30)))
     try:
         new_today = db.query(User).filter(User.created_at >= today_start).count()
     except Exception:
@@ -1336,7 +1336,7 @@ def health_check(db: Session = Depends(get_db)):
         "database": DB_DIALECT,
         "activeComplaintsInSQL": total_complaints,
         "timelineEventsInSQL": total_events,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now(timezone(timedelta(hours=5, minutes=30))).isoformat()
     }
 
 
@@ -1414,7 +1414,7 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
         hex_suffix = "".join(random.choices("0123456789ABCDEF", k=6))
         new_key = f"TN-GOV-X{hex_suffix}"
 
-    today_str = datetime.now().strftime("%b %d, %Y")
+    today_str = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%b %d, %Y")
 
     # Category icon mapping
     icon_map = {
@@ -1592,7 +1592,7 @@ def update_complaint_status(payload: OfficerUpdateDTO, db: Session = Depends(get
             detail=f"Complaint #{payload.complaint_id} does not exist in the SQL database."
         )
 
-    today_str = datetime.now().strftime("%b %d, %Y")
+    today_str = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%b %d, %Y")
     action = payload.action_type
     comments = payload.comments or ""
 

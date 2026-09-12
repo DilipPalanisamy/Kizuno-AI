@@ -1119,24 +1119,18 @@
                 const d = new Date(isoString);
                 if (isNaN(d.getTime())) return isoString;
 
-                const day = String(d.getDate()).padStart(2, '0');
-                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                const month = months[d.getMonth()];
-                const year = d.getFullYear();
-
-                let hours = d.getHours();
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12;
-                hours = hours ? hours : 12; // 0 becomes 12
-                const hoursStr = String(hours).padStart(2, '0');
-                const minutes = String(d.getMinutes()).padStart(2, '0');
-                const seconds = String(d.getSeconds()).padStart(2, '0');
-
-                return `${day} ${month} ${year}, ${hoursStr}:${minutes}:${seconds} ${ampm}`;
+                // Force IST (Asia/Kolkata) timezone
+                const options = {
+                    day: '2-digit', month: 'short', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit',
+                    hour12: true, timeZone: 'Asia/Kolkata'
+                };
+                return d.toLocaleString('en-IN', options);
             } catch (e) {
                 return isoString;
             }
         }
+
 
         // -------------------------------------------------------------
         // TOAST NOTIFICATIONS
