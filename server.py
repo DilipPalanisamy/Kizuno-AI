@@ -6,15 +6,18 @@ managing real SQL operations, and serving the frontend interface.
 
 import os
 import ssl
+import csv
 import json
 import base64
 import random
 import hashlib
 import hmac
 import smtplib
-from datetime import datetime, timedelta
+import threading
+import io
+from datetime import datetime, timedelta, timezone
 from email.message import EmailMessage
-from typing import Optional, List
+from typing import Optional, List, Any, Dict
 
 from dotenv import load_dotenv
 
@@ -22,7 +25,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import uvicorn
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, Depends, HTTPException, Query, Header, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -38,8 +41,65 @@ from database import (
     Officer,
     User,
     EmailVerification,
-    DB_DIALECT
+    DB_DIALECT,
+    SessionLocal
 )
+
+# -------------------------------------------------------------
+# SUPABASE POSTGRESQL & ADMIN CONFIGURATION
+# -------------------------------------------------------------
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "").strip()
+SUPABASE_KEY = (os.environ.get("SUPABASE_KEY") or os.environ.get("SUPABASE_ANON_KEY") or "").strip()
+SUPABASE_SERVICE_ROLE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+ADMIN_PIN = os.environ.get("ADMIN_PIN", "1234").strip()
+
+supabase_client = None
+if SUPABASE_URL and (SUPABASE_SERVICE_ROLE_KEY or SUPABASE_KEY):
+    try:
+        from supabase import create_client, Client
+        target_key = SUPABASE_SERVICE_ROLE_KEY or SUPABASE_KEY
+        supabase_client: Client = create_client(SUPABASE_URL, target_key)
+        print(f"[Kizuno-AI Supabase] Live Supabase Client initialized successfully at {SUPABASE_URL}!")
+    except Exception as e:
+        print(f"[Kizuno-AI Supabase] Note: Supabase SDK initialization: {e}")
+
+def get_admin_auth_token(pin: str) -> str:
+    """Creates a deterministic HMAC token for authenticated admin sessions"""
+    secret = os.environ.get("SESSION_SECRET", "kizuno_admin_secret_key_2026")
+    return hmac.new(secret.encode(), f"admin:{pin}".encode(), hashlib.sha256).hexdigest()
+
+def verify_admin_access(
+    x_admin_pin: Optional[str] = Header(None),
+    authorization: Optional[str] = Header(None),
+    token: Optional[str] = Query(None)
+):
+    """
+    Enforces server-side administrator authorization.
+    Accepts X-Admin-Pin header, Authorization Bearer token, or token query param.
+    """
+    valid_token = get_admin_auth_token(ADMIN_PIN)
+    
+    # Check X-Admin-Pin header
+    if x_admin_pin:
+        clean_pin = x_admin_pin.strip()
+        if clean_pin == ADMIN_PIN or clean_pin == valid_token:
+            return True
+
+    # Check Authorization Bearer header
+    if authorization:
+        bearer = authorization.replace("Bearer ", "").strip()
+        if bearer == valid_token or bearer == ADMIN_PIN:
+            return True
+
+    # Check query param (for export-csv direct download)
+    if token and (token.strip() == valid_token or token.strip() == ADMIN_PIN):
+        return True
+
+    raise HTTPException(
+        status_code=403,
+        detail="Access forbidden. Kizuno-AI Administrator Security PIN or Session Token required."
+    )
+
 
 def hash_password(password: str) -> str:
     """Creates a secure salted PBKDF2-SHA256 password hash"""
@@ -223,8 +283,450 @@ Kizuna-AI Municipal Redressal Engine
 # Verified Google OAuth 2.0 Client ID for Kizuno-AI
 GOOGLE_CLIENT_ID = "485227555296-5jqikr8c4ruddifkp7uj2k3h82sfivd1.apps.googleusercontent.com"
 
+# -------------------------------------------------------------
+# USERS.CSV STORAGE & DEDUPLICATION ENGINE
+# Automatically records every verified user across both registration
+# methods (Google OAuth & Email-OTP). Thread-safe & duplicate-proof.
+# -------------------------------------------------------------
+
+USERS_CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "users.csv")
+CSV_LOCK = threading.Lock()
+CSV_HEADERS = [
+    "user_id",
+    "gmail",
+    "name",
+    "registration_method",
+    "email_verified",
+    "created_date",
+    "created_time",
+    "created_at"
+]
+
+
+def init_users_csv() -> str:
+    """
+    Initializes users.csv with standard headers if file does not exist.
+    Thread-safe operation.
+    """
+    with CSV_LOCK:
+        if not os.path.exists(USERS_CSV_FILE):
+            try:
+                with open(USERS_CSV_FILE, mode="w", newline="", encoding="utf-8") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(CSV_HEADERS)
+                print(f"[Kizuno-AI CSV] Successfully initialized {USERS_CSV_FILE} with headers: {', '.join(CSV_HEADERS)}")
+            except Exception as e:
+                print(f"[Kizuno-AI CSV] Failed to initialize users.csv: {e}")
+    return USERS_CSV_FILE
+
+
+def get_user_from_csv(email: str) -> Optional[Dict[str, str]]:
+    """
+    Searches users.csv for an existing user by Gmail address (case-insensitive).
+    Returns dictionary of user attributes if found, else None.
+    """
+    if not email:
+        return None
+    clean_email = email.strip().lower()
+    with CSV_LOCK:
+        if not os.path.exists(USERS_CSV_FILE):
+            return None
+        try:
+            with open(USERS_CSV_FILE, mode="r", newline="", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    if row.get("gmail", "").strip().lower() == clean_email:
+                        return dict(row)
+        except Exception as e:
+            print(f"[Kizuno-AI CSV] Error reading users.csv: {e}")
+    return None
+
+
+def record_user_to_csv(
+    user_id: Optional[Any],
+    email: str,
+    name: str,
+    registration_method: str,
+    email_verified: bool = True,
+    created_at: Optional[datetime] = None
+) -> Dict[str, str]:
+    """
+    Safely stores a user account in users.csv:
+    1. Checks if Gmail already exists in users.csv (case-insensitive).
+       If user exists, DOES NOT create a new row; returns original row to preserve original timestamps.
+    2. Validates registration_method is 'google' or 'email'.
+    3. Requires email_verified == True before recording. Never stores unverified accounts.
+    4. Automatically generates created_date (YYYY-MM-DD), created_time (HH:MM:SS),
+       and created_at (YYYY-MM-DD HH:MM:SS).
+    5. Never stores passwords, OTP verification codes, or Google OAuth tokens.
+    6. Thread-safe writing guarded by CSV_LOCK.
+    """
+    if not email:
+        return {}
+
+    clean_email = email.strip().lower()
+    clean_name = (name or clean_email.split("@")[0]).strip()
+    norm_method = "google" if registration_method.lower() == "google" else "email"
+    verified_str = "true" if email_verified else "false"
+
+    # Only verified accounts are eligible for users.csv
+    if not email_verified:
+        print(f"[Kizuno-AI CSV] Skipped unverified user {clean_email}. Only verified accounts are stored.")
+        return {}
+
+    with CSV_LOCK:
+        # Guarantee users.csv exists with correct header
+        if not os.path.exists(USERS_CSV_FILE):
+            try:
+                with open(USERS_CSV_FILE, mode="w", newline="", encoding="utf-8") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(CSV_HEADERS)
+            except Exception as e:
+                print(f"[Kizuno-AI CSV] Failed to create users.csv: {e}")
+                return {}
+
+        existing_user_row = None
+        max_id = 0
+
+        # Scan for existing Gmail address to prevent duplicate accounts
+        try:
+            with open(USERS_CSV_FILE, mode="r", newline="", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    r_id = row.get("user_id", "").strip()
+                    if r_id.isdigit():
+                        max_id = max(max_id, int(r_id))
+                    if row.get("gmail", "").strip().lower() == clean_email:
+                        existing_user_row = dict(row)
+        except Exception as e:
+            print(f"[Kizuno-AI CSV] Error scanning users.csv: {e}")
+
+        # If user already exists, return existing row to preserve original timestamps
+        if existing_user_row:
+            return existing_user_row
+
+        # Assign user_id (either database user_id or sequential max + 1)
+        if user_id is not None and str(user_id).strip():
+            final_user_id = str(user_id).strip()
+        else:
+            final_user_id = str(max_id + 1)
+
+        # Generate timestamps
+        dt = created_at if isinstance(created_at, datetime) else datetime.now()
+        created_date = dt.strftime("%Y-%m-%d")
+        created_time = dt.strftime("%H:%M:%S")
+        created_at_str = dt.strftime("%Y-%m-%d %H:%M:%S")
+
+        new_row = [
+            final_user_id,
+            clean_email,
+            clean_name,
+            norm_method,
+            verified_str,
+            created_date,
+            created_time,
+            created_at_str
+        ]
+
+        try:
+            with open(USERS_CSV_FILE, mode="a", newline="", encoding="utf-8") as f:
+                writer = csv.writer(f)
+                writer.writerow(new_row)
+            print(f"[Kizuno-AI CSV] Appended new user #{final_user_id} ({clean_email}, method={norm_method}) to users.csv")
+        except Exception as e:
+            print(f"[Kizuno-AI CSV] Failed to write new row to users.csv: {e}")
+            return {}
+
+        return {
+            "user_id": final_user_id,
+            "gmail": clean_email,
+            "name": clean_name,
+            "registration_method": norm_method,
+            "email_verified": verified_str,
+            "created_date": created_date,
+            "created_time": created_time,
+            "created_at": created_at_str
+        }
+
+
+def sync_sql_users_to_csv(db: Session):
+    """
+    Synchronizes existing verified users from the SQL database into users.csv.
+    Prevents duplicate entries and populates historical users seamlessly.
+    """
+    try:
+        users = db.query(User).order_by(User.id.asc()).all()
+        for u in users:
+            is_verified = bool(u.is_verified or u.auth_provider == "google")
+            if is_verified:
+                method = "google" if u.auth_provider == "google" else "email"
+                record_user_to_csv(
+                    user_id=u.id,
+                    email=u.email,
+                    name=u.name,
+                    registration_method=method,
+                    email_verified=True,
+                    created_at=u.created_at
+                )
+    except Exception as e:
+        print(f"[Kizuno-AI CSV] Warning during SQL to CSV sync: {e}")
+
+
+# -------------------------------------------------------------
+# COMPLAINTS.CSV & DELETED_COMPLAINTS.CSV STORAGE ENGINE
+# Records every citizen grievance across the portal.
+# Synchronized with SQL, officer portal, and tracking flows.
+# -------------------------------------------------------------
+
+COMPLAINTS_CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "complaints.csv")
+DELETED_COMPLAINTS_CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "deleted_complaints.csv")
+
+COMPLAINTS_CSV_HEADERS = [
+    "complaint_id",
+    "tracking_key",
+    "citizen_name",
+    "citizen_email",
+    "category",
+    "title",
+    "description",
+    "location",
+    "priority",
+    "status",
+    "department",
+    "day_label",
+    "last_updated",
+    "created_at"
+]
+
+DELETED_COMPLAINTS_CSV_HEADERS = [
+    "complaint_id",
+    "tracking_key",
+    "citizen_name",
+    "citizen_email",
+    "category",
+    "title",
+    "description",
+    "location",
+    "priority",
+    "status",
+    "department",
+    "deleted_at",
+    "deleted_by"
+]
+
+
+def init_complaints_csv() -> str:
+    with CSV_LOCK:
+        if not os.path.exists(COMPLAINTS_CSV_FILE):
+            try:
+                with open(COMPLAINTS_CSV_FILE, mode="w", newline="", encoding="utf-8") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(COMPLAINTS_CSV_HEADERS)
+                print(f"[Kizuno-AI CSV] Initialized {COMPLAINTS_CSV_FILE}")
+            except Exception as e:
+                print(f"[Kizuno-AI CSV] Failed to initialize complaints.csv: {e}")
+    return COMPLAINTS_CSV_FILE
+
+
+def init_deleted_complaints_csv() -> str:
+    with CSV_LOCK:
+        if not os.path.exists(DELETED_COMPLAINTS_CSV_FILE):
+            try:
+                with open(DELETED_COMPLAINTS_CSV_FILE, mode="w", newline="", encoding="utf-8") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(DELETED_COMPLAINTS_CSV_HEADERS)
+                print(f"[Kizuno-AI CSV] Initialized {DELETED_COMPLAINTS_CSV_FILE}")
+            except Exception as e:
+                print(f"[Kizuno-AI CSV] Failed to initialize deleted_complaints.csv: {e}")
+    return DELETED_COMPLAINTS_CSV_FILE
+
+
+def save_complaint_to_csv(complaint) -> dict:
+    """
+    Appends or updates a complaint in complaints.csv. Thread-safe.
+    """
+    if not complaint or not complaint.id:
+        return {}
+
+    init_complaints_csv()
+
+    cid = str(complaint.id).strip()
+    tkey = str(complaint.tracking_key or "").strip()
+    cname = str(complaint.citizen_name or "Citizen").strip()
+    cemail = str(complaint.citizen_email or "").strip().lower()
+    cat = str(complaint.category or "General").strip()
+    title = str(complaint.title or "").strip()
+    desc = str(complaint.description or "").strip()
+    loc = str(complaint.location or "").strip()
+    prio = str(complaint.priority or "Medium").strip()
+    stat = str(complaint.status or "Pending").strip()
+    dept = str(complaint.department or "").strip()
+    day_lbl = str(complaint.day_label or "Day 0").strip()
+    l_upd = str(complaint.last_updated or "").strip()
+    created_at_str = complaint.created_at.strftime("%Y-%m-%d %H:%M:%S") if (hasattr(complaint, 'created_at') and complaint.created_at) else datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+
+    row_data = {
+        "complaint_id": cid,
+        "tracking_key": tkey,
+        "citizen_name": cname,
+        "citizen_email": cemail,
+        "category": cat,
+        "title": title,
+        "description": desc,
+        "location": loc,
+        "priority": prio,
+        "status": stat,
+        "department": dept,
+        "day_label": day_lbl,
+        "last_updated": l_upd,
+        "created_at": created_at_str
+    }
+
+    with CSV_LOCK:
+        try:
+            existing_rows = []
+            if os.path.exists(COMPLAINTS_CSV_FILE):
+                with open(COMPLAINTS_CSV_FILE, mode="r", newline="", encoding="utf-8") as f:
+                    reader = csv.DictReader(f)
+                    for r in reader:
+                        existing_rows.append(r)
+
+            found_idx = -1
+            for idx, r in enumerate(existing_rows):
+                if r.get("complaint_id") == cid or (tkey and r.get("tracking_key") == tkey):
+                    found_idx = idx
+                    break
+
+            if found_idx >= 0:
+                existing_rows[found_idx] = row_data
+            else:
+                existing_rows.append(row_data)
+
+            with open(COMPLAINTS_CSV_FILE, mode="w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=COMPLAINTS_CSV_HEADERS)
+                writer.writeheader()
+                writer.writerows(existing_rows)
+
+            print(f"[Kizuno-AI CSV] Saved complaint #{cid} ({stat}) to complaints.csv")
+            return row_data
+        except Exception as e:
+            print(f"[Kizuno-AI CSV] Error writing complaints.csv: {e}")
+            return {}
+
+
+def remove_complaint_from_csv(complaint_id_or_key: str) -> bool:
+    """
+    Removes a complaint from complaints.csv. Thread-safe.
+    """
+    if not complaint_id_or_key:
+        return False
+
+    clean_target = complaint_id_or_key.strip().upper()
+    init_complaints_csv()
+
+    with CSV_LOCK:
+        try:
+            if not os.path.exists(COMPLAINTS_CSV_FILE):
+                return False
+
+            existing_rows = []
+            with open(COMPLAINTS_CSV_FILE, mode="r", newline="", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for r in reader:
+                    cid = (r.get("complaint_id") or "").strip().upper()
+                    tkey = (r.get("tracking_key") or "").strip().upper()
+                    if cid != clean_target and tkey != clean_target:
+                        existing_rows.append(r)
+
+            with open(COMPLAINTS_CSV_FILE, mode="w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=COMPLAINTS_CSV_HEADERS)
+                writer.writeheader()
+                writer.writerows(existing_rows)
+
+            print(f"[Kizuno-AI CSV] Removed {clean_target} from complaints.csv")
+            return True
+        except Exception as e:
+            print(f"[Kizuno-AI CSV] Error removing complaint from complaints.csv: {e}")
+            return False
+
+
+def record_deleted_complaint_to_csv(complaint, deleted_by: str = "Citizen Owner") -> dict:
+    """
+    Records a deleted grievance into deleted_complaints.csv. Thread-safe.
+    """
+    if not complaint:
+        return {}
+
+    init_deleted_complaints_csv()
+
+    cid = str(complaint.id).strip()
+    tkey = str(complaint.tracking_key or "").strip()
+    cname = str(complaint.citizen_name or "Citizen").strip()
+    cemail = str(complaint.citizen_email or "").strip().lower()
+    cat = str(complaint.category or "General").strip()
+    title = str(complaint.title or "").strip()
+    desc = str(complaint.description or "").strip()
+    loc = str(complaint.location or "").strip()
+    prio = str(complaint.priority or "Medium").strip()
+    stat = str(complaint.status or "Pending").strip()
+    dept = str(complaint.department or "").strip()
+    deleted_at_str = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+
+    row_data = {
+        "complaint_id": cid,
+        "tracking_key": tkey,
+        "citizen_name": cname,
+        "citizen_email": cemail,
+        "category": cat,
+        "title": title,
+        "description": desc,
+        "location": loc,
+        "priority": prio,
+        "status": stat,
+        "department": dept,
+        "deleted_at": deleted_at_str,
+        "deleted_by": deleted_by
+    }
+
+    with CSV_LOCK:
+        try:
+            with open(DELETED_COMPLAINTS_CSV_FILE, mode="a", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=DELETED_COMPLAINTS_CSV_HEADERS)
+                writer.writerow(row_data)
+            print(f"[Kizuno-AI CSV] Archived deleted complaint #{cid} into deleted_complaints.csv by {deleted_by}")
+            return row_data
+        except Exception as e:
+            print(f"[Kizuno-AI CSV] Error writing deleted_complaints.csv: {e}")
+            return {}
+
+
+def sync_sql_complaints_to_csv(db: Session):
+    """
+    Synchronizes all existing active complaints from SQL into complaints.csv on server startup.
+    """
+    try:
+        complaints = db.query(Complaint).order_by(Complaint.created_at.asc()).all()
+        for c in complaints:
+            save_complaint_to_csv(c)
+        print(f"[Kizuno-AI CSV] Synchronized {len(complaints)} SQL complaints into complaints.csv")
+    except Exception as e:
+        print(f"[Kizuno-AI CSV] Warning during SQL to complaints.csv sync: {e}")
+
+
 # Initialize database tables on server start
 init_db()
+
+# Initialize users.csv, complaints.csv, and deleted_complaints.csv on startup
+init_users_csv()
+init_complaints_csv()
+init_deleted_complaints_csv()
+
+_sync_session = SessionLocal()
+try:
+    sync_sql_users_to_csv(_sync_session)
+    sync_sql_complaints_to_csv(_sync_session)
+finally:
+    _sync_session.close()
 
 app = FastAPI(
     title="Kizuno-AI REST API",
@@ -337,6 +839,14 @@ def send_verification_code(payload: SendVerificationDTO, db: Session = Depends(g
     if not clean_email or "@" not in clean_email:
         raise HTTPException(status_code=400, detail="Please enter a valid Gmail address.")
 
+    # Check if user already exists with password in SQL
+    existing_user = db.query(User).filter(User.email == clean_email).first()
+    if existing_user and existing_user.password_hash:
+        raise HTTPException(
+            status_code=400,
+            detail=f"An account with {clean_email} already exists. Please switch to Sign In with your password."
+        )
+
     # Generate 6-digit numeric OTP code
     code = f"{random.randint(100000, 999999)}"
     expires = datetime.utcnow() + timedelta(minutes=10)
@@ -417,11 +927,14 @@ def test_email_endpoint(payload: TestEmailDTO):
 
 
 @app.post("/api/auth/register")
+@app.post("/api/auth/register")
 @app.post("/api/auth/verify-and-register")
 def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
     """
     Registers a new citizen with verified Gmail, username, and password.
     Validates real 6-digit code against SQL `email_verifications`.
+    Stores user in Supabase PostgreSQL primary database with registration_method='email', email_verified=True.
+    Permanently assigns created_at and sets initial last_login.
     """
     clean_email = payload.email.strip().lower()
     clean_code = payload.verification_code.strip().replace(" ", "").replace("-", "")
@@ -448,9 +961,10 @@ def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
     # Mark code as consumed
     verif.is_used = True
 
-    # Check if user already exists in SQL
+    # Check if user already exists in SQL / Supabase
     existing_user = db.query(User).filter(User.email == clean_email).first()
     hashed = hash_password(payload.password)
+    now_utc = datetime.now(timezone.utc)
 
     if existing_user:
         if existing_user.password_hash:
@@ -461,25 +975,39 @@ def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
         # Upgrade existing Google/mock user with password
         existing_user.name = payload.username.strip() or existing_user.name
         existing_user.password_hash = hashed
-        existing_user.is_verified = True
+        existing_user.email_verified = True
+        existing_user.registration_method = existing_user.registration_method or "email"
         existing_user.role = "citizen"
-        existing_user.last_login = datetime.utcnow()
+        existing_user.last_login = now_utc
+        # Note: created_at is permanently untouched!
         db.commit()
         db.refresh(existing_user)
         user = existing_user
     else:
-        # Create fresh citizen account
+        # Create fresh citizen account with permanent creation timestamp
         user = User(
             email=clean_email,
             name=payload.username.strip() or clean_email.split("@")[0],
             password_hash=hashed,
-            is_verified=True,
+            email_verified=True,
             role="citizen",
-            auth_provider="email"
+            registration_method="email",
+            created_at=now_utc,
+            last_login=now_utc
         )
         db.add(user)
         db.commit()
         db.refresh(user)
+
+    # Maintain users.csv cache without duplicating
+    record_user_to_csv(
+        user_id=user.id,
+        email=user.email,
+        name=user.name,
+        registration_method="email",
+        email_verified=True,
+        created_at=user.created_at
+    )
 
     return {
         "success": True,
@@ -491,8 +1019,9 @@ def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
 @app.post("/api/auth/login")
 def login_with_password(payload: LoginUserDTO, db: Session = Depends(get_db)):
     """
-    Authenticates citizen using verified Gmail and Password from SQL.
+    Authenticates citizen using verified Gmail and Password from SQL / Supabase.
     Requires prior email verification through the Create Account flow.
+    Updates last_login timestamp while strictly preserving the original created_at.
     """
     clean_email = payload.email.strip().lower()
     user = db.query(User).filter(User.email == clean_email).first()
@@ -503,7 +1032,7 @@ def login_with_password(payload: LoginUserDTO, db: Session = Depends(get_db)):
             detail="No account found with this Gmail address. Please click 'Create Account' to register and verify your email."
         )
 
-    if not user.is_verified:
+    if not user.email_verified and not user.is_verified:
         raise HTTPException(
             status_code=403,
             detail="Your Gmail address has not been verified yet. Please complete verification."
@@ -515,9 +1044,21 @@ def login_with_password(payload: LoginUserDTO, db: Session = Depends(get_db)):
             detail="Incorrect password. Please verify and try again."
         )
 
-    user.last_login = datetime.utcnow()
+    # Update last_login only (created_at remains completely unchanged)
+    user.last_login = datetime.now(timezone.utc)
     db.commit()
     db.refresh(user)
+
+    # Sync cache without duplicate entries
+    method = user.registration_method or "email"
+    record_user_to_csv(
+        user_id=user.id,
+        email=user.email,
+        name=user.name,
+        registration_method=method,
+        email_verified=True,
+        created_at=user.created_at
+    )
 
     return {
         "success": True,
@@ -531,8 +1072,13 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
     """
     Ingests and validates Google OAuth 2.0 credential:
     1. Decodes JWT to extract Google profile (sub, email, name, picture).
-    2. Persists or updates the user record in SQLite `users` table.
-    3. Returns authenticated session object with real SQL user ID.
+    2. Checks Supabase / SQL database:
+       - If new user: creates record with registration_method='google', email_verified=True,
+         created_at=now, last_login=now.
+       - If existing user: updates last_login=now, DOES NOT recreate or duplicate,
+         and NEVER modifies created_at.
+    3. Does NOT store Google password, OAuth secrets, access tokens, or refresh tokens.
+    4. Returns authenticated session object with real SQL user ID.
     """
     token_data = decode_jwt_unverified(payload.credential)
     if not token_data or "email" not in token_data:
@@ -542,31 +1088,49 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
         )
 
     google_id = token_data.get("sub")
-    email = token_data.get("email")
-    name = token_data.get("name") or email.split("@")[0]
+    email = token_data.get("email", "").strip().lower()
+    name = (token_data.get("name") or email.split("@")[0]).strip()
     avatar_url = token_data.get("picture")
     role = payload.role or ("officer" if "officer" in email else "citizen")
+    now_utc = datetime.now(timezone.utc)
 
-    # Find or create user in SQLite database
+    # Search for existing user by google_id or email (case-insensitive) to prevent duplicates
     user = db.query(User).filter((User.google_id == google_id) | (User.email == email)).first()
     if user:
-        user.name = name
+        # Existing user: update last_login and profile info; DO NOT touch created_at
+        user.name = name or user.name
         user.avatar_url = avatar_url or user.avatar_url
-        user.role = role
-        user.last_login = datetime.utcnow()
+        user.role = role or user.role
+        user.email_verified = True
+        user.registration_method = user.registration_method or "google"
+        user.last_login = now_utc
     else:
+        # New user: store with permanent creation timestamp
         user = User(
             google_id=google_id,
             email=email,
             name=name,
             avatar_url=avatar_url,
             role=role,
-            auth_provider="google"
+            registration_method="google",
+            email_verified=True,
+            created_at=now_utc,
+            last_login=now_utc
         )
         db.add(user)
 
     db.commit()
     db.refresh(user)
+
+    # Maintain cache without duplicate row
+    record_user_to_csv(
+        user_id=user.id,
+        email=user.email,
+        name=user.name,
+        registration_method="google",
+        email_verified=True,
+        created_at=user.created_at
+    )
 
     return {
         "success": True,
@@ -584,9 +1148,192 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
 
 @app.get("/api/auth/users")
 def list_authenticated_users(db: Session = Depends(get_db)):
-    """Retrieves all users authenticated in the SQLite database"""
+    """Retrieves all users authenticated in the database"""
     users = db.query(User).order_by(User.last_login.desc()).all()
     return [u.to_dict() for u in users]
+
+
+# -------------------------------------------------------------
+# SUPABASE CONFIG & ADMIN USER MANAGEMENT REST APIS
+# -------------------------------------------------------------
+
+class VerifyPinDTO(BaseModel):
+    pin: str
+
+
+@app.get("/api/supabase/config")
+def get_supabase_config():
+    """Returns public Supabase parameters for frontend Realtime subscriptions"""
+    return {
+        "supabaseUrl": SUPABASE_URL,
+        "supabaseAnonKey": SUPABASE_KEY
+    }
+
+
+@app.post("/api/admin/verify-pin")
+def verify_admin_pin(payload: VerifyPinDTO):
+    """Verifies Administrator Security PIN and issues secure session token"""
+    if payload.pin.strip() == ADMIN_PIN:
+        return {
+            "success": True,
+            "token": get_admin_auth_token(ADMIN_PIN),
+            "message": "Admin authorization granted."
+        }
+    raise HTTPException(status_code=401, detail="Incorrect Admin PIN. Access denied.")
+
+
+@app.get("/api/admin/stats")
+def get_admin_user_stats(
+    db: Session = Depends(get_db),
+    _auth: bool = Depends(verify_admin_access)
+):
+    """
+    Computes live registered user statistics directly from SQL / Supabase:
+    - Total Users
+    - Google Users
+    - Email Users
+    - Verified Users
+    - New Today (created within last 24h / today)
+    """
+    total_users = db.query(User).count()
+    google_users = db.query(User).filter(User.registration_method == "google").count()
+    email_users = db.query(User).filter(User.registration_method == "email").count()
+    verified_users = db.query(User).filter(User.email_verified == True).count()
+
+    now_utc = datetime.now(timezone.utc)
+    today_start = datetime(now_utc.year, now_utc.month, now_utc.day, tzinfo=timezone.utc)
+    try:
+        new_today = db.query(User).filter(User.created_at >= today_start).count()
+    except Exception:
+        new_today = db.query(User).filter(User.created_at >= today_start.replace(tzinfo=None)).count()
+
+    return {
+        "total_users": total_users,
+        "google_users": google_users,
+        "email_users": email_users,
+        "verified_users": verified_users,
+        "new_today": new_today
+    }
+
+
+@app.get("/api/admin/users")
+def get_admin_users(
+    search: Optional[str] = Query(None),
+    sort: Optional[str] = Query("newest"),
+    db: Session = Depends(get_db),
+    _auth: bool = Depends(verify_admin_access)
+):
+    """
+    Retrieves live registered users list with search, sorting, and complaint counts.
+    Protected: Only authorized administrators can access.
+    """
+    query = db.query(User)
+    if search:
+        clean_search = f"%{search.strip()}%"
+        query = query.filter((User.name.ilike(clean_search)) | (User.email.ilike(clean_search)))
+
+    if sort == "newest":
+        query = query.order_by(User.created_at.desc())
+    elif sort == "oldest":
+        query = query.order_by(User.created_at.asc())
+    elif sort == "last_login":
+        query = query.order_by(User.last_login.desc())
+    elif sort == "name":
+        query = query.order_by(User.name.asc())
+    elif sort == "email":
+        query = query.order_by(User.email.asc())
+    elif sort == "method":
+        query = query.order_by(User.registration_method.asc())
+    else:
+        query = query.order_by(User.created_at.desc())
+
+    users = query.all()
+    return [u.to_dict() for u in users]
+
+
+@app.get("/api/admin/users/{user_id}/details")
+def get_admin_user_details(
+    user_id: int,
+    db: Session = Depends(get_db),
+    _auth: bool = Depends(verify_admin_access)
+):
+    """
+    Retrieves full user profile and associated complaints for administrative inspection.
+    """
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail=f"User #{user_id} not found in database.")
+
+    complaints = db.query(Complaint).filter(
+        (Complaint.user_id == user.id) | (Complaint.citizen_email == user.email)
+    ).order_by(Complaint.created_at.desc()).all()
+
+    data = user.to_dict()
+    data["complaints"] = [c.to_dict() for c in complaints]
+    data["complaints_count"] = len(complaints)
+    return data
+
+
+@app.get("/api/admin/export-users-csv")
+def export_users_to_csv(
+    db: Session = Depends(get_db),
+    _auth: bool = Depends(verify_admin_access)
+):
+    """
+    Generates dynamic users.csv on-the-fly directly from live database.
+    Columns: id,email,name,registration_method,email_verified,created_at,last_login
+    """
+    users = db.query(User).order_by(User.created_at.desc()).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["id", "email", "name", "registration_method", "email_verified", "created_at", "last_login"])
+
+    for u in users:
+        c_str = u.created_at.strftime("%Y-%m-%d %H:%M:%S") if u.created_at else ""
+        l_str = u.last_login.strftime("%Y-%m-%d %H:%M:%S") if u.last_login else ""
+        writer.writerow([
+            u.id,
+            u.email,
+            u.name,
+            u.registration_method or "email",
+            "true" if u.email_verified else "false",
+            c_str,
+            l_str
+        ])
+
+    output.seek(0)
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": 'attachment; filename="users.csv"'
+        }
+    )
+
+
+
+@app.get("/api/auth/users-csv")
+def list_csv_users():
+    """
+    Retrieves all user records currently stored in users.csv.
+    Read-only view for verification, auditing, and administrative inspection.
+    """
+    users = []
+    with CSV_LOCK:
+        if os.path.exists(USERS_CSV_FILE):
+            try:
+                with open(USERS_CSV_FILE, mode="r", newline="", encoding="utf-8") as f:
+                    reader = csv.DictReader(f)
+                    users = list(reader)
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Failed to read users.csv: {e}")
+    return {
+        "count": len(users),
+        "file": "users.csv",
+        "columns": CSV_HEADERS,
+        "users": users
+    }
 
 
 @app.get("/api/health")
@@ -690,10 +1437,19 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
     }
     category_icon = icon_map.get(payload.category, "📋")
 
+    # Relational foreign key: Link complaint to users table (complaints.user_id -> users.id)
+    user_fk = None
+    if payload.citizen_email:
+        clean_cemail = payload.citizen_email.strip().lower()
+        matched_user = db.query(User).filter(User.email == clean_cemail).first()
+        if matched_user:
+            user_fk = matched_user.id
+
     # Insert into SQL complaints table
     new_complaint = Complaint(
         id=new_id,
         tracking_key=new_key,
+        user_id=user_fk,
         category=payload.category,
         category_icon=category_icon,
         title=payload.title,
@@ -728,6 +1484,9 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
     db.commit()
     db.refresh(new_complaint)
 
+    # Automatically archive into complaints.csv
+    save_complaint_to_csv(new_complaint)
+
     return new_complaint.to_dict()
 
 
@@ -742,6 +1501,7 @@ def bulk_sync_complaints(payload: BulkComplaintDTO, db: Session = Depends(get_db
         if item.id:
             existing = db.query(Complaint).filter(Complaint.id == item.id).first()
             if existing:
+                save_complaint_to_csv(existing)
                 synced_items.append(existing.to_dict())
                 continue
         created = create_complaint(item, db)
@@ -759,13 +1519,19 @@ def delete_complaint(
     id_or_key: str,
     requester_email: Optional[str] = Query(None, description="Email of citizen or officer requesting deletion"),
     requester_role: Optional[str] = Query(None, description="Role of requester (citizen or officer)"),
+    user_email: Optional[str] = Query(None, description="Alias for requester_email"),
+    role: Optional[str] = Query(None, description="Alias for requester_role"),
     db: Session = Depends(get_db)
 ):
     """
-    Deletes a citizen complaint and its child timeline events from the SQL database.
-    Restricted to either the citizen owner who submitted it OR an authorized municipal officer.
-    Complaints are permanently preserved in SQL and never deleted automatically until explicitly deleted by citizen or officer.
+    Deletes a citizen complaint and its child timeline events from the SQL database:
+    1. Archives deleted complaint details into `deleted_complaints.csv` with timestamp and user.
+    2. Removes the complaint from `complaints.csv`.
+    3. Removes complaint permanently from SQL database so it disappears from the Officer Portal.
     """
+    requester_email = requester_email or user_email
+    requester_role = requester_role or role
+
     clean = id_or_key.strip().upper()
     complaint = db.query(Complaint).filter(
         (Complaint.id == clean) | (Complaint.tracking_key == clean)
@@ -804,13 +1570,22 @@ def delete_complaint(
         )
 
     deleted_id = complaint.id
+    actor_label = "an authorized officer" if is_officer else "its citizen owner"
+    deleter_info = requester_email or actor_label
+
+    # 1. Archive to deleted_complaints.csv
+    record_deleted_complaint_to_csv(complaint, deleted_by=deleter_info)
+
+    # 2. Remove from active complaints.csv
+    remove_complaint_from_csv(deleted_id)
+
+    # 3. Permanently remove from SQL (cascades child timeline events)
     db.delete(complaint)
     db.commit()
 
-    actor_label = "an authorized officer" if is_officer else "its citizen owner"
     return {
         "success": True,
-        "message": f"Complaint #{deleted_id} has been permanently deleted from SQL by {actor_label}.",
+        "message": f"Complaint #{deleted_id} has been permanently deleted and archived by {actor_label}.",
         "deletedId": deleted_id
     }
 
@@ -819,7 +1594,7 @@ def delete_complaint(
 def update_complaint_status(payload: OfficerUpdateDTO, db: Session = Depends(get_db)):
     """
     Officer Operational Action Console endpoint:
-    Applies real status updates in SQL and appends verified milestones to the day-wise timeline.
+    Applies real status updates in SQL, updates complaints.csv, and appends verified milestones to timeline.
     """
     complaint = db.query(Complaint).filter(Complaint.id == payload.complaint_id).first()
     if not complaint:
@@ -894,11 +1669,36 @@ def update_complaint_status(payload: OfficerUpdateDTO, db: Session = Depends(get
     db.commit()
     db.refresh(complaint)
 
+    # Synchronize updated status and timeline directly to complaints.csv
+    save_complaint_to_csv(complaint)
+
     return {
         "message": f"Successfully updated complaint #{complaint.id}",
         "action": action,
         "complaint": complaint.to_dict()
     }
+
+
+@app.get("/api/complaints-csv")
+def download_complaints_csv():
+    """Allows downloading complaints.csv directly"""
+    init_complaints_csv()
+    return FileResponse(
+        COMPLAINTS_CSV_FILE,
+        media_type="text/csv",
+        filename="complaints.csv"
+    )
+
+
+@app.get("/api/complaints/deleted-csv")
+def download_deleted_complaints_csv():
+    """Allows downloading deleted_complaints.csv directly"""
+    init_deleted_complaints_csv()
+    return FileResponse(
+        DELETED_COMPLAINTS_CSV_FILE,
+        media_type="text/csv",
+        filename="deleted_complaints.csv"
+    )
 
 
 # -------------------------------------------------------------
@@ -931,6 +1731,16 @@ def get_network_info():
         "officer_url": f"http://{ip}:{port}/officer",
         "instructions": f"Any friend or citizen on the same Wi-Fi can open http://{ip}:{port} on their phone or laptop to submit complaints directly to your Officer Portal!"
     }
+
+
+@app.get("/admin")
+@app.get("/admin/users")
+def serve_admin():
+    """Serves the Kizuno-AI Admin Dashboard for live Supabase PostgreSQL user management"""
+    admin_path = os.path.join(os.path.dirname(__file__), "admin.html")
+    if os.path.exists(admin_path):
+        return FileResponse(admin_path, media_type="text/html")
+    raise HTTPException(status_code=404, detail="admin.html not found.")
 
 
 @app.get("/officer")

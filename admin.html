@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Kizuno-AI Live User Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client for Realtime Subscriptions -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bg-canvas: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border-light: #cbd5e1;
+            --border-subtle: #94a3b8;
+
+            --brand-primary: #334155;
+            --brand-primary-hover: #1e293b;
+            --brand-primary-subtle: #e2e8f0;
+            --brand-primary-border: #cbd5e1;
+            --brand-primary-text: #0f172a;
+            --brand-primary-shadow: rgba(51, 65, 85, 0.2);
+
+            --accent-blue: #2563eb;
+            --accent-blue-subtle: #eff6ff;
+            --accent-green: #16a34a;
+            --accent-green-subtle: #f0fdf4;
+            --accent-amber: #d97706;
+            --accent-amber-subtle: #fffbeb;
+            --accent-purple: #7c3aed;
+            --accent-purple-subtle: #f5f3ff;
+            --accent-red: #dc2626;
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 18px;
+
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.09), 0 4px 6px -4px rgba(0,0,0,0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-canvas);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Executive Navigation */
+        .admin-nav {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-light);
+            padding: 0.85rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .brand-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .brand-badge {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .brand-sub {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .live-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            padding: 0.4rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+        }
+
+        @keyframes pulse {
+            to { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.55rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.825rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: #0f172a;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #1e293b;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--text-secondary);
+            border-color: var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: var(--border-subtle);
+            color: var(--text-primary);
+        }
+
+        .btn-export {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .btn-export:hover {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Main Container */
+        .admin-main {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+
+        /* 5 KPI Stat Cards Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 1.35rem 1.5rem;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.65rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .stat-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .icon-total { background: #f1f5f9; color: #0f172a; }
+        .icon-google { background: #eff6ff; color: #2563eb; }
+        .icon-email { background: #fef3c7; color: #d97706; }
+        .icon-verified { background: #ecfdf5; color: #16a34a; }
+        .icon-today { background: #fdf2f8; color: #db2777; }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 0.35rem;
+        }
+
+        .stat-sub {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Management Panel Card */
+        .panel-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 1.35rem 1.75rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .panel-title-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .panel-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .panel-count-badge {
+            background: var(--brand-primary-subtle);
+            color: var(--brand-primary);
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.25rem 0.65rem;
+            border-radius: 9999px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Filter & Search Toolbar */
+        .panel-toolbar {
+            padding: 1rem 1.75rem;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            min-width: 280px;
+            max-width: 480px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.65rem 1rem 0.65rem 2.4rem;
+            border: 1.5px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            outline: none;
+            background: #ffffff;
+            color: var(--text-primary);
+            transition: all 0.15s ease;
+        }
+
+        .search-input:focus {
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+        }
+
+        .search-icon-svg {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .toolbar-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 0.6rem 0.85rem;
+            border: 1.5px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.825rem;
+            font-weight: 600;
+            background: #ffffff;
+            color: var(--text-primary);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            border-color: #0f172a;
+        }
+
+        .method-pills {
+            display: flex;
+            background: #e2e8f0;
+            padding: 3px;
+            border-radius: 8px;
+            gap: 2px;
+        }
+
+        .method-pill-btn {
+            border: none;
+            background: transparent;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .method-pill-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* User Table */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
+        .user-table th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 800;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1.5px solid var(--border-light);
+            white-space: nowrap;
+        }
+
+        .user-table td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .user-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .avatar-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #0f172a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .user-name-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .user-id-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .email-cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+        }
+
+        .badge-method {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-google {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .badge-email {
+            background: #fef3c7;
+            color: #b45309;
+            border: 1px solid #fde68a;
+        }
+
+        .badge-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+            padding: 0.3rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-unverified {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            padding: 0.3rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .time-cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .time-cell-joined {
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .btn-view-details {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            padding: 0.4rem 0.85rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-view-details:hover {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+        }
+
+        /* Empty & Loading States */
+        .table-state-box {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .state-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #0f172a;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Modal Overlay & Card */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 580px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalSlide 0.2s ease-out;
+        }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            padding: 1.5rem 1.75rem;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            line-height: 1;
+            padding: 0.25rem;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.75rem;
+        }
+
+        /* Detail Rows */
+        .detail-item-grid {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 0.85rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            align-items: center;
+        }
+
+        .detail-label {
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .detail-value {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .detail-value.mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Complaints list inside details */
+        .complaints-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .complaint-item {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .complaint-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* PIN Login Modal */
+        .pin-input-box {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .pin-input {
+            width: 100%;
+            max-width: 240px;
+            font-size: 1.5rem;
+            letter-spacing: 0.35em;
+            text-align: center;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            outline: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+        }
+
+        .pin-input:focus {
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.15);
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 0.85rem 1.25rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            animation: toastIn 0.2s ease-out;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .admin-main {
+                padding: 1rem;
+            }
+            .panel-header, .panel-toolbar {
+                padding: 1rem;
+            }
+            .detail-item-grid {
+                grid-template-columns: 1fr;
+                gap: 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP EXECUTIVE NAVIGATION BAR -->
+    <nav class="admin-nav">
+        <div class="nav-inner">
+            <a class="brand-group" href="/admin">
+                <div class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <div class="brand-title">
+                        Kizuno-AI <span class="brand-badge">ADMIN</span>
+                    </div>
+                    <div class="brand-sub">PostgreSQL / Supabase Live Registry</div>
+                </div>
+            </a>
+
+            <div class="nav-actions">
+                <!-- LIVE SUPABASE PULSE BADGE -->
+                <div class="live-status-pill" id="live-pulse-badge" title="Live connection active with PostgreSQL Supabase">
+                    <div class="pulse-dot"></div>
+                    <span id="live-status-text">Supabase Live Sync</span>
+                </div>
+
+                <!-- EXPORT USERS TO CSV BUTTON -->
+                <button type="button" class="btn btn-export" onclick="exportUsersToCSV()" title="Download live users as CSV">
+                    📥 Export Users to CSV
+                </button>
+
+                <!-- LINK TO CITIZEN PORTAL -->
+                <a href="/" class="btn btn-secondary" title="Switch to Citizen Portal">
+                    🏛️ Citizen Portal
+                </a>
+
+                <!-- LINK TO OFFICER DASHBOARD -->
+                <a href="/officer" class="btn btn-secondary" title="Switch to Officer Console">
+                    👨‍💼 Officer Portal
+                </a>
+
+                <!-- LOCK / LOGOUT BUTTON -->
+                <button type="button" class="btn btn-secondary" onclick="logoutAdmin()" title="Lock Admin Session">
+                    🔒 Lock
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN ADMIN VIEW -->
+    <main class="admin-main">
+
+        <!-- 5 KPI STAT CARDS (REQUIRED BY SPEC) -->
+        <section class="stats-grid">
+            <!-- 1. Total Users -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Total Users</span>
+                    <div class="stat-icon icon-total">👥</div>
+                </div>
+                <div class="stat-value" id="kpi-total-users">0</div>
+                <div class="stat-sub">Registered across portal</div>
+            </div>
+
+            <!-- 2. Google Users -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Google Users</span>
+                    <div class="stat-icon icon-google">🌐</div>
+                </div>
+                <div class="stat-value" id="kpi-google-users" style="color: #2563eb;">0</div>
+                <div class="stat-sub">Google OAuth 2.0</div>
+            </div>
+
+            <!-- 3. Email Users -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Email Users</span>
+                    <div class="stat-icon icon-email">✉️</div>
+                </div>
+                <div class="stat-value" id="kpi-email-users" style="color: #d97706;">0</div>
+                <div class="stat-sub">Gmail OTP Verified</div>
+            </div>
+
+            <!-- 4. Verified Users -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">Verified Users</span>
+                    <div class="stat-icon icon-verified">🛡️</div>
+                </div>
+                <div class="stat-value" id="kpi-verified-users" style="color: #16a34a;">0</div>
+                <div class="stat-sub">100% verified citizens</div>
+            </div>
+
+            <!-- 5. New Today -->
+            <div class="stat-card">
+                <div class="stat-header">
+                    <span class="stat-label">New Today</span>
+                    <div class="stat-icon icon-today">⚡</div>
+                </div>
+                <div class="stat-value" id="kpi-new-today" style="color: #db2777;">0</div>
+                <div class="stat-sub">Joined in last 24 hours</div>
+            </div>
+        </section>
+
+        <!-- USERS MANAGEMENT PANEL -->
+        <section class="panel-card">
+            <!-- Header -->
+            <div class="panel-header">
+                <div class="panel-title-area">
+                    <h2 class="panel-title">Registered Citizen Registry</h2>
+                    <span class="panel-count-badge" id="panel-user-count">0 Users</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <button type="button" class="btn btn-secondary" onclick="loadDashboardData(true)" style="padding: 0.45rem 0.85rem;" title="Refresh list from Supabase">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter & Search Toolbar -->
+            <div class="panel-toolbar">
+                <!-- Search bar -->
+                <div class="search-container">
+                    <svg class="search-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="adminUserSearch" class="search-input" placeholder="🔍 Search users by name or email..." oninput="handleSearchInput(event)">
+                </div>
+
+                <!-- Toolbar controls -->
+                <div class="toolbar-controls">
+                    <!-- Method Pill Filters -->
+                    <div class="method-pills">
+                        <button type="button" class="method-pill-btn active" onclick="setMethodFilter('all', this)">All</button>
+                        <button type="button" class="method-pill-btn" onclick="setMethodFilter('google', this)">Google</button>
+                        <button type="button" class="method-pill-btn" onclick="setMethodFilter('email', this)">Email</button>
+                    </div>
+
+                    <!-- Sort Select Dropdown -->
+                    <select id="adminUserSort" class="filter-select" onchange="handleSortChange(event)">
+                        <option value="newest" selected>Sort: Newest joined</option>
+                        <option value="oldest">Sort: Oldest joined</option>
+                        <option value="last_login">Sort: Last login</option>
+                        <option value="name">Sort: Name (A-Z)</option>
+                        <option value="email">Sort: Email (A-Z)</option>
+                        <option value="method">Sort: Registration method</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- User Table -->
+            <div class="table-responsive">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Method</th>
+                            <th>Verified</th>
+                            <th>Joined (Date & Exact Time)</th>
+                            <th>Last Login</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-table-tbody">
+                        <!-- Populated dynamically -->
+                        <tr>
+                            <td colspan="7">
+                                <div class="table-state-box">
+                                    <div class="spinner"></div>
+                                    <p>Loading live users from database...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- USER DETAILS MODAL -->
+    <div id="userDetailsModal" class="modal-overlay" style="display: none;" onclick="closeModalOnBackdrop(event, 'userDetailsModal')">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div id="modal-avatar" class="avatar-circle">?</div>
+                    <div>
+                        <h3 class="modal-title" id="modal-user-name">User Details</h3>
+                        <span id="modal-user-id" style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">ID: #0</span>
+                    </div>
+                </div>
+                <button type="button" class="modal-close-btn" onclick="closeUserDetailsModal()">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="detail-item-grid">
+                    <span class="detail-label">Name</span>
+                    <span class="detail-value" id="modal-field-name">—</span>
+                </div>
+
+                <div class="detail-item-grid">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value mono" id="modal-field-email">—</span>
+                </div>
+
+                <div class="detail-item-grid">
+                    <span class="detail-label">Registration</span>
+                    <span class="detail-value" id="modal-field-method">—</span>
+                </div>
+
+                <div class="detail-item-grid">
+                    <span class="detail-label">Verification</span>
+                    <span class="detail-value" id="modal-field-verified">—</span>
+                </div>
+
+                <div class="detail-item-grid">
+                    <span class="detail-label">Joined</span>
+                    <span class="detail-value mono" id="modal-field-joined" style="font-weight: 700; color: #0f172a;">—</span>
+                </div>
+
+                <div class="detail-item-grid">
+                    <span class="detail-label">Last Login</span>
+                    <span class="detail-value mono" id="modal-field-lastlogin">—</span>
+                </div>
+
+                <div class="detail-item-grid" style="border-bottom: none; margin-bottom: 0.5rem;">
+                    <span class="detail-label">Complaints</span>
+                    <span class="detail-value" id="modal-field-complaints-count">
+                        <span class="badge-method badge-google" style="background: #f1f5f9; color: #0f172a; border-color: #cbd5e1;">0 Submitted</span>
+                    </span>
+                </div>
+
+                <!-- Complaints List Container -->
+                <div class="complaints-box" id="modal-complaints-box">
+                    <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem;">
+                        Connected Grievances
+                    </div>
+                    <div id="modal-complaints-list">
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">No complaints recorded for this user.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PIN LOGIN MODAL -->
+    <div id="adminAuthModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card" style="max-width: 420px; text-align: center; padding: 2rem;">
+            <div style="width: 56px; height: 56px; border-radius: 14px; background: #0f172a; color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.5rem;">
+                🛡️
+            </div>
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 0.4rem;">Admin Authorization</h3>
+            <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+                Enter your Kizuno-AI Administrator Security PIN to access live Supabase user management.
+            </p>
+
+            <form id="adminPinForm" onsubmit="handlePinSubmit(event)">
+                <div class="pin-input-box">
+                    <input type="password" id="adminPinInput" class="pin-input" maxlength="8" placeholder="••••" autocomplete="current-password" autofocus required>
+                </div>
+                <div id="pinErrorMsg" style="color: #dc2626; font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem; display: none;"></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
+                    Unlock Admin Dashboard
+                </button>
+                <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 1rem;">
+                    Default Admin PIN: <code>1234</code> (Configurable via <code>ADMIN_PIN</code>)
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // -------------------------------------------------------------
+        // APPLICATION STATE
+        // -------------------------------------------------------------
+        let allUsers = [];
+        let filteredUsers = [];
+        let activeFilterMethod = 'all';
+        let activeSort = 'newest';
+        let searchQuery = '';
+        let pollingInterval = null;
+        let supabaseClient = null;
+
+        // -------------------------------------------------------------
+        // EXACT LOCAL TIMEZONE FORMATTER
+        // Output Requirement: "12 Sep 2026, 12:35:42 PM"
+        // Displays BOTH complete date AND exact time.
+        // -------------------------------------------------------------
+        function formatLocalDateTime(isoString) {
+            if (!isoString) return "—";
+            try {
+                const d = new Date(isoString);
+                if (isNaN(d.getTime())) return isoString;
+
+                const day = String(d.getDate()).padStart(2, '0');
+                const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const month = months[d.getMonth()];
+                const year = d.getFullYear();
+
+                let hours = d.getHours();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // 0 becomes 12
+                const hoursStr = String(hours).padStart(2, '0');
+                const minutes = String(d.getMinutes()).padStart(2, '0');
+                const seconds = String(d.getSeconds()).padStart(2, '0');
+
+                return `${day} ${month} ${year}, ${hoursStr}:${minutes}:${seconds} ${ampm}`;
+            } catch (e) {
+                return isoString;
+            }
+        }
+
+        // -------------------------------------------------------------
+        // TOAST NOTIFICATIONS
+        // -------------------------------------------------------------
+        function showToast(message, icon = "ℹ️") {
+            const container = document.getElementById("toastContainer");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translateY(8px)";
+                setTimeout(() => toast.remove(), 200);
+            }, 3500);
+        }
+
+        // -------------------------------------------------------------
+        // ADMIN AUTHORIZATION GATE
+        // -------------------------------------------------------------
+        function checkAdminAuth() {
+            const token = sessionStorage.getItem("kizuno_admin_token");
+            if (!token) {
+                document.getElementById("adminAuthModal").style.display = "flex";
+                document.getElementById("adminPinInput").focus();
+                return false;
+            }
+            return true;
+        }
+
+        async function handlePinSubmit(e) {
+            e.preventDefault();
+            const pin = document.getElementById("adminPinInput").value.trim();
+            const errBox = document.getElementById("pinErrorMsg");
+            errBox.style.display = "none";
+
+            try {
+                const res = await fetch("/api/admin/verify-pin", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ pin })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    sessionStorage.setItem("kizuno_admin_token", data.token || pin);
+                    document.getElementById("adminAuthModal").style.display = "none";
+                    showToast("Admin session unlocked successfully!", "🛡️");
+                    initDashboard();
+                } else {
+                    errBox.innerText = data.detail || "Invalid PIN code. Please try again.";
+                    errBox.style.display = "block";
+                }
+            } catch (err) {
+                errBox.innerText = "Connection error. Ensure backend server is running.";
+                errBox.style.display = "block";
+            }
+        }
+
+        function logoutAdmin() {
+            sessionStorage.removeItem("kizuno_admin_token");
+            window.location.reload();
+        }
+
+        function getAuthHeaders() {
+            const token = sessionStorage.getItem("kizuno_admin_token") || "";
+            return {
+                "Authorization": `Bearer ${token}`,
+                "X-Admin-Pin": token
+            };
+        }
+
+        // -------------------------------------------------------------
+        // FETCH DATA & LIVE SYNC
+        // -------------------------------------------------------------
+        async function loadDashboardData(showSuccessToast = false) {
+            if (!checkAdminAuth()) return;
+
+            try {
+                // 1. Fetch live KPI stats
+                const statsRes = await fetch("/api/admin/stats", {
+                    headers: getAuthHeaders()
+                });
+                if (statsRes.status === 401 || statsRes.status === 403) {
+                    sessionStorage.removeItem("kizuno_admin_token");
+                    checkAdminAuth();
+                    return;
+                }
+                if (statsRes.ok) {
+                    const stats = await statsRes.json();
+                    updateKPIs(stats);
+                }
+
+                // 2. Fetch live users list
+                const usersRes = await fetch("/api/admin/users", {
+                    headers: getAuthHeaders()
+                });
+                if (usersRes.ok) {
+                    const users = await usersRes.json();
+                    allUsers = users || [];
+                    applyFiltersAndRender();
+                    if (showSuccessToast) {
+                        showToast(`Synchronized ${allUsers.length} users from database!`, "🔄");
+                    }
+                }
+            } catch (err) {
+                console.warn("[Admin Dashboard] Sync error:", err);
+            }
+        }
+
+        function updateKPIs(stats) {
+            document.getElementById("kpi-total-users").innerText = stats.total_users ?? allUsers.length;
+            document.getElementById("kpi-google-users").innerText = stats.google_users ?? 0;
+            document.getElementById("kpi-email-users").innerText = stats.email_users ?? 0;
+            document.getElementById("kpi-verified-users").innerText = stats.verified_users ?? 0;
+            document.getElementById("kpi-new-today").innerText = stats.new_today ?? 0;
+        }
+
+        // -------------------------------------------------------------
+        // FILTERING & SORTING ENGINE
+        // -------------------------------------------------------------
+        function handleSearchInput(e) {
+            searchQuery = e.target.value.trim().toLowerCase();
+            applyFiltersAndRender();
+        }
+
+        function setMethodFilter(method, btn) {
+            activeFilterMethod = method;
+            document.querySelectorAll(".method-pill-btn").forEach(b => b.classList.remove("active"));
+            if (btn) btn.classList.add("active");
+            applyFiltersAndRender();
+        }
+
+        function handleSortChange(e) {
+            activeSort = e.target.value;
+            applyFiltersAndRender();
+        }
+
+        function applyFiltersAndRender() {
+            let result = [...allUsers];
+
+            // Filter by search query (Name or Email)
+            if (searchQuery) {
+                result = result.filter(u => {
+                    const name = (u.name || "").toLowerCase();
+                    const email = (u.email || "").toLowerCase();
+                    return name.includes(searchQuery) || email.includes(searchQuery);
+                });
+            }
+
+            // Filter by registration method
+            if (activeFilterMethod === 'google') {
+                result = result.filter(u => (u.registration_method || u.registrationMethod || "").toLowerCase() === 'google');
+            } else if (activeFilterMethod === 'email') {
+                result = result.filter(u => (u.registration_method || u.registrationMethod || "").toLowerCase() === 'email');
+            }
+
+            // Sort logic
+            result.sort((a, b) => {
+                if (activeSort === 'newest') {
+                    return new Date(b.created_at || b.createdAt || 0) - new Date(a.created_at || a.createdAt || 0);
+                } else if (activeSort === 'oldest') {
+                    return new Date(a.created_at || a.createdAt || 0) - new Date(b.created_at || b.createdAt || 0);
+                } else if (activeSort === 'last_login') {
+                    return new Date(b.last_login || b.lastLogin || 0) - new Date(a.last_login || a.lastLogin || 0);
+                } else if (activeSort === 'name') {
+                    return (a.name || "").localeCompare(b.name || "");
+                } else if (activeSort === 'email') {
+                    return (a.email || "").localeCompare(b.email || "");
+                } else if (activeSort === 'method') {
+                    return (a.registration_method || "").localeCompare(b.registration_method || "");
+                }
+                return 0;
+            });
+
+            filteredUsers = result;
+            document.getElementById("panel-user-count").innerText = `${filteredUsers.length} Users`;
+            renderTable(filteredUsers);
+        }
+
+        // -------------------------------------------------------------
+        // RENDER USER TABLE
+        // Column requirement: Name | Email | Method | Verified | Joined | Last Login
+        // Joined format: "12 Sep 2026, 12:35:42 PM" (Date AND Time)
+        // -------------------------------------------------------------
+        function renderTable(users) {
+            const tbody = document.getElementById("user-table-tbody");
+            if (!tbody) return;
+
+            if (!users || users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="table-state-box">
+                                <div class="state-icon">🔍</div>
+                                <p style="font-weight: 700; color: #0f172a; margin-bottom: 0.25rem;">No matching registered users found</p>
+                                <p style="font-size: 0.8rem;">Try clearing your search query or switching filters.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => {
+                const name = user.name || "Citizen";
+                const email = user.email || "—";
+                const initial = name.charAt(0).toUpperCase();
+                const method = (user.registration_method || user.registrationMethod || "email").toLowerCase();
+                const isGoogle = method === "google";
+                const isVerified = Boolean(user.email_verified || user.emailVerified || user.is_verified);
+
+                const methodBadge = isGoogle
+                    ? `<span class="badge-method badge-google">🌐 Google</span>`
+                    : `<span class="badge-method badge-email">✉️ Email</span>`;
+
+                const verifiedBadge = isVerified
+                    ? `<span class="badge-verified">✅ Verified</span>`
+                    : `<span class="badge-unverified">⚠️ Pending</span>`;
+
+                // IMPORTANT: Exact local format containing BOTH complete date and exact time
+                const joinedFormatted = formatLocalDateTime(user.created_at || user.createdAt);
+                const lastLoginFormatted = formatLocalDateTime(user.last_login || user.lastLogin);
+
+                return `
+                    <tr style="cursor: pointer;" onclick="openUserDetailsModal(${user.id})">
+                        <td>
+                            <div class="user-cell">
+                                <div class="avatar-circle" style="background: ${isGoogle ? '#2563eb' : '#0f172a'};">
+                                    ${initial}
+                                </div>
+                                <div class="user-name-box">
+                                    <span class="user-name">${escapeHtml(name)}</span>
+                                    <span class="user-id-sub">UID: #${user.id}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="email-cell">${escapeHtml(email)}</span>
+                        </td>
+                        <td>${methodBadge}</td>
+                        <td>${verifiedBadge}</td>
+                        <td>
+                            <span class="time-cell time-cell-joined">${joinedFormatted}</span>
+                        </td>
+                        <td>
+                            <span class="time-cell">${lastLoginFormatted}</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <button type="button" class="btn-view-details" onclick="event.stopPropagation(); openUserDetailsModal(${user.id})">
+                                View Details &rarr;
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // -------------------------------------------------------------
+        // USER DETAILS MODAL
+        // -------------------------------------------------------------
+        async function openUserDetailsModal(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+
+            document.getElementById("modal-avatar").innerText = (user.name || "C").charAt(0).toUpperCase();
+            document.getElementById("modal-user-name").innerText = user.name || "Citizen";
+            document.getElementById("modal-user-id").innerText = `Database User ID: #${user.id}`;
+            document.getElementById("modal-field-name").innerText = user.name || "—";
+            document.getElementById("modal-field-email").innerText = user.email || "—";
+
+            const method = (user.registration_method || user.registrationMethod || "email").toLowerCase();
+            document.getElementById("modal-field-method").innerHTML = method === "google"
+                ? `<span class="badge-method badge-google">🌐 Google OAuth</span>`
+                : `<span class="badge-method badge-email">✉️ Normal Email / Gmail</span>`;
+
+            const isVerified = Boolean(user.email_verified || user.emailVerified || user.is_verified);
+            document.getElementById("modal-field-verified").innerHTML = isVerified
+                ? `<span class="badge-verified">✅ Verified</span>`
+                : `<span class="badge-unverified">⚠️ Unverified</span>`;
+
+            document.getElementById("modal-field-joined").innerText = formatLocalDateTime(user.created_at || user.createdAt);
+            document.getElementById("modal-field-lastlogin").innerText = formatLocalDateTime(user.last_login || user.lastLogin);
+
+            // Fetch full details including linked complaints
+            const compList = document.getElementById("modal-complaints-list");
+            compList.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-muted);">Fetching connected grievances...</p>`;
+
+            try {
+                const res = await fetch(`/api/admin/users/${userId}/details`, {
+                    headers: getAuthHeaders()
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const complaints = data.complaints || [];
+                    document.getElementById("modal-field-complaints-count").innerHTML = `
+                        <span class="badge-method badge-google" style="background: #0f172a; color: #ffffff; border: none;">
+                            ${complaints.length} Grievances Submitted
+                        </span>
+                    `;
+
+                    if (complaints.length === 0) {
+                        compList.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-muted);">No complaints recorded for this citizen.</p>`;
+                    } else {
+                        compList.innerHTML = complaints.map(c => `
+                            <div class="complaint-item">
+                                <div>
+                                    <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a;">
+                                        ${escapeHtml(c.id)}: ${escapeHtml(c.title || 'Untitled')}
+                                    </div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+                                        📍 ${escapeHtml(c.location || 'Coimbatore')} &bull; Category: ${escapeHtml(c.category || 'General')}
+                                    </div>
+                                </div>
+                                <span class="badge-method" style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-size: 0.7rem;">
+                                    ${escapeHtml(c.status || 'Pending')}
+                                </span>
+                            </div>
+                        `).join("");
+                    }
+                }
+            } catch (err) {
+                compList.innerHTML = `<p style="font-size: 0.8rem; color: #dc2626;">Could not fetch complaint associations.</p>`;
+            }
+
+            document.getElementById("userDetailsModal").style.display = "flex";
+        }
+
+        function closeUserDetailsModal() {
+            document.getElementById("userDetailsModal").style.display = "none";
+        }
+
+        function closeModalOnBackdrop(e, modalId) {
+            if (e.target.id === modalId) {
+                document.getElementById(modalId).style.display = "none";
+            }
+        }
+
+        // -------------------------------------------------------------
+        // EXPORT TO CSV (ON-DEMAND DOWNLOAD)
+        // Fetches live user records from database and triggers users.csv download
+        // -------------------------------------------------------------
+        function exportUsersToCSV() {
+            if (!checkAdminAuth()) return;
+            showToast("Generating live users.csv export...", "📥");
+            window.location.href = `/api/admin/export-users-csv?token=${encodeURIComponent(sessionStorage.getItem('kizuno_admin_token') || '')}`;
+        }
+
+        // -------------------------------------------------------------
+        // SUPABASE REALTIME INITIALIZATION
+        // -------------------------------------------------------------
+        async function setupSupabaseRealtime() {
+            try {
+                const res = await fetch("/api/supabase/config");
+                if (!res.ok) return;
+                const config = await res.json();
+                if (config.supabaseUrl && config.supabaseAnonKey && window.supabase) {
+                    supabaseClient = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+                    supabaseClient
+                        .channel('admin-users-live')
+                        .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, payload => {
+                            console.log("[Supabase Realtime] User change event received:", payload);
+                            showToast("⚡ Supabase Realtime: User database updated!", "🔔");
+                            loadDashboardData(false);
+                        })
+                        .subscribe(status => {
+                            if (status === 'SUBSCRIBED') {
+                                document.getElementById("live-status-text").innerText = "Supabase Realtime Active";
+                            }
+                        });
+                }
+            } catch (e) {
+                console.info("[Supabase Realtime] Falling back to high-frequency polling sync.", e);
+            }
+        }
+
+        // -------------------------------------------------------------
+        // DASHBOARD BOOTSTRAP
+        // -------------------------------------------------------------
+        function initDashboard() {
+            loadDashboardData();
+            setupSupabaseRealtime();
+
+            // Smart fallback polling every 5 seconds for zero-refresh live updates
+            if (pollingInterval) clearInterval(pollingInterval);
+            pollingInterval = setInterval(() => {
+                loadDashboardData(false);
+            }, 5000);
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            if (checkAdminAuth()) {
+                initDashboard();
+            }
+        });
+    </script>
+</body>
+</html>
