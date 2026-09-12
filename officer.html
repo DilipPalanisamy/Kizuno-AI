@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Dashboard — Kizuno-AI Municipal Administration Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script>
+        // Apply saved theme immediately to prevent any visual flash (Default: mono-slate)
+        (function () {
+            const saved = localStorage.getItem('kizuno_active_theme') || 'mono-slate';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+    </script>
+    <style>
+        :root {
+            /* Default #1 Opening Theme: Executive Slate Monochrome */
+            --bg-canvas: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border-light: #cbd5e1;
+            --border-subtle: #94a3b8;
+
+            --brand-primary: #334155;
+            --brand-primary-hover: #1e293b;
+            --brand-primary-subtle: #e2e8f0;
+            --brand-primary-border: #cbd5e1;
+            --brand-primary-text: #0f172a;
+            --brand-primary-shadow: rgba(51, 65, 85, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #475569 0%, #0f172a 100%);
+
+            --brand-green: #16a34a;
+            --brand-green-hover: #15803d;
+            --brand-green-subtle: #f0fdf4;
+            --brand-purple: #8b5cf6;
+            --brand-purple-hover: #7c3aed;
+            --brand-purple-subtle: #f5f3ff;
+            --brand-amber: #d97706;
+            --brand-amber-subtle: #fffbeb;
+            --brand-red: #dc2626;
+            --brand-red-subtle: #fef2f2;
+
+            /* Status Theme */
+            --status-green: #16a34a;
+            --status-blue: #2563eb;
+            --status-amber: #d97706;
+            --status-red: #dc2626;
+            --status-gray: #64748b;
+
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+        }
+
+        /* -------------------------------------------------------------
+           THEME VARIATIONS
+           ------------------------------------------------------------- */
+        [data-theme="mono-slate"], :root:not([data-theme]) {
+            --bg-canvas: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --border-light: #cbd5e1;
+            --border-subtle: #94a3b8;
+            --brand-primary: #334155;
+            --brand-primary-hover: #1e293b;
+            --brand-primary-subtle: #e2e8f0;
+            --brand-primary-border: #cbd5e1;
+            --brand-primary-text: #0f172a;
+            --brand-primary-shadow: rgba(51, 65, 85, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #475569 0%, #0f172a 100%);
+        }
+
+        [data-theme="dark-green"] {
+            --bg-canvas: #090d16;
+            --card-bg: #111827;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-light: #1e293b;
+            --border-subtle: #334155;
+            --brand-primary: #22c55e;
+            --brand-primary-hover: #16a34a;
+            --brand-primary-subtle: rgba(34, 197, 94, 0.12);
+            --brand-primary-border: #166534;
+            --brand-primary-text: #4ade80;
+            --brand-primary-shadow: rgba(34, 197, 94, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #22c55e 0%, #0f172a 100%);
+        }
+
+        [data-theme="grey-green"] {
+            --bg-canvas: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-light: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --brand-primary: #16a34a;
+            --brand-primary-hover: #15803d;
+            --brand-primary-subtle: #f0fdf4;
+            --brand-primary-border: #bbf7d0;
+            --brand-primary-text: #166534;
+            --brand-primary-shadow: rgba(22, 163, 74, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #16a34a 0%, #334155 100%);
+        }
+
+        [data-theme="classic-blue"] {
+            --bg-canvas: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-light: #e2e8f0;
+            --border-subtle: #cbd5e1;
+            --brand-primary: #2563eb;
+            --brand-primary-hover: #1d4ed8;
+            --brand-primary-subtle: #eff6ff;
+            --brand-primary-border: #bfdbfe;
+            --brand-primary-text: #1e40af;
+            --brand-primary-shadow: rgba(37, 99, 235, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        }
+
+        [data-theme="forest-emerald"] {
+            --bg-canvas: #f4f4f5;
+            --card-bg: #ffffff;
+            --text-primary: #18181b;
+            --text-secondary: #52525b;
+            --text-muted: #a1a1aa;
+            --border-light: #e4e4e7;
+            --border-subtle: #d4d4d8;
+            --brand-primary: #059669;
+            --brand-primary-hover: #047857;
+            --brand-primary-subtle: #ecfdf5;
+            --brand-primary-border: #a7f3d0;
+            --brand-primary-text: #065f46;
+            --brand-primary-shadow: rgba(5, 150, 105, 0.25);
+            --brand-shield-gradient: linear-gradient(135deg, #059669 0%, #27272a 100%);
+        }
+
+        /* Dark Mode overrides for inputs, cards, and tables */
+        [data-theme="dark-green"] .form-control {
+            background: #1e293b;
+            color: #f8fafc;
+            border-color: #334155;
+        }
+
+        [data-theme="dark-green"] .content-card,
+        [data-theme="dark-green"] .app-nav,
+        [data-theme="dark-green"] .officer-sidebar,
+        [data-theme="dark-green"] .kpi-card,
+        [data-theme="dark-green"] .modal-container,
+        [data-theme="dark-green"] .theme-dropdown-menu {
+            background: #111827 !important;
+            color: #f8fafc !important;
+            border-color: #1e293b !important;
+        }
+
+        [data-theme="dark-green"] .btn-secondary {
+            background: #1e293b !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
+        }
+
+        [data-theme="dark-green"] .btn-secondary:hover {
+            background: #334155 !important;
+        }
+
+        [data-theme="dark-green"] .officer-table th {
+            background: #1e293b;
+            color: #94a3b8;
+        }
+
+        [data-theme="dark-green"] .officer-table td {
+            border-color: #1e293b;
+            color: #e2e8f0;
+        }
+
+        [data-theme="dark-green"] .officer-table tr:hover td {
+            background: #1a2333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.5;
+        }
+
+        /* App Main Navbar */
+        .app-nav {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.85rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .brand-shield {
+            width: 40px;
+            height: 40px;
+            background: var(--brand-shield-gradient, var(--brand-primary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            box-shadow: 0 3px 6px var(--brand-primary-shadow);
+            flex-shrink: 0;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--brand-primary);
+            line-height: 1.1;
+        }
+
+        .brand-tagline {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .nav-btn:hover {
+            color: var(--brand-primary);
+            background: var(--brand-primary-subtle);
+        }
+
+        .nav-btn.active {
+            color: var(--brand-primary);
+            background: var(--brand-primary-subtle);
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            background: var(--brand-primary);
+            color: #ffffff;
+            border: none;
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--brand-primary-hover);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--text-secondary);
+            border: 1.5px solid var(--border-light);
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: var(--brand-primary-subtle);
+            color: var(--brand-primary);
+            border-color: var(--brand-primary);
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+            border: 1px solid var(--border-light);
+        }
+
+        .user-pill:hover {
+            background: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #1e293b;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        /* Layout */
+        .officer-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 1.75rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* Sidebar */
+        .officer-sidebar {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 1.15rem;
+            height: fit-content;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 5rem;
+        }
+
+        .sidebar-officer-card {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 0.85rem;
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+        }
+
+        .sidebar-heading {
+            font-size: 0.725rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0 0.5rem;
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 0.85rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-item:hover {
+            background: var(--brand-primary-subtle);
+            color: var(--brand-primary);
+        }
+
+        .sidebar-item.active {
+            background: var(--brand-primary-subtle);
+            color: var(--brand-primary);
+            font-weight: 800;
+        }
+
+        .sidebar-item-label {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .sidebar-count-badge {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            background: #e2e8f0;
+            color: #334155;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .sidebar-item.active .sidebar-count-badge {
+            background: var(--brand-primary);
+            color: #ffffff;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 1.35rem 1.15rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .kpi-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.4rem;
+        }
+
+        .kpi-number {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .kpi-number.pending { color: var(--brand-amber); }
+        .kpi-number.in-progress { color: var(--brand-primary); }
+        .kpi-number.resolved { color: var(--brand-green); }
+        .kpi-number.delayed { color: #ea580c; }
+        .kpi-number.escalations { color: var(--brand-red); }
+
+        /* Content Card */
+        .content-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.75rem;
+        }
+
+        /* Filter Toolbar */
+        .toolbar-grid {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+        }
+
+        .search-box-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.7rem 1rem 0.7rem 2.4rem;
+            border: 1.5px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 0.875rem;
+            outline: none;
+            background: var(--bg-canvas);
+            color: var(--text-primary);
+            transition: all 0.15s ease;
+        }
+
+        .search-input:focus {
+            background: #ffffff;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px var(--brand-primary-shadow);
+        }
+
+        .search-icon-inside {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .filter-select {
+            padding: 0.65rem 1rem;
+            border: 1.5px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--card-bg);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            border-color: var(--brand-primary);
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+        }
+
+        .officer-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.875rem;
+        }
+
+        .officer-table th {
+            background: #f8fafc;
+            padding: 0.9rem 1.15rem;
+            font-weight: 800;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .officer-table td {
+            padding: 1.1rem 1.15rem;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle;
+        }
+
+        .officer-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        .officer-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badges & Pills */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .status-pill.pending { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .status-pill.in-progress { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+        .status-pill.resolved { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .status-pill.delayed { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        .priority-badge {
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            font-size: 0.725rem;
+            font-weight: 800;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .priority-badge.Critical { background: #7f1d1d; color: #ffffff; }
+        .priority-badge.High { background: #fee2e2; color: #b91c1c; }
+        .priority-badge.Medium { background: #fef3c7; color: #b45309; }
+        .priority-badge.Low { background: #f1f5f9; color: #475569; }
+
+        .btn-table-action {
+            background: #ffffff;
+            border: 1.5px solid var(--border-light);
+            padding: 0.45rem 0.85rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--brand-primary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .btn-table-action:hover {
+            background: var(--brand-primary);
+            color: #ffffff;
+            border-color: var(--brand-primary);
+        }
+
+        /* Action Console Card (Screen 8) */
+        .action-console-card {
+            background: #ffffff;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            animation: slideDown 0.25s ease-out;
+            margin-top: 1.75rem;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .action-buttons-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.25rem 0;
+        }
+
+        .officer-action-btn {
+            background: #ffffff;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1.1rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-align: left;
+        }
+
+        .officer-action-btn:hover {
+            border-color: var(--brand-primary);
+            color: var(--brand-primary);
+            background: var(--brand-primary-subtle);
+            transform: translateY(-2px);
+        }
+
+        .officer-action-btn.selected {
+            border-color: var(--brand-primary);
+            background: var(--brand-primary-subtle);
+            color: var(--brand-primary);
+            box-shadow: 0 0 0 3px var(--brand-primary-shadow);
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border: 1.5px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            outline: none;
+            background: var(--bg-canvas);
+            color: var(--text-primary);
+            transition: all 0.15s ease;
+        }
+
+        .form-control:focus {
+            background: #ffffff;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px var(--brand-primary-shadow);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Modal backdrop & container */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1.5rem;
+        }
+
+        .modal-container {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 620px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Day-Wise Timeline Styling inside inspector */
+        .timeline-stream {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 2px solid var(--border-light);
+            margin-left: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .timeline-node {
+            position: relative;
+            margin-bottom: 1.75rem;
+        }
+
+        .timeline-node:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-node::before {
+            content: '';
+            position: absolute;
+            left: -2.48rem;
+            top: 0.25rem;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid var(--brand-primary);
+            z-index: 2;
+        }
+
+        .timeline-node.submitted::before { border-color: var(--status-green); background: var(--status-green); }
+        .timeline-node.work-started::before { border-color: var(--status-blue); background: var(--status-blue); }
+        .timeline-node.resolved::before { border-color: var(--status-green); background: var(--status-green); box-shadow: 0 0 0 3px rgba(22,163,74,0.25); }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 0.85rem 1.25rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            animation: toastIn 0.25s ease-out;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Theme dropdown */
+        .theme-dropdown-menu {
+            background: var(--card-bg) !important;
+            border: 1px solid var(--border-subtle) !important;
+            color: var(--text-primary) !important;
+            box-shadow: 0 14px 30px -4px rgba(0, 0, 0, 0.45) !important;
+            border-radius: 14px;
+            padding: 0.6rem;
+            min-width: 300px;
+        }
+
+        .theme-option-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0.75rem;
+            border: 1.5px solid transparent;
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.18s ease;
+            margin-bottom: 0.35rem;
+        }
+
+        .theme-option-btn:hover {
+            background: var(--brand-primary-subtle);
+        }
+
+        .theme-option-btn.active {
+            background: var(--brand-primary-subtle);
+            border-color: var(--brand-primary);
+        }
+
+        @media (max-width: 960px) {
+            .officer-layout {
+                grid-template-columns: 1fr;
+            }
+            .officer-sidebar {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOP OFFICER NAVBAR -->
+    <nav class="app-nav">
+        <div class="nav-container">
+            <a class="brand-logo" href="officer.html">
+                <div class="brand-shield">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">Kizuno-AI</span>
+                    <span class="brand-tagline">Officer Administration Console</span>
+                </div>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html" class="nav-btn" title="View Citizen Grievance Portal">
+                    <span>🏛️ Citizen Portal</span>
+                </a>
+                <a href="officer.html" class="nav-btn active">
+                    <span>👨‍💼 Officer Dashboard</span>
+                </a>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <!-- LIVE SYNC STATUS PILL -->
+                <span id="officer-sync-status-badge" class="user-pill" style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; font-weight: 700; font-size: 0.8rem;">
+                    🟢 Live SQL Sync: Active
+                </span>
+
+                <button type="button" id="officer-live-sync-btn" onclick="fetchComplaintsFromBackend(false)" class="btn-primary" style="font-size: 0.8rem; padding: 0.45rem 0.85rem; border-radius: 8px;">
+                    🔄 Live Sync
+                </button>
+
+                <button type="button" onclick="openNetworkShareModal()" class="btn-secondary" style="font-size: 0.8rem; padding: 0.45rem 0.85rem; border-radius: 8px;">
+                    📱 Wi-Fi Share
+                </button>
+
+                <!-- THEME TOGGLE -->
+                <div style="position: relative;">
+                    <button type="button" onclick="toggleThemeMenu(event)" class="btn-secondary" style="font-size: 0.8rem; padding: 0.45rem 0.8rem; border-radius: 8px;">
+                        <span id="theme-btn-label">🏛️ Slate</span> ▼
+                    </button>
+                    <div id="theme-dropdown" class="theme-dropdown-menu" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); min-width: 290px; z-index: 300;">
+                        <div style="padding: 0.4rem 0.5rem; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Color Theme</div>
+                        <button type="button" class="theme-option-btn" onclick="setAppTheme('mono-slate')">🏛️ Executive Slate (Default)</button>
+                        <button type="button" class="theme-option-btn" onclick="setAppTheme('dark-green')">🌑 Dark Slate & Vivid Green</button>
+                        <button type="button" class="theme-option-btn" onclick="setAppTheme('grey-green')">🌲 Grey & Emerald Green</button>
+                        <button type="button" class="theme-option-btn" onclick="setAppTheme('classic-blue')">🔷 Classic Civic Blue</button>
+                        <button type="button" class="theme-option-btn" onclick="setAppTheme('forest-emerald')">🌿 Forest Warm Stone</button>
+                    </div>
+                </div>
+
+                <!-- OFFICER AVATAR BADGE -->
+                <div class="user-pill" title="Authenticated Officer Session">
+                    <div class="user-avatar" id="officer-nav-avatar">D</div>
+                    <span id="officer-nav-name" style="font-weight: 800; color: var(--text-primary);">Officer DILIP</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN OFFICER PAGE LAYOUT -->
+    <div class="officer-layout">
+        <!-- SIDEBAR -->
+        <aside class="officer-sidebar">
+            <div class="sidebar-officer-card">
+                <div class="user-avatar" style="width: 38px; height: 38px; font-size: 1.1rem; flex-shrink: 0;">D</div>
+                <div>
+                    <div style="font-size: 0.9rem; font-weight: 800; color: var(--text-primary);">Officer DILIP</div>
+                    <div style="font-size: 0.725rem; color: var(--text-muted);">Coimbatore Corporation</div>
+                    <div style="font-size: 0.675rem; color: #16a34a; font-weight: 700; margin-top: 2px;">● PIN Verified Officer</div>
+                </div>
+            </div>
+
+            <div class="sidebar-heading">Navigation</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item active" onclick="filterByStatus('All', this)">
+                    <span class="sidebar-item-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        All Grievances
+                    </span>
+                    <span class="sidebar-count-badge" id="side-total">0</span>
+                </li>
+                <li class="sidebar-item" onclick="filterByStatus('Pending', this)">
+                    <span class="sidebar-item-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 14 14"></polyline>
+                        </svg>
+                        Pending Triage
+                    </span>
+                    <span class="sidebar-count-badge" id="side-pending">0</span>
+                </li>
+                <li class="sidebar-item" onclick="filterByStatus('In Progress', this)">
+                    <span class="sidebar-item-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+                        </svg>
+                        In Progress
+                    </span>
+                    <span class="sidebar-count-badge" id="side-progress">0</span>
+                </li>
+                <li class="sidebar-item" onclick="filterByStatus('Resolved', this)">
+                    <span class="sidebar-item-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Resolved
+                    </span>
+                    <span class="sidebar-count-badge" id="side-resolved">0</span>
+                </li>
+                <li class="sidebar-item" onclick="filterByStatus('Delayed', this)">
+                    <span class="sidebar-item-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                        </svg>
+                        Delayed
+                    </span>
+                    <span class="sidebar-count-badge" id="side-delayed">0</span>
+                </li>
+            </ul>
+
+            <div class="sidebar-heading">Priority Filter</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item" onclick="filterByPriority('Critical', this)">
+                    <span class="sidebar-item-label">🚨 Critical Priority</span>
+                </li>
+                <li class="sidebar-item" onclick="filterByPriority('High', this)">
+                    <span class="sidebar-item-label">🔴 High Priority</span>
+                </li>
+            </ul>
+
+            <div class="sidebar-heading">System</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item" onclick="window.location.href='index.html'">
+                    <span class="sidebar-item-label">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Switch to Citizen Portal
+                    </span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- MAIN OFFICER WORKSPACE -->
+        <main>
+            <!-- HEADER -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.75rem;">
+                <div>
+                    <h1 style="font-size: 1.85rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text-primary);">
+                        Municipal Officer Administration
+                    </h1>
+                    <p style="font-size: 0.95rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                        Real-time triage, field assignment, milestone updates, and SQL grievance registry management.
+                    </p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
+                        Jurisdiction: <strong>Coimbatore Central & North Wards</strong>
+                    </span>
+                </div>
+            </div>
+
+            <!-- 6 KPI METRICS CARDS -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-title">Total Grievances</div>
+                    <div class="kpi-number" id="kpi-total">0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Pending Triage</div>
+                    <div class="kpi-number pending" id="kpi-pending">0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">In Progress</div>
+                    <div class="kpi-number in-progress" id="kpi-progress">0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Resolved</div>
+                    <div class="kpi-number resolved" id="kpi-resolved">0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Delayed</div>
+                    <div class="kpi-number delayed" id="kpi-delayed">0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Escalations</div>
+                    <div class="kpi-number escalations" id="kpi-escalations">0</div>
+                </div>
+            </div>
+
+            <!-- GRIEVANCES TABLE CARD -->
+            <div class="content-card">
+                <!-- TOOLBAR -->
+                <div class="toolbar-grid">
+                    <div class="search-box-wrapper">
+                        <span class="search-icon-inside">🔍</span>
+                        <input type="text" id="officer-search-input" class="search-input"
+                            placeholder="Search by ID (e.g. CIV-2026-1042), title, citizen name, location..."
+                            oninput="handleSearchFilter()">
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                        <select id="category-filter" class="filter-select" onchange="handleSearchFilter()">
+                            <option value="All">All Categories</option>
+                            <option value="Roads & Footpaths">Roads & Footpaths</option>
+                            <option value="Water Supply">Water Supply</option>
+                            <option value="Sanitation & Garbage">Sanitation & Garbage</option>
+                            <option value="Street Lighting">Street Lighting</option>
+                            <option value="Drainage & Sewage">Drainage & Sewage</option>
+                        </select>
+
+                        <select id="status-select-filter" class="filter-select" onchange="handleStatusDropdown(this.value)">
+                            <option value="All">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Delayed">Delayed</option>
+                        </select>
+
+                        <button type="button" class="btn-secondary" onclick="resetFilters()" style="padding: 0.65rem 0.95rem; font-size: 0.8rem;">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TABLE -->
+                <div class="table-responsive">
+                    <table class="officer-table">
+                        <thead>
+                            <tr>
+                                <th>Grievance ID</th>
+                                <th>Title & Submitting Citizen</th>
+                                <th>Location & Ward</th>
+                                <th>Priority</th>
+                                <th>Current Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="officer-table-body">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+                                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+                                    <div style="font-weight: 800; color: var(--text-primary); font-size: 1rem;">Loading Grievance Registry...</div>
+                                    <div style="font-size: 0.8rem; margin-top: 0.25rem;">Connecting to Central SQL Database...</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ACTION CONSOLE PANEL (Screen 8) -->
+            <div class="action-console-card" id="officer-action-panel" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1.25rem;">
+                    <div>
+                        <div style="font-size: 0.75rem; font-weight: 800; color: var(--brand-primary); text-transform: uppercase; letter-spacing: 0.05em;">
+                            Operational Action Console
+                        </div>
+                        <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-top: 0.2rem;" id="action-complaint-header">
+                            Complaint #CIV-2026-1042
+                        </h2>
+                        <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.2rem;" id="action-complaint-sub">
+                            Streetlight not working • Gandhipuram, Coimbatore
+                        </div>
+                    </div>
+                    <button type="button" class="btn-secondary" onclick="closeOfficerActionPanel()" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
+                        ✕ Close Console
+                    </button>
+                </div>
+
+                <!-- Complaint Overview Snapshot -->
+                <div style="display: flex; gap: 1.25rem; align-items: center; background: var(--bg-canvas); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-light); margin-bottom: 1.5rem;">
+                    <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80"
+                        id="action-thumb" style="width: 75px; height: 75px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-light); flex-shrink: 0;" onerror="this.src='https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80'">
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);" id="action-title">Streetlight Failure</div>
+                        <div style="font-size: 0.825rem; color: var(--text-secondary); margin-top: 2px;" id="action-citizen-info">👤 Citizen Kumar (kumar.citizen@gmail.com)</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;" id="action-location">Gandhipuram, Coimbatore</div>
+                        <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="status-pill delayed" id="action-status-pill">Delayed</span>
+                            <span class="priority-badge Medium" id="action-priority-badge">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-label">Step 1: Choose Action Milestone</div>
+                <div class="action-buttons-group">
+                    <button type="button" class="officer-action-btn" id="act-btn-assign" onclick="selectAction('assign')">
+                        <span style="font-size: 1.25rem;">👤</span>
+                        <div>
+                            <div>Assign to Field Officer</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Allocate to Junior Engineer</div>
+                        </div>
+                    </button>
+                    <button type="button" class="officer-action-btn" id="act-btn-start" onclick="selectAction('start')">
+                        <span style="font-size: 1.25rem;">🔧</span>
+                        <div>
+                            <div>Start Site Work</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Mark In Progress in SQL</div>
+                        </div>
+                    </button>
+                    <button type="button" class="officer-action-btn" id="act-btn-progress" onclick="selectAction('progress')">
+                        <span style="font-size: 1.25rem;">🔄</span>
+                        <div>
+                            <div>Post Progress Note</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Materials / Inspection milestone</div>
+                        </div>
+                    </button>
+                    <button type="button" class="officer-action-btn" id="act-btn-resolve" onclick="selectAction('resolve')">
+                        <span style="font-size: 1.25rem;">✅</span>
+                        <div>
+                            <div>Mark as Resolved</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Final closure verification</div>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="form-label" style="margin-top: 1.25rem;">Step 2: Department Operational Notes</div>
+                <textarea class="form-control" id="officer-comments"
+                    placeholder="Enter specific field notes (e.g., 'Inspected broken wiring on Cross Cut Rd. Replacement LED luminaire installed and tested.')..."></textarea>
+
+                <div style="display: flex; gap: 0.85rem; justify-content: space-between; align-items: center; margin-top: 1.5rem; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <button type="button" class="btn-primary" onclick="applyOfficerUpdate()">
+                            <span>💾 Update Grievance & Publish to SQL Timeline</span>
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="inspectActiveTimeline()">
+                            <span>🔍 Inspect Full Public Timeline</span>
+                        </button>
+                    </div>
+                    <button type="button" onclick="deleteActiveComplaint()" style="background: #fef2f2; border: 1.5px solid #fecaca; color: #dc2626; padding: 0.65rem 1.15rem; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.15s ease;" title="Permanently delete this record from municipal SQL database">
+                        <span>🗑️ Delete Grievance</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- TIMELINE INSPECTOR MODAL -->
+    <div class="modal-backdrop" id="timeline-modal">
+        <div class="modal-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem;">
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary);" id="modal-timeline-title">Public Evidence Timeline</h3>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;" id="modal-timeline-key">Key: TN-GOV-XXXXXX</div>
+                </div>
+                <button type="button" class="btn-secondary" onclick="closeTimelineModal()" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;">✕ Close</button>
+            </div>
+            <div id="modal-timeline-content">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- NETWORK WI-FI SHARING MODAL -->
+    <div class="modal-backdrop" id="network-modal">
+        <div class="modal-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary);">📱 Multi-Device Wi-Fi Network Access</h3>
+                <button type="button" class="btn-secondary" onclick="closeNetworkModal()" style="padding: 0.35rem 0.7rem; font-size: 0.8rem;">✕ Close</button>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                Any citizen or peer connected to the same Wi-Fi network can submit grievances directly from their mobile phones or laptops straight into this Officer Dashboard!
+            </p>
+            <div style="background: var(--bg-canvas); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem;">
+                <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Citizen Portal Mobile URL:</div>
+                <div style="font-size: 1.2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--brand-primary); margin: 0.4rem 0;" id="net-share-url">
+                    http://localhost:8000/
+                </div>
+                <button type="button" class="btn-secondary" onclick="copyShareUrl()" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; margin-top: 0.3rem;">
+                    📋 Copy URL to Clipboard
+                </button>
+            </div>
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 1rem; font-size: 0.85rem; color: #166534;">
+                ✅ <strong>Real-time Sync Active:</strong> Grievances submitted by any phone immediately update this dashboard without manual page refreshes.
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        /**
+         * Kizuno-AI Officer Administration Engine
+         */
+        const API_BASE = window.location.origin.includes(':8000') || window.location.origin.includes('localhost')
+            ? `${window.location.origin}/api`
+            : '/api';
+
+        let ALL_COMPLAINTS = [];
+        let ACTIVE_STATUS_FILTER = 'All';
+        let ACTIVE_PRIORITY_FILTER = null;
+        let CURRENT_ACTIVE_ACTION_ID = null;
+        let SELECTED_ACTION_TYPE = null;
+        let POLLING_TIMER = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchComplaintsFromBackend(true);
+            startAutoPolling();
+            fetchNetworkInfo();
+        });
+
+        /**
+         * Fetches all complaints from FastAPI / SQLite
+         */
+        async function fetchComplaintsFromBackend(isSilent = false) {
+            try {
+                const res = await fetch(`${API_BASE}/complaints`);
+                if (res.ok) {
+                    const data = await res.json();
+                    ALL_COMPLAINTS = Array.isArray(data) ? data : [];
+                    renderTable();
+                    updateKpis();
+                    updateSyncBadge(true);
+                    if (!isSilent) showToast(`Synced ${ALL_COMPLAINTS.length} grievances from SQLite Database!`, '💾');
+                    return;
+                }
+            } catch (err) {
+                console.warn('Backend SQLite fetch warning:', err);
+                updateSyncBadge(false);
+            }
+
+            // LocalStorage fallback if backend offline
+            const cached = localStorage.getItem('kizuno_complaints_backup');
+            if (cached) {
+                try {
+                    ALL_COMPLAINTS = JSON.parse(cached);
+                } catch (e) { }
+            }
+            renderTable();
+            updateKpis();
+            updateSyncBadge(false);
+        }
+
+        function updateSyncBadge(isOnline) {
+            const badge = document.getElementById('officer-sync-status-badge');
+            if (!badge) return;
+            const count = ALL_COMPLAINTS.length;
+            if (isOnline) {
+                badge.style.background = '#ecfdf5';
+                badge.style.color = '#065f46';
+                badge.style.borderColor = '#a7f3d0';
+                badge.innerHTML = `🟢 Live SQL Sync: ${count} Grievance${count === 1 ? '' : 's'}`;
+            } else {
+                badge.style.background = '#fffbeb';
+                badge.style.color = '#b45309';
+                badge.style.borderColor = '#fde68a';
+                badge.innerHTML = `⚠️ Offline Mode: ${count} Cached`;
+            }
+        }
+
+        function updateKpis() {
+            const total = ALL_COMPLAINTS.length;
+            const pending = ALL_COMPLAINTS.filter(c => c.status === 'Pending').length;
+            const progress = ALL_COMPLAINTS.filter(c => c.status === 'In Progress').length;
+            const resolved = ALL_COMPLAINTS.filter(c => c.status === 'Resolved').length;
+            const delayed = ALL_COMPLAINTS.filter(c => c.status === 'Delayed').length;
+            const escalations = ALL_COMPLAINTS.filter(c => c.priority === 'Critical').length;
+
+            document.getElementById('kpi-total').innerText = total;
+            document.getElementById('kpi-pending').innerText = pending;
+            document.getElementById('kpi-progress').innerText = progress;
+            document.getElementById('kpi-resolved').innerText = resolved;
+            document.getElementById('kpi-delayed').innerText = delayed;
+            document.getElementById('kpi-escalations').innerText = escalations;
+
+            // Sidebar counts
+            document.getElementById('side-total').innerText = total;
+            document.getElementById('side-pending').innerText = pending;
+            document.getElementById('side-progress').innerText = progress;
+            document.getElementById('side-resolved').innerText = resolved;
+            document.getElementById('side-delayed').innerText = delayed;
+        }
+
+        /**
+         * Renders the grievance table with active filters
+         */
+        function renderTable() {
+            const tbody = document.getElementById('officer-table-body');
+            if (!tbody) return;
+
+            const searchTerm = (document.getElementById('officer-search-input')?.value || '').toLowerCase().trim();
+            const categoryTerm = document.getElementById('category-filter')?.value || 'All';
+
+            let list = [...ALL_COMPLAINTS];
+
+            if (ACTIVE_STATUS_FILTER !== 'All') {
+                list = list.filter(c => c.status === ACTIVE_STATUS_FILTER);
+            }
+
+            if (ACTIVE_PRIORITY_FILTER) {
+                list = list.filter(c => c.priority === ACTIVE_PRIORITY_FILTER);
+            }
+
+            if (categoryTerm !== 'All') {
+                list = list.filter(c => (c.category || '').toLowerCase() === categoryTerm.toLowerCase());
+            }
+
+            if (searchTerm) {
+                list = list.filter(c =>
+                    (c.id || '').toLowerCase().includes(searchTerm) ||
+                    (c.trackingKey || '').toLowerCase().includes(searchTerm) ||
+                    (c.title || '').toLowerCase().includes(searchTerm) ||
+                    (c.location || '').toLowerCase().includes(searchTerm) ||
+                    (c.citizenName || '').toLowerCase().includes(searchTerm) ||
+                    (c.citizenEmail || '').toLowerCase().includes(searchTerm)
+                );
+            }
+
+            if (list.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+                            <div style="font-weight: 800; color: var(--text-primary); font-size: 1.05rem;">No Grievances Match Active Filters</div>
+                            <div style="font-size: 0.85rem; margin-top: 0.35rem;">Try clearing search keywords or status filters.</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = list.map(c => `
+                <tr>
+                    <td>
+                        <strong style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--brand-primary); cursor: pointer;" onclick="openOfficerActionConsole('${escapeHtml(c.id)}')">
+                            ${escapeHtml(c.id)}
+                        </strong>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
+                            ${escapeHtml(c.trackingKey || '')}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <img src="${escapeHtml(c.photoUrl || 'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=100&auto=format&fit=crop&q=80')}"
+                                 alt="${escapeHtml(c.title)}"
+                                 style="width: 42px; height: 42px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-light); flex-shrink: 0;"
+                                 onerror="this.src='https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=100&auto=format&fit=crop&q=80'">
+                            <div>
+                                <div style="font-weight: 800; color: var(--text-primary); font-size: 0.9rem;">${escapeHtml(c.title)}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+                                    ${escapeHtml(c.category || 'General')} • <span style="color: var(--brand-primary); font-weight: 700;">👤 ${escapeHtml(c.citizenName || 'Citizen')}</span> <span style="font-size: 0.7rem;">(${escapeHtml(c.citizenEmail || 'anonymous')})</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">${escapeHtml(c.location || 'Coimbatore')}</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">${escapeHtml(c.department || 'Corporation Ward Unit')}</div>
+                    </td>
+                    <td>
+                        <span class="priority-badge ${c.priority}">${c.priority || 'Medium'}</span>
+                    </td>
+                    <td>
+                        <span class="status-pill ${getStatusPillClass(c.status)}">${escapeHtml(c.status || 'Pending')}</span>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 3px;">${escapeHtml(c.dayLabel || 'Day 0')}</div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                            <button type="button" class="btn-table-action" onclick="openOfficerActionConsole('${escapeHtml(c.id)}')">
+                                Review & Action
+                            </button>
+                            <button type="button" class="btn-table-action" onclick="inspectTimeline('${escapeHtml(c.id)}')" title="View Timeline">
+                                📅
+                            </button>
+                            <button type="button" onclick="deleteComplaintRecord('${escapeHtml(c.id)}')" style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 0.45rem 0.6rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer;" title="Delete Record">
+                                🗑️
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusPillClass(status) {
+            switch (status) {
+                case 'Pending': return 'pending';
+                case 'In Progress': return 'in-progress';
+                case 'Resolved': return 'resolved';
+                case 'Delayed': return 'delayed';
+                default: return 'pending';
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        /* Filter handlers */
+        function filterByStatus(status, element) {
+            ACTIVE_STATUS_FILTER = status;
+            ACTIVE_PRIORITY_FILTER = null;
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            if (element) element.classList.add('active');
+            const selectEl = document.getElementById('status-select-filter');
+            if (selectEl) selectEl.value = status;
+            renderTable();
+            showToast(`Filter applied: Status = ${status}`, '🔍');
+        }
+
+        function filterByPriority(priority, element) {
+            ACTIVE_PRIORITY_FILTER = priority;
+            ACTIVE_STATUS_FILTER = 'All';
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            if (element) element.classList.add('active');
+            renderTable();
+            showToast(`Filter applied: Priority = ${priority}`, '🚨');
+        }
+
+        function handleStatusDropdown(status) {
+            ACTIVE_STATUS_FILTER = status;
+            renderTable();
+        }
+
+        function handleSearchFilter() {
+            renderTable();
+        }
+
+        function resetFilters() {
+            ACTIVE_STATUS_FILTER = 'All';
+            ACTIVE_PRIORITY_FILTER = null;
+            const searchInput = document.getElementById('officer-search-input');
+            if (searchInput) searchInput.value = '';
+            const catSelect = document.getElementById('category-filter');
+            if (catSelect) catSelect.value = 'All';
+            const statSelect = document.getElementById('status-select-filter');
+            if (statSelect) statSelect.value = 'All';
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            document.querySelector('.sidebar-item')?.classList.add('active');
+            renderTable();
+            showToast('All filters reset', '🔄');
+        }
+
+        /* Action Console */
+        function openOfficerActionConsole(complaintId) {
+            const complaint = ALL_COMPLAINTS.find(c => c.id === complaintId);
+            if (!complaint) return;
+
+            CURRENT_ACTIVE_ACTION_ID = complaintId;
+            SELECTED_ACTION_TYPE = null;
+
+            document.querySelectorAll('.officer-action-btn').forEach(btn => btn.classList.remove('selected'));
+
+            document.getElementById('action-complaint-header').innerText = `Complaint #${complaint.id}`;
+            document.getElementById('action-complaint-sub').innerText = `${complaint.title} • ${complaint.location}`;
+            document.getElementById('action-title').innerText = complaint.title;
+            document.getElementById('action-citizen-info').innerText = `👤 ${complaint.citizenName || 'Citizen'} (${complaint.citizenEmail || 'anonymous'})`;
+            document.getElementById('action-location').innerText = complaint.location || 'Coimbatore';
+            document.getElementById('action-thumb').src = complaint.photoUrl || "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80";
+
+            const pill = document.getElementById('action-status-pill');
+            pill.innerText = complaint.status;
+            pill.className = `status-pill ${getStatusPillClass(complaint.status)}`;
+
+            const prioBadge = document.getElementById('action-priority-badge');
+            prioBadge.innerText = complaint.priority;
+            prioBadge.className = `priority-badge ${complaint.priority}`;
+
+            document.getElementById('officer-comments').value = "";
+
+            const panel = document.getElementById('officer-action-panel');
+            panel.style.display = 'block';
+            panel.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function closeOfficerActionPanel() {
+            document.getElementById('officer-action-panel').style.display = 'none';
+        }
+
+        function selectAction(type) {
+            SELECTED_ACTION_TYPE = type;
+            document.querySelectorAll('.officer-action-btn').forEach(btn => btn.classList.remove('selected'));
+            const btn = document.getElementById(`act-btn-${type}`);
+            if (btn) btn.classList.add('selected');
+        }
+
+        async function applyOfficerUpdate() {
+            if (!CURRENT_ACTIVE_ACTION_ID) return;
+            if (!SELECTED_ACTION_TYPE) {
+                showToast('Please select an action milestone (Assign, Start Work, etc.)', '⚠️');
+                return;
+            }
+
+            const comments = document.getElementById('officer-comments').value.trim();
+
+            try {
+                const res = await fetch(`${API_BASE}/officer/update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        complaint_id: CURRENT_ACTIVE_ACTION_ID,
+                        action_type: SELECTED_ACTION_TYPE,
+                        comments: comments,
+                        officer_name: "Officer DILIP"
+                    })
+                });
+
+                if (res.ok) {
+                    const result = await res.json();
+                    showToast(`SQL Milestone Saved: ${result.message}`, '✅');
+                    await fetchComplaintsFromBackend(true);
+                    closeOfficerActionPanel();
+                    return;
+                }
+            } catch (err) {
+                console.error('Officer update error:', err);
+            }
+
+            // Fallback for offline mode
+            const complaint = ALL_COMPLAINTS.find(c => c.id === CURRENT_ACTIVE_ACTION_ID);
+            if (complaint) {
+                if (SELECTED_ACTION_TYPE === 'start') complaint.status = 'In Progress';
+                if (SELECTED_ACTION_TYPE === 'resolve') complaint.status = 'Resolved';
+                renderTable();
+                updateKpis();
+                closeOfficerActionPanel();
+                showToast('Updated locally (Offline cache)', '⚠️');
+            }
+        }
+
+        async function deleteComplaintRecord(complaintId) {
+            const complaint = ALL_COMPLAINTS.find(c => c.id === complaintId);
+            if (!complaint) return;
+
+            if (!confirm(`Are you sure you want to permanently delete grievance ${complaint.id} from the database?`)) {
+                return;
+            }
+
+            try {
+                const key = complaint.trackingKey || complaint.id;
+                const res = await fetch(`${API_BASE}/complaints/${encodeURIComponent(key)}?user_email=dilip.officer@gov.in&role=officer`, {
+                    method: 'DELETE'
+                });
+                if (res.ok) {
+                    showToast(`Grievance ${complaint.id} deleted from database!`, '🗑️');
+                    await fetchComplaintsFromBackend(true);
+                    return;
+                }
+            } catch (err) {
+                console.error('Delete error:', err);
+            }
+
+            ALL_COMPLAINTS = ALL_COMPLAINTS.filter(c => c.id !== complaintId);
+            renderTable();
+            updateKpis();
+            showToast(`Grievance ${complaintId} removed locally`, '🗑️');
+        }
+
+        function deleteActiveComplaint() {
+            if (CURRENT_ACTIVE_ACTION_ID) {
+                deleteComplaintRecord(CURRENT_ACTIVE_ACTION_ID);
+                closeOfficerActionPanel();
+            }
+        }
+
+        /* Timeline Inspector */
+        function inspectTimeline(complaintId) {
+            const complaint = ALL_COMPLAINTS.find(c => c.id === complaintId);
+            if (!complaint) return;
+
+            document.getElementById('modal-timeline-title').innerText = `${complaint.title} (${complaint.id})`;
+            document.getElementById('modal-timeline-key').innerText = `Tracking Key: ${complaint.trackingKey || 'TN-GOV-XXXXXX'} • Submitter: ${complaint.citizenName || 'Citizen'}`;
+
+            const timeline = complaint.timeline || [];
+            const container = document.getElementById('modal-timeline-content');
+
+            if (timeline.length === 0) {
+                container.innerHTML = `<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No timeline events recorded yet.</div>`;
+            } else {
+                container.innerHTML = `
+                    <div class="timeline-stream">
+                        ${timeline.map(ev => `
+                            <div class="timeline-node ${escapeHtml(ev.statusType || '')}">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                                    <span style="font-size: 0.75rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; background: var(--bg-canvas); padding: 0.15rem 0.5rem; border-radius: 4px;">
+                                        ${escapeHtml(ev.day || 'Day 0')}
+                                    </span>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(ev.date || '')}</span>
+                                    <span style="font-size: 0.685rem; font-weight: 800; text-transform: uppercase; color: #1e40af; background: #dbeafe; padding: 0.1rem 0.4rem; border-radius: 4px;">
+                                        ${escapeHtml(ev.tagText || 'Milestone')}
+                                    </span>
+                                </div>
+                                <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">
+                                    ${escapeHtml(ev.title || '')}
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.45;">
+                                    ${escapeHtml(ev.desc || '')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            document.getElementById('timeline-modal').style.display = 'flex';
+        }
+
+        function inspectActiveTimeline() {
+            if (CURRENT_ACTIVE_ACTION_ID) inspectTimeline(CURRENT_ACTIVE_ACTION_ID);
+        }
+
+        function closeTimelineModal() {
+            document.getElementById('timeline-modal').style.display = 'none';
+        }
+
+        /* Wi-Fi Network Sharing */
+        async function fetchNetworkInfo() {
+            try {
+                const res = await fetch(`${API_BASE}/network-info`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const shareUrl = data.network_url || `http://${window.location.hostname}:8000/`;
+                    const el = document.getElementById('net-share-url');
+                    if (el) el.innerText = shareUrl;
+                }
+            } catch (e) { }
+        }
+
+        function openNetworkShareModal() {
+            fetchNetworkInfo();
+            document.getElementById('network-modal').style.display = 'flex';
+        }
+
+        function closeNetworkModal() {
+            document.getElementById('network-modal').style.display = 'none';
+        }
+
+        function copyShareUrl() {
+            const url = document.getElementById('net-share-url')?.innerText || window.location.origin;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('Network URL copied! Share with friends/citizens.', '📋');
+            });
+        }
+
+        /* Auto-polling every 5s */
+        function startAutoPolling() {
+            if (POLLING_TIMER) return;
+            POLLING_TIMER = setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    fetchComplaintsFromBackend(true);
+                }
+            }, 5000);
+        }
+
+        /* Theme Management */
+        function toggleThemeMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('theme-dropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function setAppTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('kizuno_active_theme', themeName);
+            const label = {
+                'mono-slate': '🏛️ Slate',
+                'dark-green': '🌑 Dark',
+                'grey-green': '🌲 Green',
+                'classic-blue': '🔷 Blue',
+                'forest-emerald': '🌿 Forest'
+            }[themeName] || '🏛️ Slate';
+            document.getElementById('theme-btn-label').innerText = label;
+            document.getElementById('theme-dropdown').style.display = 'none';
+            showToast(`Theme switched to ${label}`, '🎨');
+        }
+
+        document.addEventListener('click', () => {
+            const dropdown = document.getElementById('theme-dropdown');
+            if (dropdown) dropdown.style.display = 'none';
+        });
+
+        /* Toast notifications */
+        function showToast(message, icon = 'ℹ️') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.25s ease';
+                setTimeout(() => toast.remove(), 250);
+            }, 3200);
+        }
+    </script>
+</body>
+
+</html>

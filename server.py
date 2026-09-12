@@ -253,8 +253,8 @@ class ComplaintCreateDTO(BaseModel):
     location: str
     photo_url: Optional[str] = None
     priority: Optional[str] = "Medium"
-    citizen_email: Optional[str] = "kumar.citizen@gmail.com"
-    citizen_name: Optional[str] = "Citizen Kumar"
+    citizen_email: Optional[str] = None
+    citizen_name: Optional[str] = "Citizen"
     id: Optional[str] = None
     tracking_key: Optional[str] = None
     status: Optional[str] = "Pending"
@@ -417,13 +417,14 @@ def test_email_endpoint(payload: TestEmailDTO):
 
 
 @app.post("/api/auth/register")
+@app.post("/api/auth/verify-and-register")
 def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
     """
     Registers a new citizen with verified Gmail, username, and password.
     Validates real 6-digit code against SQL `email_verifications`.
     """
     clean_email = payload.email.strip().lower()
-    clean_code = payload.verification_code.strip()
+    clean_code = payload.verification_code.strip().replace(" ", "").replace("-", "")
 
     if not clean_email or "@" not in clean_email:
         raise HTTPException(status_code=400, detail="Invalid Gmail address.")
@@ -613,6 +614,7 @@ def get_kpis(db: Session = Depends(get_db)):
 def list_complaints(
     status: Optional[str] = Query(None, description="Filter by status: Pending, In Progress, Delayed, Resolved"),
     category: Optional[str] = Query(None, description="Filter by category"),
+    citizen_email: Optional[str] = Query(None, description="Filter by citizen email"),
     db: Session = Depends(get_db)
 ):
     """Retrieves all complaints from SQL with optional filtering"""
@@ -621,6 +623,8 @@ def list_complaints(
         query = query.filter(Complaint.status == status)
     if category and category != "All":
         query = query.filter(Complaint.category == category)
+    if citizen_email:
+        query = query.filter(Complaint.citizen_email == citizen_email.strip().lower())
 
     complaints = query.order_by(Complaint.created_at.desc()).all()
     return [c.to_dict() for c in complaints]
@@ -701,8 +705,8 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
         day_label=payload.day_label or "Day 0",
         last_updated=f"Day 0 - {today_str}",
         department=payload.department or f"{payload.category} Division, Coimbatore Corporation",
-        citizen_email=payload.citizen_email or "kumar.citizen@gmail.com",
-        citizen_name=payload.citizen_name or "Citizen Kumar"
+        citizen_email=(payload.citizen_email or "").strip().lower(),
+        citizen_name=(payload.citizen_name or "Citizen").strip()
     )
     db.add(new_complaint)
     db.flush()
@@ -924,9 +928,21 @@ def get_network_info():
         "port": port,
         "local_url": f"http://localhost:{port}",
         "network_url": f"http://{ip}:{port}",
-        "officer_url": f"http://{ip}:{port}/#officer",
+        "officer_url": f"http://{ip}:{port}/officer",
         "instructions": f"Any friend or citizen on the same Wi-Fi can open http://{ip}:{port} on their phone or laptop to submit complaints directly to your Officer Portal!"
     }
+
+
+@app.get("/officer")
+def serve_officer():
+    """Serves the dedicated Officer Dashboard web app at /officer"""
+    officer_path = os.path.join(os.path.dirname(__file__), "officer.html")
+    if os.path.exists(officer_path):
+        return FileResponse(officer_path, media_type="text/html")
+    index_path = os.path.join(os.path.dirname(__file__), "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path, media_type="text/html")
+    raise HTTPException(status_code=404, detail="officer.html not found.")
 
 
 @app.get("/")

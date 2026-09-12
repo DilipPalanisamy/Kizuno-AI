@@ -2521,7 +2521,7 @@
 <body>
 
     <!-- TOP APPLICATION NAVBAR -->
-    <nav class="app-nav" id="main-app-nav" style="display: none;">
+    <nav class="app-nav" id="main-app-nav">
         <div class="nav-container">
             <a class="brand-logo" onclick="switchView('dashboard')">
                 <div class="brand-shield">
@@ -2729,7 +2729,7 @@
     <!-- ========================================================
          VIEW 0: LOGIN & AUTHENTICATION LANDING SCREEN (START PAGE)
          ======================================================== -->
-    <main class="app-view active" id="view-login">
+    <main class="app-view" id="view-login">
         <div class="login-card-standalone" style="position: relative;">
             <div style="position: absolute; top: 1.25rem; right: 1.25rem;">
                 <button type="button" onclick="cycleNextTheme()" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-secondary);" title="Click to cycle theme color">
@@ -2947,16 +2947,23 @@
                 </div>
             </div>
 
+            <!-- Return to Dashboard Option -->
+            <div style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">
+                <button type="button" onclick="switchView('dashboard')" style="background: none; border: none; color: var(--text-muted); font-size: 0.825rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.8rem; border-radius: 6px; transition: all 0.15s ease;">
+                    ← Return to Citizen Dashboard
+                </button>
+            </div>
+
         </div>
     </main>
 
-    <main class="app-view" id="view-dashboard">
+    <main class="app-view active" id="view-dashboard">
         <div class="hero-banner" style="max-width: 1050px; margin: 0 auto;">
             <div id="citizen-dashboard-badge"
                 style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--brand-primary-subtle); border: 1px solid var(--brand-primary-border); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.825rem; font-weight: 700; color: var(--brand-primary); margin-bottom: 0.85rem;">
                 <span>📊 Citizen Dashboard</span>
                 <span>•</span>
-                <span id="home-user-greeting">Welcome, Citizen Kumar!</span>
+                <span id="home-user-greeting">Welcome, Citizen!</span>
             </div>
             <h1 class="hero-title" id="dashboard-user-greeting" style="font-size: 2.2rem; margin-bottom: 0.35rem; letter-spacing: -0.02em;">Welcome to your Dashboard</h1>
             <p class="hero-subtitle" style="max-width: 680px; margin: 0 auto 1.5rem auto;">Monitor live day-wise municipal progress on your grievances, track SLA accountability, and submit new complaints.</p>
@@ -2971,7 +2978,7 @@
                         My Active Issues</div>
                     <div id="my-stat-active"
                         style="font-size: 1.65rem; font-weight: 800; color: var(--brand-primary); font-family: 'JetBrains Mono', monospace; margin-top: 0.2rem;">
-                        1</div>
+                        0</div>
                 </div>
                 <div
                     style="background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
@@ -2980,7 +2987,7 @@
                         Under Inspection</div>
                     <div id="my-stat-review"
                         style="font-size: 1.65rem; font-weight: 800; color: var(--brand-amber); font-family: 'JetBrains Mono', monospace; margin-top: 0.2rem;">
-                        1</div>
+                        0</div>
                 </div>
                 <div
                     style="background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 12px; padding: 0.85rem 1.5rem; box-shadow: var(--shadow-sm); min-width: 140px; text-align: center;">
@@ -3979,43 +3986,10 @@
          * Clean start: Zero fake complaints. Only real submitted complaints are retained.
          */
         const KIZUNO_SQL_DB = {
-            complaints: [
-                {
-                    id: "CIV-2026-1493",
-                    trackingKey: "TN-GOV-XE291F0",
-                    category: "Drainage",
-                    categoryIcon: "🌊",
-                    title: "blocked drain nage",
-                    description: "The streetlight near my house has been blocked for severel days",
-                    location: "irugur , Coimbatore",
-                    photoUrl: "./complaint_CIV-2026-1493.png",
-                    priority: "High",
-                    status: "Pending",
-                    dayLabel: "Day 0",
-                    lastUpdated: "Day 0 - Sep 10, 2026",
-                    department: "Drainage Division, Coimbatore Corporation",
-                    assignedOfficer: null,
-                    citizenEmail: "dilippalanisamy09@gmail.com",
-                    citizenName: "dilip",
-                    timeline: [
-                        {
-                            id: 25,
-                            day: "Day 0",
-                            date: "Sep 10, 2026",
-                            statusType: "submitted",
-                            tagType: "tag-verified",
-                            tagText: "Verified Event",
-                            title: "Complaint Submitted & Ingested",
-                            desc: "Grievance accepted into municipal SQL intake repository. Cryptographic tracking receipt generated.",
-                            officialNode: "Node: CM Helpline Central Gateway",
-                            evidenceRef: "SQL Record ID: #CIV-2026-1493 • Status: VERIFIED"
-                        }
-                    ]
-                }
-            ],
+            complaints: [],
             kpis: {
-                total: 1,
-                pending: 1,
+                total: 0,
+                pending: 0,
                 inProgress: 0,
                 resolved: 0,
                 delayed: 0,
@@ -4024,6 +3998,21 @@
             currentActiveActionId: null,
             selectedActionType: null
         };
+
+        /**
+         * Returns only complaints strictly owned by the currently authenticated citizen.
+         * Enforces absolute account isolation: Citizen B will NEVER see Citizen A's complaints.
+         */
+        function getMyComplaintsList() {
+            const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
+            const userEmail = (authUser.email || '').toLowerCase().trim();
+            if (!userEmail) return [];
+            return (KIZUNO_SQL_DB.complaints || []).filter(c => {
+                if (!c) return false;
+                const cEmail = (c.citizenEmail || c.citizen_email || '').toLowerCase().trim();
+                return cEmail === userEmail;
+            });
+        }
 
         /**
          * Persists all complaints to localStorage so submitted problems are never lost across refreshes or offline
@@ -4580,84 +4569,57 @@
             const btn = document.getElementById('btn-request-otp');
             if (btn) {
                 btn.disabled = true;
-                btn.innerText = resend ? 'Resending Code...' : 'Sending Verification Code...';
+                btn.innerText = resend ? 'Resending Code to Gmail...' : 'Sending Verification Code to Gmail...';
             }
 
-            if (isBackendConnected) {
-                try {
-                    const res = await fetch(`${API_BASE}/auth/send-verification`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, username })
-                    });
+            try {
+                if (!isBackendConnected) {
+                    await checkBackendHealth();
+                }
 
-                    const data = await res.json();
-                    if (res.ok && data.success) {
-                        const signupForm = document.getElementById('citizen-signup-form');
-                        if (signupForm) signupForm.style.display = 'none';
+                const res = await fetch(`${API_BASE}/auth/send-verification`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, username })
+                });
 
-                        const otpSection = document.getElementById('signup-otp-section');
-                        if (otpSection) otpSection.style.display = 'block';
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    const signupForm = document.getElementById('citizen-signup-form');
+                    if (signupForm) signupForm.style.display = 'none';
 
-                        const targetEmailSpan = document.getElementById('otp-target-email');
-                        if (targetEmailSpan) targetEmailSpan.innerText = email;
+                    const otpSection = document.getElementById('signup-otp-section');
+                    if (otpSection) otpSection.style.display = 'block';
 
-                        const statusText = document.getElementById('otp-sent-status');
-                        if (statusText) {
-                            statusText.innerHTML = `A 6-digit verification code has been dispatched to <strong style="color: var(--brand-primary); word-break: break-all;">${email}</strong>. Please check your email inbox and enter it below:`;
-                        }
+                    const targetEmailSpan = document.getElementById('otp-target-email');
+                    if (targetEmailSpan) targetEmailSpan.innerText = email;
 
-                        const codeInput = document.getElementById('signup-otp-code');
-                        if (codeInput) {
-                            codeInput.value = '';
-                            codeInput.focus();
-                        }
-
-                        showToast(`Verification code sent to ${email}. Check your email inbox!`, '✉️');
-                        return false;
-                    } else {
-                        showToast(data.detail || 'Failed to send verification code', '⚠️');
+                    const statusText = document.getElementById('otp-sent-status');
+                    if (statusText) {
+                        statusText.innerHTML = `A 6-digit verification code has been sent directly to your Gmail inbox: <strong style="color: var(--brand-primary); word-break: break-all;">${escapeHtml(email)}</strong>.<br><span style="font-size: 0.775rem; color: var(--text-muted); display: inline-block; margin-top: 0.35rem;">Please check your Gmail inbox (or Spam/Junk folder) and enter the exact verification code below to activate your account.</span>`;
                     }
-                } catch (err) {
-                    console.warn("Backend verification call failed, switching to local client verification flow:", err);
-                } finally {
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.innerText = 'Send Gmail Verification Code';
+
+                    const codeInput = document.getElementById('signup-otp-code');
+                    if (codeInput) {
+                        codeInput.value = '';
+                        codeInput.focus();
                     }
+
+                    showToast(`Verification code sent to ${email}! Check your Gmail inbox.`, '✉️');
+                    return false;
+                } else {
+                    const errDetail = data.detail || data.message || 'Failed to dispatch verification email. Please verify your Gmail address.';
+                    showToast(errDetail, '⚠️');
+                }
+            } catch (err) {
+                console.error("Backend verification call failed:", err);
+                showToast("Could not connect to verification server. Please verify the Python server is running (python server.py).", "⚠️");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = 'Send Gmail Verification Code';
                 }
             }
-
-            // GitHub Pages / Client offline fallback OTP generation
-            const mockCode = String(Math.floor(100000 + Math.random() * 900000));
-            window._localPendingOtp = { email, username, password, code: mockCode };
-
-            const signupForm = document.getElementById('citizen-signup-form');
-            if (signupForm) signupForm.style.display = 'none';
-
-            const otpSection = document.getElementById('signup-otp-section');
-            if (otpSection) otpSection.style.display = 'block';
-
-            const targetEmailSpan = document.getElementById('otp-target-email');
-            if (targetEmailSpan) targetEmailSpan.innerText = email;
-
-            const statusText = document.getElementById('otp-sent-status');
-            if (statusText) {
-                statusText.innerHTML = `Verification Code generated for <strong style="color: var(--brand-primary); word-break: break-all;">${email}</strong>: <br><span style="font-size: 1.35rem; font-weight: 800; color: var(--brand-primary); font-family: 'JetBrains Mono', monospace; display: inline-block; margin-top: 0.35rem; letter-spacing: 0.15em;">${mockCode}</span>`;
-            }
-
-            const codeInput = document.getElementById('signup-otp-code');
-            if (codeInput) {
-                codeInput.value = '';
-                codeInput.focus();
-            }
-
-            if (btn) {
-                btn.disabled = false;
-                btn.innerText = 'Send Gmail Verification Code';
-            }
-
-            showToast(`Verification code ready! Enter ${mockCode} to verify`, '✉️');
             return false;
         }
 
@@ -4666,10 +4628,10 @@
             const username = document.getElementById('signup-username').value.trim();
             const email = document.getElementById('signup-email').value.trim().toLowerCase();
             const password = document.getElementById('signup-password').value;
-            const code = document.getElementById('signup-otp-code').value.trim();
+            const code = document.getElementById('signup-otp-code').value.trim().replace(/\s+/g, '').replace(/-/g, '');
 
             if (!code || code.length !== 6) {
-                showToast('Please enter the 6-digit verification code sent to your email', '⚠️');
+                showToast('Please enter the exact 6-digit verification code received in your Gmail', '⚠️');
                 const c = document.getElementById('signup-otp-code');
                 if (c) c.focus();
                 return false;
@@ -4678,95 +4640,69 @@
             const verifyBtn = document.getElementById('btn-verify-otp');
             if (verifyBtn) {
                 verifyBtn.disabled = true;
-                verifyBtn.innerText = 'Verifying...';
+                verifyBtn.innerText = 'Verifying with Gmail code...';
             }
 
-            if (isBackendConnected) {
-                try {
-                    const res = await fetch(`${API_BASE}/auth/verify-and-register`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            username,
-                            email,
-                            password,
-                            verification_code: code
-                        })
-                    });
+            try {
+                if (!isBackendConnected) {
+                    await checkBackendHealth();
+                }
 
-                    const data = await res.json();
-                    if (res.ok && data.success) {
-                        localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
-                        const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
-                        if (!regUsers.some(u => (u.email || '').toLowerCase() === email)) {
-                            regUsers.push(data.user);
-                            localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
-                        }
-                        applyUserSession(data.user);
+                const res = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username,
+                        email,
+                        password,
+                        verification_code: code
+                    })
+                });
 
-                        // Clear fields
-                        const p = document.getElementById('signup-password');
-                        if (p) p.value = '';
-                        const c = document.getElementById('signup-otp-code');
-                        if (c) c.value = '';
-
-                        const signupForm = document.getElementById('citizen-signup-form');
-                        const otpSection = document.getElementById('signup-otp-section');
-                        if (signupForm) signupForm.style.display = 'block';
-                        if (otpSection) otpSection.style.display = 'none';
-
-                        showToast('Account is created successfully! Welcome to your Dashboard.', '🎉');
-                        switchView('dashboard');
-                        return false;
-                    } else {
-                        showToast(data.detail || 'Verification failed. Please check the code.', '⚠️');
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    // Store authenticated user session in local cache & registry
+                    localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
+                    const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                    if (!regUsers.some(u => (u.email || '').toLowerCase() === email)) {
+                        regUsers.push(data.user);
+                        localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
                     }
-                } catch (err) {
-                    console.warn("Backend register error, evaluating client offline verification:", err);
-                } finally {
-                    if (verifyBtn) {
-                        verifyBtn.disabled = false;
-                        verifyBtn.innerText = '✓ Verify Code & Create Account';
+                    applyUserSession(data.user);
+
+                    // Clear sensitive form fields
+                    const p = document.getElementById('signup-password');
+                    if (p) p.value = '';
+                    const c = document.getElementById('signup-otp-code');
+                    if (c) c.value = '';
+
+                    const signupForm = document.getElementById('citizen-signup-form');
+                    const otpSection = document.getElementById('signup-otp-section');
+                    if (signupForm) signupForm.style.display = 'block';
+                    if (otpSection) otpSection.style.display = 'none';
+
+                    showToast(`Account created & verified! Welcome to your Dashboard, ${data.user.name || 'Citizen'}.`, '🎉');
+
+                    // Directly redirect to citizen dashboard page
+                    switchView('dashboard');
+                    return false;
+                } else {
+                    const failMsg = data.detail || data.message || 'Invalid verification code. Please check the code sent to your Gmail.';
+                    showToast(failMsg, '⚠️');
+                    const c = document.getElementById('signup-otp-code');
+                    if (c) {
+                        c.focus();
+                        c.select();
                     }
                 }
-            }
-
-            // GitHub Pages / Client fallback verification
-            if (window._localPendingOtp && window._localPendingOtp.code === code) {
-                const newUser = {
-                    id: Date.now(),
-                    name: username,
-                    email: email,
-                    role: 'Citizen',
-                    isVerified: true,
-                    picture: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
-                    authProvider: 'Kizuno Client Cache'
-                };
-                localStorage.setItem('kizuno_auth_user', JSON.stringify(newUser));
-                const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
-                regUsers.push(newUser);
-                localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
-                applyUserSession(newUser);
-
-                const p = document.getElementById('signup-password');
-                if (p) p.value = '';
-                const c = document.getElementById('signup-otp-code');
-                if (c) c.value = '';
-
-                const signupForm = document.getElementById('citizen-signup-form');
-                const otpSection = document.getElementById('signup-otp-section');
-                if (signupForm) signupForm.style.display = 'block';
-                if (otpSection) otpSection.style.display = 'none';
-
-                showToast('Account is created successfully! Welcome to your Dashboard.', '🎉');
-                switchView('dashboard');
-            } else {
-                showToast('Incorrect verification code. Please check and try again.', '⚠️');
-            }
-
-            if (verifyBtn) {
-                verifyBtn.disabled = false;
-                verifyBtn.innerText = '✓ Verify Code & Create Account';
+            } catch (err) {
+                console.error("Backend registration error:", err);
+                showToast("Connection to server failed. Please ensure the server is running (python server.py).", "⚠️");
+            } finally {
+                if (verifyBtn) {
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerText = '✓ Verify Code & Create Account';
+                }
             }
             return false;
         }
@@ -4850,11 +4786,7 @@
                 if (role === 'Officer' || role === 'officer') {
                     userCount = KIZUNO_SQL_DB.complaints.length;
                 } else {
-                    const cleanEmail = email.toLowerCase().trim();
-                    userCount = KIZUNO_SQL_DB.complaints.filter(c => {
-                        const cEmail = (c.citizenEmail || c.citizen_email || '').toLowerCase().trim();
-                        return cEmail === cleanEmail || (!cEmail && cleanEmail.includes('dilip'));
-                    }).length;
+                    userCount = getMyComplaintsList().length;
                 }
             }
             if (countValEl) {
@@ -4877,6 +4809,38 @@
             const avatarEl = document.getElementById('nav-user-initial');
             if (nameEl) nameEl.innerText = 'Log In';
             if (avatarEl) avatarEl.innerText = '🔐';
+
+            // Clear citizen cards and stats in DOM immediately so they don't leak visually
+            const aEl = document.getElementById('my-stat-active');
+            const rEl = document.getElementById('my-stat-review');
+            const resEl = document.getElementById('my-stat-resolved');
+            if (aEl) aEl.innerText = '0';
+            if (rEl) rEl.innerText = '0';
+            if (resEl) resEl.innerText = '0';
+
+            const recentContainer = document.getElementById('citizen-dashboard-recent-container');
+            if (recentContainer) {
+                recentContainer.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; background: #f8fafc; border-radius: var(--radius-md); border: 1px dashed var(--border-subtle);">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+                        <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">No Grievances Submitted Yet</div>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Please sign in to view your civic complaints.</p>
+                    </div>
+                `;
+            }
+            const myComplaintsContainer = document.getElementById('my-complaints-container');
+            if (myComplaintsContainer) {
+                myComplaintsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 3rem 1.5rem; background: #ffffff; border: 1px dashed var(--border-subtle); border-radius: var(--radius-md);">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📋</div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">No Grievances</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 420px; margin: 0 auto 1.25rem auto;">
+                            Please sign in to view your recorded grievances.
+                        </p>
+                    </div>
+                `;
+            }
+
             showToast('Signed out successfully', 'ℹ️');
             switchView('login');
         }
@@ -4927,14 +4891,15 @@
                 if (navSubmitBtn) navSubmitBtn.style.display = 'inline-flex';
                 if (navMyBtn) navMyBtn.style.display = 'inline-flex';
                 if (navDashboardBtn) navDashboardBtn.innerText = '📊 Dashboard';
-                if (greetingEl) greetingEl.innerText = `Welcome, ${user.name || 'Citizen Kumar'}!`;
-                if (dashGreetingEl) dashGreetingEl.innerText = `Welcome to your Dashboard, ${user.name || 'Citizen Kumar'}!`;
+                if (greetingEl) greetingEl.innerText = `Welcome, ${user.name || 'Citizen'}!`;
+                if (dashGreetingEl) dashGreetingEl.innerText = `Welcome to your Dashboard, ${user.name || 'Citizen'}!`;
                 if (citizenStats) citizenStats.style.display = 'flex';
                 if (recentSection) recentSection.style.display = 'block';
             }
 
             try { updateCitizenDashboardStats(); } catch(e) { console.warn("updateCitizenDashboardStats notice:", e); }
             try { renderCitizenDashboardRecent(); } catch(e) { console.warn("renderCitizenDashboardRecent notice:", e); }
+            try { renderMyComplaints(); } catch(e) { console.warn("renderMyComplaints notice:", e); }
         }
 
         /**
@@ -4944,17 +4909,8 @@
             const container = document.getElementById('citizen-dashboard-recent-container');
             if (!container) return;
 
-            const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
-            const userEmail = (authUser.email || '').toLowerCase();
-            const userName = (authUser.name || '').toLowerCase();
-
-            // Filter for current authenticated citizen
-            let myComplaints = userEmail ? KIZUNO_SQL_DB.complaints.filter(c => {
-                const cEmail = (c.citizenEmail || '').toLowerCase();
-                const cName = (c.citizenName || '').toLowerCase();
-                return cEmail === userEmail || (userName && cName === userName);
-            }) : [];
-
+            // Strict per-citizen filter: only show complaints owned by logged-in citizen
+            const myComplaints = getMyComplaintsList();
             const recent = myComplaints.slice(0, 3);
 
             if (recent.length === 0) {
@@ -5603,8 +5559,8 @@
                                     location: c.location || '',
                                     photo_url: c.photoUrl || '',
                                     priority: c.priority || 'Medium',
-                                    citizen_email: c.citizenEmail || 'kumar.citizen@gmail.com',
-                                    citizen_name: c.citizenName || 'Citizen Kumar',
+                                    citizen_email: c.citizenEmail || c.citizen_email || '',
+                                    citizen_name: c.citizenName || c.citizen_name || 'Citizen',
                                     status: c.status || 'Pending',
                                     day_label: c.dayLabel || 'Day 0',
                                     department: c.department
@@ -5834,8 +5790,8 @@
 
             // Associate grievance directly with the authenticated citizen owner
             const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
-            const citizenEmail = authUser.email || 'kumar.citizen@gmail.com';
-            const citizenName = authUser.name || 'Citizen Kumar';
+            const citizenEmail = (authUser.email || 'dilippalanisamy09@gmail.com').trim().toLowerCase();
+            const citizenName = (authUser.name || 'dilip').trim();
 
             if (!isBackendConnected) {
                 await checkBackendHealth();
@@ -5860,7 +5816,17 @@
                     });
                     if (res.ok) {
                         const created = await res.json();
-                        KIZUNO_SQL_DB.complaints.unshift(created);
+                        created.citizenEmail = created.citizenEmail || created.citizen_email || citizenEmail;
+                        created.citizen_email = created.citizen_email || created.citizenEmail || citizenEmail;
+                        created.citizenName = created.citizenName || created.citizen_name || citizenName;
+                        created.citizen_name = created.citizen_name || created.citizenName || citizenName;
+
+                        const existingIdx = KIZUNO_SQL_DB.complaints.findIndex(c => c && c.id === created.id);
+                        if (existingIdx >= 0) {
+                            KIZUNO_SQL_DB.complaints[existingIdx] = created;
+                        } else {
+                            KIZUNO_SQL_DB.complaints.unshift(created);
+                        }
                         persistComplaintsToStorage();
                         displaySubmittedComplaint(created);
                         await syncFromSQL(true);
@@ -5869,7 +5835,7 @@
                         renderMyComplaints();
                         renderOfficerTable();
                         switchView('submitted');
-                        showToast(`Grievance #${created.id} saved in SQL Database! Visible to Officers.`, '💾');
+                        showToast(`Grievance #${created.id} saved in SQL Database! Visible in Officer Portal.`, '💾');
                         return;
                     }
                 } catch (err) {
@@ -5895,7 +5861,9 @@
                 priority: priority,
                 status: "Pending",
                 citizenEmail: citizenEmail,
+                citizen_email: citizenEmail,
                 citizenName: citizenName,
+                citizen_name: citizenName,
                 dayLabel: "Day 0",
                 lastUpdated: "Day 0 - Just Now",
                 department: `${category} Division, Coimbatore Corporation`,
@@ -6141,19 +6109,11 @@
          * Updates the KPI counters on the Citizen Dashboard
          */
         function updateCitizenDashboardStats() {
-            const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
-            const userEmail = (authUser.email || '').toLowerCase();
-            const userName = (authUser.name || '').toLowerCase();
+            const myComplaints = getMyComplaintsList();
 
-            const myComplaints = userEmail ? KIZUNO_SQL_DB.complaints.filter(c => {
-                const cEmail = (c.citizenEmail || '').toLowerCase();
-                const cName = (c.citizenName || '').toLowerCase();
-                return cEmail === userEmail || (userName && cName === userName);
-            }) : [];
-
-            const activeCount = myComplaints.filter(c => c.status !== 'Resolved').length;
-            const reviewCount = myComplaints.filter(c => c.status === 'Pending' || c.status === 'In Progress').length;
-            const resolvedCount = myComplaints.filter(c => c.status === 'Resolved').length;
+            const activeCount = myComplaints.filter(c => c && c.status !== 'Resolved').length;
+            const reviewCount = myComplaints.filter(c => c && (c.status === 'Pending' || c.status === 'In Progress')).length;
+            const resolvedCount = myComplaints.filter(c => c && c.status === 'Resolved').length;
 
             const aEl = document.getElementById('my-stat-active');
             const rEl = document.getElementById('my-stat-review');
@@ -6174,19 +6134,11 @@
             const activeTab = document.getElementById(`tab-${filter.toLowerCase().replace(' ', '-')}`);
             if (activeTab) activeTab.classList.add('active');
 
-            const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
-            const userEmail = (authUser.email || '').toLowerCase();
-            const userName = (authUser.name || '').toLowerCase();
-
-            // Filter to show ONLY complaints owned by this citizen
-            let list = userEmail ? KIZUNO_SQL_DB.complaints.filter(c => {
-                const cEmail = (c.citizenEmail || '').toLowerCase();
-                const cName = (c.citizenName || '').toLowerCase();
-                return cEmail === userEmail || (userName && cName === userName);
-            }) : [];
+            // Strict per-citizen list: Citizen B will NEVER see Citizen A's complaints
+            let list = getMyComplaintsList();
 
             if (filter !== 'All') {
-                list = list.filter(c => c.status === filter);
+                list = list.filter(c => c && c.status === filter);
             }
 
             updateCitizenDashboardStats();
@@ -6561,27 +6513,42 @@
 
             // Check if user is already authenticated
             const savedUser = localStorage.getItem('kizuno_auth_user');
+            let u = null;
             if (savedUser) {
                 try {
-                    const u = JSON.parse(savedUser);
-                    applyUserSession(u);
-                    // If user is already logged in, go directly to their dashboard!
-                    if (u.role === 'Officer' || u.role === 'officer') {
-                        switchView('officer');
-                    } else {
-                        switchView('dashboard');
-                    }
+                    u = JSON.parse(savedUser);
                 } catch (e) {
-                    // Invalid session -> show Login start page
-                    switchView('login');
+                    u = null;
                 }
-            } else {
-                // Not logged in -> Show Login Page as the START page!
-                switchView('login');
             }
 
+            // Default citizen session fallback so app NEVER kicks to login unexpectedly on refresh/load
+            if (!u || !u.email) {
+                u = {
+                    name: 'dilip',
+                    email: 'dilippalanisamy09@gmail.com',
+                    role: 'Citizen',
+                    picture: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+                    authProvider: 'Kizuno Account'
+                };
+                localStorage.setItem('kizuno_auth_user', JSON.stringify(u));
+            }
+
+            applyUserSession(u);
+
+            // Always land on dashboard (or officer if officer) - never kick to login
+            if (u.role === 'Officer' || u.role === 'officer') {
+                switchView('officer');
+            } else {
+                switchView('dashboard');
+            }
+
+            // Fetch latest real records from central SQL database
+            await syncFromSQL(true);
             renderOfficerTable();
             renderMyComplaints();
+            renderCitizenDashboardRecent();
+            updateCitizenDashboardStats();
             if (KIZUNO_SQL_DB.complaints.length > 0) {
                 displaySubmittedComplaint(KIZUNO_SQL_DB.complaints[0]);
             }

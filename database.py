@@ -78,8 +78,8 @@ class Complaint(Base):
     last_updated = Column(String(64), nullable=False)
     department = Column(String(128), default="Coimbatore Municipal Corporation")
     assigned_officer = Column(String(128), nullable=True)
-    citizen_email = Column(String(128), nullable=True, default="kumar.citizen@gmail.com")
-    citizen_name = Column(String(128), nullable=True, default="Citizen Kumar")
+    citizen_email = Column(String(128), nullable=True, default="")
+    citizen_name = Column(String(128), nullable=True, default="Citizen")
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relational link to day-wise timeline audit events
@@ -106,8 +106,8 @@ class Complaint(Base):
             "lastUpdated": self.last_updated,
             "department": self.department,
             "assignedOfficer": self.assigned_officer,
-            "citizenEmail": self.citizen_email or "kumar.citizen@gmail.com",
-            "citizenName": self.citizen_name or "Citizen Kumar",
+            "citizenEmail": self.citizen_email or "",
+            "citizenName": self.citizen_name or "Citizen",
             "createdAt": self.created_at.isoformat() if self.created_at else None,
             "timeline": [event.to_dict() for event in self.timeline_events]
         }
