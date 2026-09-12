@@ -812,7 +812,7 @@
     <!-- TOP EXECUTIVE NAVIGATION BAR -->
     <nav class="admin-nav">
         <div class="nav-inner">
-            <a class="brand-group" href="/admin">
+            <a class="brand-group" href="admin.html">
                 <div class="brand-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
@@ -840,7 +840,7 @@
                     </button>
 
                     <!-- LINK TO OFFICER DASHBOARD -->
-                    <a href="/officer" class="btn btn-secondary" title="Switch to Officer Console">
+                    <a href="officer.html" class="btn btn-secondary" title="Switch to Officer Console">
                         👨‍💼 Officer Portal
                     </a>
 
@@ -851,7 +851,7 @@
                 </div>
 
                 <!-- LINK TO CITIZEN PORTAL -->
-                <a href="/" class="btn btn-secondary" title="Switch to Citizen Portal">
+                <a href="index.html" class="btn btn-secondary" title="Switch to Citizen Portal">
                     🏛️ Citizen Portal
                 </a>
             </div>
@@ -1074,7 +1074,7 @@
 
             <form id="adminPinForm" onsubmit="handlePinSubmit(event)">
                 <div class="pin-input-box">
-                    <input type="password" id="adminPinInput" class="pin-input" maxlength="8" placeholder="••••" autocomplete="current-password" autofocus required>
+                    <input type="password" id="adminPinInput" class="pin-input" maxlength="8" placeholder="••••" autocomplete="current-password" autofocus required value="1234">
                 </div>
                 <div id="pinErrorMsg" style="color: #dc2626; font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem; display: none;"></div>
                 <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;">
@@ -1083,7 +1083,7 @@
             </form>
 
             <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 0.65rem;">
-                <a href="/" class="btn btn-secondary" style="width: 100%; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.825rem;">
+                <a href="index.html" class="btn btn-secondary" style="width: 100%; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.825rem;">
                     ← Return to Citizen Portal
                 </a>
                 <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">
@@ -1225,7 +1225,10 @@
                 document.getElementById("adminAuthModal").style.display = "flex";
                 renderAuthLockScreen();
                 const pinInput = document.getElementById("adminPinInput");
-                if (pinInput) setTimeout(() => pinInput.focus(), 80);
+                if (pinInput) {
+                    pinInput.value = "1234";
+                    setTimeout(() => pinInput.focus(), 80);
+                }
                 return false;
             }
             const mainView = document.getElementById("adminMainView");
