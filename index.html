@@ -1955,6 +1955,11 @@
                 padding-bottom: calc(84px + env(safe-area-inset-bottom, 15px)) !important;
             }
 
+            body.on-login-view,
+            body:has(#view-login.active) {
+                padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+            }
+
             .mobile-bottom-nav {
                 display: flex !important;
                 position: fixed !important;
@@ -1971,6 +1976,20 @@
                 z-index: 9999 !important;
                 justify-content: space-around !important;
                 align-items: center !important;
+            }
+
+            /* Strictly hide footer/mobile bottom dock on login page and modal */
+            body.on-login-view .mobile-bottom-nav,
+            body.on-login-view #mobile-bottom-dock,
+            body.modal-open .mobile-bottom-nav,
+            body.modal-open #mobile-bottom-dock,
+            body:has(#view-login.active) .mobile-bottom-nav,
+            body:has(#view-login.active) #mobile-bottom-dock,
+            body:has(#login-modal[style*="display: flex"]) .mobile-bottom-nav,
+            #view-login.active ~ .mobile-bottom-nav,
+            #view-login.active ~ #mobile-bottom-dock,
+            #view-login[style*="display: flex"] ~ #mobile-bottom-dock {
+                display: none !important;
             }
 
             [data-theme="dark"] .mobile-bottom-nav,
@@ -2855,7 +2874,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 
-<body>
+<body class="on-login-view">
 
     <!-- TOP APPLICATION NAVBAR -->
     <nav class="app-nav" id="main-app-nav">
@@ -4754,10 +4773,18 @@
                     (viewId === 'home' ? document.getElementById('mob-nav-dashboard') : null);
                 if (activeMobBtn) activeMobBtn.classList.add('active');
 
-                // Bottom dock visibility: hide on login view
+                // Bottom dock & body padding visibility: strictly hide on login view
                 const mobDock = document.getElementById('mobile-bottom-dock');
-                if (mobDock) {
-                    mobDock.style.display = (viewId === 'login') ? 'none' : 'flex';
+                if (viewId === 'login') {
+                    document.body.classList.add('on-login-view');
+                    if (mobDock) {
+                        mobDock.style.setProperty('display', 'none', 'important');
+                    }
+                } else {
+                    document.body.classList.remove('on-login-view');
+                    if (mobDock) {
+                        mobDock.style.setProperty('display', 'flex', 'important');
+                    }
                 }
 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -7050,11 +7077,19 @@
 
         // Login Modal Logic
         function openLoginModal() {
+            document.body.classList.add('modal-open');
+            const mobDock = document.getElementById('mobile-bottom-dock');
+            if (mobDock) mobDock.style.setProperty('display', 'none', 'important');
             document.getElementById('login-modal').style.display = 'flex';
         }
 
         function closeLoginModal(e) {
             if (!e || e.target === document.getElementById('login-modal')) {
+                document.body.classList.remove('modal-open');
+                const mobDock = document.getElementById('mobile-bottom-dock');
+                if (mobDock && currentView !== 'login') {
+                    mobDock.style.setProperty('display', 'flex', 'important');
+                }
                 document.getElementById('login-modal').style.display = 'none';
             }
         }
