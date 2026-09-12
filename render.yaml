@@ -10,10 +10,13 @@ services:
       - key: DATABASE_URL
         sync: false
       - key: SMTP_EMAIL
-        sync: false
+        value: kizuno.ai.in@gmail.com
       - key: SMTP_APP_PASSWORD
-        sync: false
+        value: vbgpxofsjvkkjejw
       - key: SMTP_SERVER
         value: smtp.gmail.com
       - key: SMTP_PORT
         value: "465"
+      - key: ADMIN_PIN
+        value: "1234"
+

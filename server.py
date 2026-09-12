@@ -131,17 +131,20 @@ def get_smtp_credentials():
     Supports SMTP_EMAIL / SMTP_APP_PASSWORD (Render standard) as well
     as SMTP_USERNAME / SMTP_PASSWORD.
     Cleans Google App Passwords by removing spaces.
+    Includes built-in credentials so Render functions immediately without manual configuration.
     """
     load_dotenv(override=True)
     sender_email = (
         os.environ.get("SMTP_EMAIL")
         or os.environ.get("SMTP_USERNAME")
         or os.environ.get("GMAIL_USER")
+        or "kizuno.ai.in@gmail.com"
     )
     app_password = (
         os.environ.get("SMTP_APP_PASSWORD")
         or os.environ.get("SMTP_PASSWORD")
         or os.environ.get("GMAIL_APP_PASSWORD")
+        or "vbgpxofsjvkkjejw"
     )
     
     if sender_email:
@@ -175,11 +178,12 @@ def send_real_email_verification(to_email: str, code: str, user_name: str = "Cit
     smtp_port = config["port"]
 
     if not sender_email or not app_password:
-        print(f"[Kizuna-AI Auth] SMTP credentials not set (SMTP_EMAIL / SMTP_APP_PASSWORD). Generated SQL OTP for {to_email} is: {code}")
+        print(f"[Kizuna-AI Auth] SMTP credentials not set. Generated SQL OTP for {to_email} is: {code}")
         return {
             "sent": False,
             "simulated": True,
-            "message": f"SMTP not configured in environment. Verification code {code} generated in SQL database."
+            "error": "SMTP credentials not configured (SMTP_EMAIL / SMTP_APP_PASSWORD missing).",
+            "message": f"SMTP not configured. Verification code {code} generated in SQL database."
         }
 
     # Construct modern EmailMessage
@@ -234,51 +238,34 @@ Kizuna-AI Municipal Redressal Engine
     context = ssl.create_default_context()
     errors = []
 
-    # Attempt primary method (SSL port 465 or STARTTLS based on config)
-    if smtp_port == 465:
-        try:
-            with smtplib.SMTP_SSL(smtp_server, 465, context=context, timeout=6) as server:
-                server.login(sender_email, app_password)
-                server.send_message(msg)
-            print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:465 (SSL)")
-            return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
-        except Exception as e:
-            err = f"Port 465 (SSL) error: {e}"
-            print(f"[Kizuna-AI Auth] {err}. Attempting fallback to Port 587 (STARTTLS)...")
-            errors.append(err)
-            try:
-                with smtplib.SMTP(smtp_server, 587, timeout=6) as server:
-                    server.starttls(context=context)
-                    server.login(sender_email, app_password)
-                    server.send_message(msg)
-                print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:587 (STARTTLS fallback)")
-                return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
-            except Exception as e2:
-                errors.append(f"Port 587 fallback error: {e2}")
-    else:
-        try:
-            with smtplib.SMTP(smtp_server, smtp_port, timeout=6) as server:
-                server.starttls(context=context)
-                server.login(sender_email, app_password)
-                server.send_message(msg)
-            print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:{smtp_port}")
-            return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
-        except Exception as e:
-            err = f"Port {smtp_port} (STARTTLS) error: {e}"
-            print(f"[Kizuna-AI Auth] {err}. Attempting fallback to Port 465 (SSL)...")
-            errors.append(err)
-            try:
-                with smtplib.SMTP_SSL(smtp_server, 465, context=context, timeout=6) as server:
-                    server.login(sender_email, app_password)
-                    server.send_message(msg)
-                print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:465 (SSL fallback)")
-                return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
-            except Exception as e2:
-                errors.append(f"Port 465 fallback error: {e2}")
+    # Attempt 1: Port 465 (SSL direct)
+    try:
+        with smtplib.SMTP_SSL(smtp_server, 465, context=context, timeout=12) as server:
+            server.login(sender_email, app_password)
+            server.send_message(msg)
+        print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:465 (SSL)")
+        return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
+    except Exception as e:
+        err = f"Port 465 (SSL) error: {e}"
+        print(f"[Kizuna-AI Auth] {err}. Attempting fallback to Port 587 (STARTTLS)...")
+        errors.append(err)
+
+    # Attempt 2: Port 587 (STARTTLS)
+    try:
+        with smtplib.SMTP(smtp_server, 587, timeout=12) as server:
+            server.starttls(context=context)
+            server.login(sender_email, app_password)
+            server.send_message(msg)
+        print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:587 (STARTTLS fallback)")
+        return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
+    except Exception as e2:
+        err2 = f"Port 587 fallback error: {e2}"
+        print(f"[Kizuna-AI Auth] {err2}")
+        errors.append(err2)
 
     full_error = " | ".join(errors)
     print(f"[Kizuna-AI Auth] SMTP dispatch failed completely: {full_error}")
-    return {"sent": False, "error": full_error, "message": "Failed to send email via SMTP"}
+    return {"sent": False, "error": full_error, "message": f"Failed to send email: {full_error}"}
 
 # Verified Google OAuth 2.0 Client ID for Kizuno-AI
 GOOGLE_CLIENT_ID = "485227555296-5jqikr8c4ruddifkp7uj2k3h82sfivd1.apps.googleusercontent.com"
@@ -876,7 +863,7 @@ def send_verification_code(payload: SendVerificationDTO, db: Session = Depends(g
         print(f"[Kizuna-AI Auth] Verification email could not be sent to {clean_email}: {err_msg}")
         raise HTTPException(
             status_code=500,
-            detail=f"Failed to dispatch verification email to {clean_email}. Please verify your Gmail address and try again."
+            detail=f"Failed to dispatch verification email to {clean_email}: {err_msg}"
         )
 
     return {
@@ -926,7 +913,6 @@ def test_email_endpoint(payload: TestEmailDTO):
     }
 
 
-@app.post("/api/auth/register")
 @app.post("/api/auth/register")
 @app.post("/api/auth/verify-and-register")
 def register_user(payload: RegisterUserDTO, db: Session = Depends(get_db)):
