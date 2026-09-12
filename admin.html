@@ -1166,15 +1166,7 @@
             }
 
             const isDilip = Boolean(
-                user && (
-                    (user.role && user.role.toLowerCase() === 'admin') ||
-                    (user.email && (
-                        user.email.toLowerCase().trim() === 'dilippalanisamy812@gmail.com' ||
-                        user.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com' ||
-                        user.email.toLowerCase().includes('dilip')
-                    )) ||
-                    (user.name && user.name.toLowerCase().includes('dilip'))
-                )
+                user && user.email && user.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com'
             );
 
             const badge = document.getElementById("authUserBadge");

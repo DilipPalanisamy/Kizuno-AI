@@ -1330,9 +1330,7 @@
                 try {
                     const u = JSON.parse(authRaw);
                     const email = (u.email || '').toLowerCase().trim();
-                    const name = (u.name || '').toLowerCase().trim();
-                    const role = (u.role || '').toLowerCase().trim();
-                    if (role === 'admin' || email === 'dilippalanisamy812@gmail.com' || email === 'dilippalanisamy09@gmail.com' || email.includes('dilip') || name.includes('dilip')) {
+                    if (email === 'dilippalanisamy09@gmail.com') {
                         isDilip = true;
                     }
                 } catch(e) {}

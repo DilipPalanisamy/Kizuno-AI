@@ -5038,17 +5038,9 @@
             const citizenStats = document.getElementById('citizen-live-stats');
             const recentSection = document.getElementById('citizen-dashboard-recent-section');
 
-            // Admin Portal Visibility: STRICTLY VISIBLE ONLY TO DILIP (Administrator)
+            // Admin Portal Visibility: STRICTLY VISIBLE ONLY TO dilippalanisamy09@gmail.com
             const isDilipAdmin = Boolean(
-                user && (
-                    (user.role && user.role.toLowerCase() === 'admin') ||
-                    (user.email && (
-                        user.email.toLowerCase().trim() === 'dilippalanisamy812@gmail.com' ||
-                        user.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com' ||
-                        user.email.toLowerCase().includes('dilip')
-                    )) ||
-                    (user.name && user.name.toLowerCase().includes('dilip'))
-                )
+                user && user.email && user.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com'
             );
             const navAdminBtn = document.getElementById('nav-admin');
             if (navAdminBtn) {
