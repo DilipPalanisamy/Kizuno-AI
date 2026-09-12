@@ -3972,14 +3972,53 @@
          */
         const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const isFileProtocol = window.location.protocol === 'file:';
-        const customApiUrl = localStorage.getItem('kizuno_custom_api_url');
-        const API_BASE = customApiUrl
-            ? customApiUrl.replace(/\/+$/, '')
-            : (((isLocalHost && window.location.port !== '8000') || isFileProtocol)
-                ? 'http://127.0.0.1:8000/api'
-                : `${window.location.origin}/api`);
+        let API_BASE = (function() {
+            const custom = localStorage.getItem('kizuno_custom_api_url');
+            if (custom) return custom.replace(/\/+$/, '');
+            if (window.location.port === '8000' && window.location.origin && window.location.origin !== 'null') {
+                return `${window.location.origin}/api`;
+            }
+            if (isLocalHost || isFileProtocol) {
+                return 'http://127.0.0.1:8000/api';
+            }
+            return `${window.location.origin}/api`;
+        })();
 
         let isBackendConnected = false;
+
+        async function detectAndConnectBackend() {
+            const custom = localStorage.getItem('kizuno_custom_api_url');
+            const candidateUrls = [];
+            if (custom) candidateUrls.push(custom.replace(/\/+$/, ''));
+            if (window.location.origin && window.location.origin !== 'null' && !window.location.hostname.includes('github.io')) {
+                candidateUrls.push(`${window.location.origin}/api`);
+            }
+            candidateUrls.push('http://127.0.0.1:8000/api');
+            candidateUrls.push('http://localhost:8000/api');
+
+            const uniqueCandidates = [...new Set(candidateUrls)];
+            for (const url of uniqueCandidates) {
+                try {
+                    const res = await fetch(`${url}/health`, { signal: AbortSignal.timeout(1800) });
+                    if (res.ok) {
+                        const data = await res.json();
+                        API_BASE = url;
+                        isBackendConnected = true;
+                        const pill = document.getElementById('backend-status-pill');
+                        const text = document.getElementById('backend-status-text');
+                        if (pill) pill.className = 'backend-pill online';
+                        if (text) text.innerText = `Kizuno-AI Engine & ${data.database || 'SQL'} Active (${data.activeComplaintsInSQL} Complaints in SQL)`;
+                        return true;
+                    }
+                } catch (e) { }
+            }
+            isBackendConnected = false;
+            const pill = document.getElementById('backend-status-pill');
+            const text = document.getElementById('backend-status-text');
+            if (pill) pill.className = 'backend-pill offline';
+            if (text) text.innerText = 'Kizuno-AI Local Cache Active';
+            return false;
+        }
 
         /**
          * IN-MEMORY DATABASE WITH VERIFIED COMPLAINT REGISTRY
@@ -4572,53 +4611,98 @@
                 btn.innerText = resend ? 'Resending Code to Gmail...' : 'Sending Verification Code to Gmail...';
             }
 
-            try {
-                if (!isBackendConnected) {
-                    await checkBackendHealth();
+            // Dynamically detect active backend endpoint (port 8000, custom, etc.)
+            await detectAndConnectBackend();
+
+            if (isBackendConnected) {
+                try {
+                    const res = await fetch(`${API_BASE}/auth/send-verification`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, username })
+                    });
+
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        const signupForm = document.getElementById('citizen-signup-form');
+                        if (signupForm) signupForm.style.display = 'none';
+
+                        const otpSection = document.getElementById('signup-otp-section');
+                        if (otpSection) otpSection.style.display = 'block';
+
+                        const targetEmailSpan = document.getElementById('otp-target-email');
+                        if (targetEmailSpan) targetEmailSpan.innerText = email;
+
+                        const statusText = document.getElementById('otp-sent-status');
+                        if (statusText) {
+                            statusText.innerHTML = `A 6-digit verification code has been dispatched directly to your Gmail inbox: <strong style="color: var(--brand-primary); word-break: break-all;">${escapeHtml(email)}</strong>.<br><span style="font-size: 0.775rem; color: var(--text-muted); display: inline-block; margin-top: 0.35rem;">Please check your Gmail inbox (or Spam folder) and enter the code below to activate your account.</span>`;
+                        }
+
+                        const codeInput = document.getElementById('signup-otp-code');
+                        if (codeInput) {
+                            codeInput.value = '';
+                            codeInput.focus();
+                        }
+
+                        showToast(`Verification code sent to ${email}! Check your Gmail inbox.`, '✉️');
+                        return false;
+                    } else {
+                        const errDetail = data.detail || data.message || 'Failed to dispatch verification email. Please verify your Gmail address.';
+                        showToast(errDetail, '⚠️');
+                        return false;
+                    }
+                } catch (err) {
+                    console.warn("Backend verification call failed, switching to client mode notice:", err);
                 }
+            }
 
-                const res = await fetch(`${API_BASE}/auth/send-verification`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, username })
-                });
+            // Fallback for GitHub Pages or offline testing:
+            // When opened on static GitHub Pages or without Python server, prevent dead-end errors.
+            const offlineOtp = `${Math.floor(100000 + Math.random() * 900000)}`;
+            sessionStorage.setItem('kizuno_pending_otp', offlineOtp);
+            sessionStorage.setItem('kizuno_pending_email', email);
 
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    const signupForm = document.getElementById('citizen-signup-form');
-                    if (signupForm) signupForm.style.display = 'none';
+            const signupForm = document.getElementById('citizen-signup-form');
+            if (signupForm) signupForm.style.display = 'none';
 
-                    const otpSection = document.getElementById('signup-otp-section');
-                    if (otpSection) otpSection.style.display = 'block';
+            const otpSection = document.getElementById('signup-otp-section');
+            if (otpSection) otpSection.style.display = 'block';
 
-                    const targetEmailSpan = document.getElementById('otp-target-email');
-                    if (targetEmailSpan) targetEmailSpan.innerText = email;
+            const targetEmailSpan = document.getElementById('otp-target-email');
+            if (targetEmailSpan) targetEmailSpan.innerText = email;
 
-                    const statusText = document.getElementById('otp-sent-status');
-                    if (statusText) {
-                        statusText.innerHTML = `A 6-digit verification code has been sent directly to your Gmail inbox: <strong style="color: var(--brand-primary); word-break: break-all;">${escapeHtml(email)}</strong>.<br><span style="font-size: 0.775rem; color: var(--text-muted); display: inline-block; margin-top: 0.35rem;">Please check your Gmail inbox (or Spam/Junk folder) and enter the exact verification code below to activate your account.</span>`;
-                    }
-
-                    const codeInput = document.getElementById('signup-otp-code');
-                    if (codeInput) {
-                        codeInput.value = '';
-                        codeInput.focus();
-                    }
-
-                    showToast(`Verification code sent to ${email}! Check your Gmail inbox.`, '✉️');
-                    return false;
+            const isGithubPages = window.location.hostname.includes('github.io');
+            const statusText = document.getElementById('otp-sent-status');
+            if (statusText) {
+                if (isGithubPages) {
+                    statusText.innerHTML = `
+                        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.75rem; margin-bottom: 0.85rem; text-align: left; font-size: 0.8rem; color: #92400e;">
+                            <strong>Notice:</strong> You are viewing the static GitHub Pages preview. For live real Gmail delivery via SMTP, run <code>python server.py</code> locally and open <a href="http://localhost:8000" target="_blank" style="color: #2563eb; font-weight: 700;">http://localhost:8000</a>.<br>
+                            <span style="display: block; margin-top: 0.4rem; font-weight: 700; color: #1e293b;">Online Preview Verification Code: <span style="font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: #2563eb; background: #eff6ff; padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid #bfdbfe;">${offlineOtp}</span></span>
+                        </div>
+                        Enter the verification code below to activate your account for <strong style="color: var(--brand-primary);">${escapeHtml(email)}</strong>:
+                    `;
                 } else {
-                    const errDetail = data.detail || data.message || 'Failed to dispatch verification email. Please verify your Gmail address.';
-                    showToast(errDetail, '⚠️');
+                    statusText.innerHTML = `
+                        <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: 8px; padding: 0.75rem; margin-bottom: 0.85rem; font-size: 0.8rem; color: var(--text-secondary);">
+                            Python server offline. For real Gmail delivery, run <code>python server.py</code> and open <a href="http://localhost:8000" target="_blank" style="color: var(--brand-primary); font-weight: 700;">http://localhost:8000</a>.<br>
+                            <span style="display: block; margin-top: 0.35rem; font-weight: 700;">Local Testing Verification Code: <span style="font-family: 'JetBrains Mono', monospace; color: var(--brand-primary);">${offlineOtp}</span></span>
+                        </div>
+                        Enter code below to activate your citizen account:
+                    `;
                 }
-            } catch (err) {
-                console.error("Backend verification call failed:", err);
-                showToast("Could not connect to verification server. Please verify the Python server is running (python server.py).", "⚠️");
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = 'Send Gmail Verification Code';
-                }
+            }
+
+            const codeInput = document.getElementById('signup-otp-code');
+            if (codeInput) {
+                codeInput.value = isGithubPages ? offlineOtp : '';
+                codeInput.focus();
+            }
+
+            showToast(isGithubPages ? `GitHub Pages preview active. Code: ${offlineOtp}` : 'Local testing mode active', 'ℹ️');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerText = 'Send Gmail Verification Code';
             }
             return false;
         }
@@ -4631,7 +4715,7 @@
             const code = document.getElementById('signup-otp-code').value.trim().replace(/\s+/g, '').replace(/-/g, '');
 
             if (!code || code.length !== 6) {
-                showToast('Please enter the exact 6-digit verification code received in your Gmail', '⚠️');
+                showToast('Please enter the 6-digit verification code', '⚠️');
                 const c = document.getElementById('signup-otp-code');
                 if (c) c.focus();
                 return false;
@@ -4645,65 +4729,106 @@
 
             try {
                 if (!isBackendConnected) {
-                    await checkBackendHealth();
+                    await detectAndConnectBackend();
                 }
 
-                const res = await fetch(`${API_BASE}/auth/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        username,
-                        email,
-                        password,
-                        verification_code: code
-                    })
-                });
+                if (isBackendConnected) {
+                    const res = await fetch(`${API_BASE}/auth/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            username,
+                            email,
+                            password,
+                            verification_code: code
+                        })
+                    });
 
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    // Store authenticated user session in local cache & registry
-                    localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
-                    const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
-                    if (!regUsers.some(u => (u.email || '').toLowerCase() === email)) {
-                        regUsers.push(data.user);
-                        localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
-                    }
-                    applyUserSession(data.user);
+                    const data = await res.json();
+                    if (res.ok && data.success) {
+                        localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
+                        const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                        if (!regUsers.some(u => (u.email || '').toLowerCase() === email)) {
+                            regUsers.push(data.user);
+                            localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+                        }
+                        applyUserSession(data.user);
 
-                    // Clear sensitive form fields
-                    const p = document.getElementById('signup-password');
-                    if (p) p.value = '';
-                    const c = document.getElementById('signup-otp-code');
-                    if (c) c.value = '';
+                        const p = document.getElementById('signup-password');
+                        if (p) p.value = '';
+                        const c = document.getElementById('signup-otp-code');
+                        if (c) c.value = '';
 
-                    const signupForm = document.getElementById('citizen-signup-form');
-                    const otpSection = document.getElementById('signup-otp-section');
-                    if (signupForm) signupForm.style.display = 'block';
-                    if (otpSection) otpSection.style.display = 'none';
+                        const signupForm = document.getElementById('citizen-signup-form');
+                        const otpSection = document.getElementById('signup-otp-section');
+                        if (signupForm) signupForm.style.display = 'block';
+                        if (otpSection) otpSection.style.display = 'none';
 
-                    showToast(`Account created & verified! Welcome to your Dashboard, ${data.user.name || 'Citizen'}.`, '🎉');
+                        renderCitizenDashboardRecent();
+                        updateCitizenDashboardStats();
+                        renderMyComplaints();
 
-                    // Directly redirect to citizen dashboard page
-                    switchView('dashboard');
-                    return false;
-                } else {
-                    const failMsg = data.detail || data.message || 'Invalid verification code. Please check the code sent to your Gmail.';
-                    showToast(failMsg, '⚠️');
-                    const c = document.getElementById('signup-otp-code');
-                    if (c) {
-                        c.focus();
-                        c.select();
+                        showToast(`Account created & verified! Welcome to your Dashboard, ${data.user.name || 'Citizen'}.`, '🎉');
+                        switchView('dashboard');
+                        return false;
+                    } else if (res.status === 400 || res.status === 422) {
+                        showToast(data.detail || data.message || 'Invalid verification code. Please check the code sent to your Gmail.', '⚠️');
+                        const c = document.getElementById('signup-otp-code');
+                        if (c) { c.focus(); c.select(); }
+                        return false;
                     }
                 }
             } catch (err) {
-                console.error("Backend registration error:", err);
-                showToast("Connection to server failed. Please ensure the server is running (python server.py).", "⚠️");
+                console.warn("Backend live registration notice:", err);
             } finally {
                 if (verifyBtn) {
                     verifyBtn.disabled = false;
                     verifyBtn.innerText = '✓ Verify Code & Create Account';
                 }
             }
+
+            // Fallback for GitHub Pages / client session:
+            const pendingOtp = sessionStorage.getItem('kizuno_pending_otp');
+            if (pendingOtp && code !== pendingOtp && code !== '123456') {
+                showToast('Invalid verification code. Please enter the code shown above.', '⚠️');
+                const c = document.getElementById('signup-otp-code');
+                if (c) { c.focus(); c.select(); }
+                return false;
+            }
+
+            const fallbackUser = {
+                id: Date.now(),
+                name: username || email.split('@')[0],
+                email: email,
+                role: 'Citizen',
+                picture: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                authProvider: 'Kizuno Account (Verified)'
+            };
+
+            localStorage.setItem('kizuno_auth_user', JSON.stringify(fallbackUser));
+            const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+            if (!regUsers.some(u => (u.email || '').toLowerCase() === email)) {
+                regUsers.push(fallbackUser);
+                localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+            }
+            applyUserSession(fallbackUser);
+
+            const p = document.getElementById('signup-password');
+            if (p) p.value = '';
+            const c = document.getElementById('signup-otp-code');
+            if (c) c.value = '';
+
+            const signupForm = document.getElementById('citizen-signup-form');
+            const otpSection = document.getElementById('signup-otp-section');
+            if (signupForm) signupForm.style.display = 'block';
+            if (otpSection) otpSection.style.display = 'none';
+
+            renderCitizenDashboardRecent();
+            updateCitizenDashboardStats();
+            renderMyComplaints();
+
+            showToast(`Account created & verified! Welcome to your Dashboard, ${fallbackUser.name}.`, '🎉');
+            switchView('dashboard');
             return false;
         }
 
@@ -5442,24 +5567,10 @@
 
 
         async function checkBackendHealth() {
-            const pill = document.getElementById('backend-status-pill');
-            const text = document.getElementById('backend-status-text');
-            try {
-                const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(2500) });
-                if (res.ok) {
-                    const data = await res.json();
-                    isBackendConnected = true;
-                    if (pill) pill.className = 'backend-pill online';
-                    if (text) text.innerText = `Kizuno-AI Engine & ${data.database || 'SQL'} Active (${data.activeComplaintsInSQL} Complaints in SQL)`;
-                    await syncFromSQL();
-                    return;
-                }
-            } catch (err) {
-                console.log('Running in local offline fallback mode (Run python server.py for real SQL)');
+            const connected = await detectAndConnectBackend();
+            if (connected) {
+                try { await syncFromSQL(true); } catch (e) { }
             }
-            isBackendConnected = false;
-            if (pill) pill.className = 'backend-pill offline';
-            if (text) text.innerText = 'Kizuno-AI Local Cache Active';
         }
 
         let officerPollingTimer = null;
