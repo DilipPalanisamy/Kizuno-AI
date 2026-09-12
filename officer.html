@@ -1312,9 +1312,32 @@
         /**
          * Kizuno-AI Officer Administration Engine
          */
-        const API_BASE = window.location.origin.includes(':8000') || window.location.origin.includes('localhost')
-            ? `${window.location.origin}/api`
-            : '/api';
+        let API_BASE = 'https://kizuno-ai.onrender.com';
+
+        async function detectOfficerApiBase() {
+            const candidateUrls = [];
+            // 1. Same origin if running via web server
+            if (window.location.origin && window.location.origin !== 'null' && !window.location.hostname.includes('github.io')) {
+                candidateUrls.push(window.location.origin.replace(/\/+$/, ''));
+            }
+            // 2. Render production backend
+            candidateUrls.push('https://kizuno-ai.onrender.com');
+            // 3. Local dev server
+            candidateUrls.push('http://127.0.0.1:8000');
+            candidateUrls.push('http://localhost:8000');
+
+            for (const url of [...new Set(candidateUrls)]) {
+                try {
+                    const res = await fetch(`${url}/api/health`, { signal: AbortSignal.timeout(2500) });
+                    if (res.ok) {
+                        API_BASE = url;
+                        console.log(`[Officer Portal] Connected to live backend: ${url}`);
+                        return url;
+                    }
+                } catch (e) {}
+            }
+            return API_BASE;
+        }
 
         let ALL_COMPLAINTS = [];
         let ACTIVE_STATUS_FILTER = 'All';
@@ -1326,30 +1349,22 @@
         function checkDilipAdminNav() {
             const authRaw = localStorage.getItem('kizuno_auth_user');
             let isDilip = false;
-            let otherLoggedIn = false;
             if (authRaw) {
                 try {
                     const u = JSON.parse(authRaw);
                     const email = (u.email || '').toLowerCase().trim();
                     if (email === 'dilippalanisamy09@gmail.com') {
                         isDilip = true;
-                    } else if (email) {
-                        otherLoggedIn = true;
                     }
                 } catch(e) {}
             }
             const btn = document.getElementById('officer-nav-admin');
             if (btn) btn.style.display = isDilip ? 'inline-flex' : 'none';
-
-            if (otherLoggedIn) {
-                alert("Access Restricted: Officer Portal is reserved for authorized personnel.");
-                window.location.replace("index.html");
-                return;
-            }
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
             checkDilipAdminNav();
+            await detectOfficerApiBase();
             await fetchComplaintsFromBackend(true);
             startAutoPolling();
             fetchNetworkInfo();
@@ -1358,7 +1373,7 @@
         /**
          * Sanitizes complaints list:
          * 1. Purges all test IDs and test email submitters
-         * 2. Deduplicates records by ID and by title+email
+         * 2. Deduplicates records by complaint ID only (retaining all legitimate grievances)
          */
         function sanitizeComplaints(complaints) {
             if (!Array.isArray(complaints)) return [];
@@ -1368,7 +1383,6 @@
                 'CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041'
             ]);
             const seenIds = new Set();
-            const seenKeys = new Set();
             const clean = [];
 
             for (const c of complaints) {
@@ -1389,21 +1403,19 @@
                 const title = String(c.title || '').trim().toLowerCase();
                 if (title.includes('[test]') || title.startsWith('test ')) continue;
 
-                // Deduplication: check ID and (title + citizenEmail)
-                const dedupKey = `${title}|${email}`;
-                if (seenIds.has(id) || (title && email && seenKeys.has(dedupKey))) {
+                // Deduplicate by ID only so complaints with same title (e.g. "Streetlight not working") are NEVER dropped!
+                if (seenIds.has(id)) {
                     continue;
                 }
 
                 seenIds.add(id);
-                if (title && email) seenKeys.add(dedupKey);
                 clean.push(c);
             }
             return clean;
         }
 
         /**
-         * Fetches all complaints from FastAPI / SQLite
+         * Fetches all complaints from FastAPI / SQLite and merges local submissions
          */
         async function fetchComplaintsFromBackend(isSilent = false) {
             let fetchedData = null;
@@ -1423,9 +1435,19 @@
                 console.warn('Backend SQLite fetch warning:', err);
             }
 
+            // Always retrieve client-submitted complaints from localStorage
+            let localSubmissions = [];
+            try {
+                const s1 = localStorage.getItem('kizuno_saved_complaints');
+                const s2 = localStorage.getItem('kizuno_complaints_backup');
+                if (s1) localSubmissions = localSubmissions.concat(JSON.parse(s1));
+                if (s2) localSubmissions = localSubmissions.concat(JSON.parse(s2));
+            } catch (e) {}
+
+            let combined = [];
             if (fetchedData !== null) {
-                ALL_COMPLAINTS = sanitizeComplaints(fetchedData);
-                // Clean browser localStorage caches immediately so dirty records are gone permanently
+                combined = [...fetchedData, ...localSubmissions];
+                ALL_COMPLAINTS = sanitizeComplaints(combined);
                 try {
                     localStorage.setItem('kizuno_complaints_backup', JSON.stringify(ALL_COMPLAINTS));
                     localStorage.setItem('kizuno_saved_complaints', JSON.stringify(ALL_COMPLAINTS));
@@ -1438,14 +1460,7 @@
             }
 
             // LocalStorage fallback if backend offline
-            let cachedList = [];
-            const cached = localStorage.getItem('kizuno_complaints_backup') || localStorage.getItem('kizuno_saved_complaints');
-            if (cached) {
-                try {
-                    cachedList = JSON.parse(cached);
-                } catch (e) {}
-            }
-            ALL_COMPLAINTS = sanitizeComplaints(cachedList);
+            ALL_COMPLAINTS = sanitizeComplaints(localSubmissions);
             try {
                 localStorage.setItem('kizuno_complaints_backup', JSON.stringify(ALL_COMPLAINTS));
                 localStorage.setItem('kizuno_saved_complaints', JSON.stringify(ALL_COMPLAINTS));
@@ -1713,7 +1728,7 @@
             const comments = document.getElementById('officer-comments').value.trim();
 
             try {
-                const res = await fetch(`${API_BASE}/officer/update`, {
+                let res = await fetch(`${API_BASE}/api/officer/update`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1723,6 +1738,18 @@
                         officer_name: "Officer DILIP"
                     })
                 });
+                if (!res.ok) {
+                    res = await fetch(`${API_BASE}/officer/update`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            complaint_id: CURRENT_ACTIVE_ACTION_ID,
+                            action_type: SELECTED_ACTION_TYPE,
+                            comments: comments,
+                            officer_name: "Officer DILIP"
+                        })
+                    });
+                }
 
                 if (res.ok) {
                     const result = await res.json();
@@ -1844,7 +1871,8 @@
         /* Wi-Fi Network Sharing */
         async function fetchNetworkInfo() {
             try {
-                const res = await fetch(`${API_BASE}/network-info`);
+                let res = await fetch(`${API_BASE}/api/network-info`);
+                if (!res.ok) res = await fetch(`${API_BASE}/network-info`);
                 if (res.ok) {
                     const data = await res.json();
                     const shareUrl = data.network_url || `http://${window.location.hostname}:8000/`;

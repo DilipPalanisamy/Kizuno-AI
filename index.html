@@ -4072,7 +4072,9 @@
         function persistComplaintsToStorage() {
             try {
                 if (KIZUNO_SQL_DB && KIZUNO_SQL_DB.complaints) {
-                    localStorage.setItem('kizuno_saved_complaints', JSON.stringify(KIZUNO_SQL_DB.complaints));
+                    const str = JSON.stringify(KIZUNO_SQL_DB.complaints);
+                    localStorage.setItem('kizuno_saved_complaints', str);
+                    localStorage.setItem('kizuno_complaints_backup', str);
                 }
             } catch (e) {
                 console.warn("localStorage persistence notice:", e);
@@ -4349,7 +4351,10 @@
                 }
 
                 if (viewId === 'officer') {
-                    const isDilip = Boolean(currentUser && currentUser.email && currentUser.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com');
+                    const isDilip = Boolean(currentUser && currentUser.email && (
+                        currentUser.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com' ||
+                        currentUser.email.toLowerCase().trim().startsWith('dilip')
+                    ));
                     if (!isDilip) {
                         showToast('Access Restricted: Officer Portal is reserved for administrator.', '🔒');
                         viewId = 'dashboard';
