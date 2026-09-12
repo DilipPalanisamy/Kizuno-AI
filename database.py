@@ -311,7 +311,7 @@ def init_db():
     try:
         with engine.connect() as conn:
             if "sqlite" in str(engine.url):
-                # Check complaints table
+                # 1. Check complaints table columns
                 res = conn.execute(text("PRAGMA table_info(complaints)"))
                 existing_cols = [row[1] for row in res.fetchall()]
                 if "user_id" not in existing_cols:
@@ -320,10 +320,26 @@ def init_db():
                     conn.execute(text("ALTER TABLE complaints ADD COLUMN citizen_email VARCHAR(128) DEFAULT 'kumar.citizen@gmail.com'"))
                 if "citizen_name" not in existing_cols:
                     conn.execute(text("ALTER TABLE complaints ADD COLUMN citizen_name VARCHAR(128) DEFAULT 'Citizen Kumar'"))
+                if "department" not in existing_cols:
+                    conn.execute(text("ALTER TABLE complaints ADD COLUMN department VARCHAR(128) DEFAULT 'Coimbatore Municipal Corporation'"))
+                if "assigned_officer" not in existing_cols:
+                    conn.execute(text("ALTER TABLE complaints ADD COLUMN assigned_officer VARCHAR(128)"))
+                if "day_label" not in existing_cols:
+                    conn.execute(text("ALTER TABLE complaints ADD COLUMN day_label VARCHAR(32) DEFAULT 'Day 0'"))
+                if "photo_url" not in existing_cols:
+                    conn.execute(text("ALTER TABLE complaints ADD COLUMN photo_url TEXT"))
+                if "created_at" not in existing_cols:
+                    conn.execute(text("ALTER TABLE complaints ADD COLUMN created_at DATETIME"))
 
-                # Check users table
+                # 2. Check users table columns
                 u_res = conn.execute(text("PRAGMA table_info(users)"))
                 u_cols = [row[1] for row in u_res.fetchall()]
+                if "google_id" not in u_cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN google_id VARCHAR(128)"))
+                if "avatar_url" not in u_cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN avatar_url TEXT"))
+                if "role" not in u_cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(32) DEFAULT 'citizen'"))
                 if "registration_method" not in u_cols:
                     conn.execute(text("ALTER TABLE users ADD COLUMN registration_method VARCHAR(32) DEFAULT 'email'"))
                 if "email_verified" not in u_cols:
@@ -331,25 +347,49 @@ def init_db():
                 if "password_hash" not in u_cols:
                     conn.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR(255)"))
                 if "is_verified" not in u_cols:
-                    conn.execute(text("ALTER TABLE users ADD COLUMN is_verified BOOLEAN DEFAULT 0"))
+                    conn.execute(text("ALTER TABLE users ADD COLUMN is_verified BOOLEAN DEFAULT 1"))
+                if "created_at" not in u_cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN created_at DATETIME"))
+                if "last_login" not in u_cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN last_login DATETIME"))
 
-                # Check officers table
+                # 3. Check officers table columns
                 o_res = conn.execute(text("PRAGMA table_info(officers)"))
                 o_cols = [row[1] for row in o_res.fetchall()]
                 if "pin_hash" not in o_cols:
                     conn.execute(text("ALTER TABLE officers ADD COLUMN pin_hash VARCHAR(255)"))
+                if "created_at" not in o_cols:
+                    conn.execute(text("ALTER TABLE officers ADD COLUMN created_at DATETIME"))
 
                 conn.commit()
             elif "postgresql" in str(engine.url):
+                # Comprehensive schema migration for PostgreSQL (Supabase / Render)
                 conn.execute(text("""
                     ALTER TABLE complaints ADD COLUMN IF NOT EXISTS user_id BIGINT REFERENCES users(id) ON DELETE SET NULL;
+                    ALTER TABLE complaints ADD COLUMN IF NOT EXISTS citizen_email VARCHAR(128) DEFAULT '';
+                    ALTER TABLE complaints ADD COLUMN IF NOT EXISTS citizen_name VARCHAR(128) DEFAULT 'Citizen';
+                    ALTER TABLE complaints ADD COLUMN IF NOT EXISTS department VARCHAR(128) DEFAULT 'Coimbatore Municipal Corporation';
+                    ALTER TABLE complaints ADD COLUMN IF NOT EXISTS assigned_officer VARCHAR(128);
+                    ALTER TABLE complaints ADD COLUMN IF NOT EXISTS day_label VARCHAR(32) DEFAULT 'Day 0';
+                    ALTER TABLE complaints ADD COLUMN IF NOT EXISTS photo_url TEXT;
+                    ALTER TABLE complaints ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+
+                    ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(128);
+                    ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+                    ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(32) DEFAULT 'citizen';
                     ALTER TABLE users ADD COLUMN IF NOT EXISTS registration_method VARCHAR(32) DEFAULT 'email';
                     ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT TRUE;
+                    ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT TRUE;
                     ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255);
+                    ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+                    ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login TIMESTAMPTZ DEFAULT NOW();
+
+                    ALTER TABLE officers ADD COLUMN IF NOT EXISTS pin_hash VARCHAR(255);
+                    ALTER TABLE officers ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
                 """))
                 conn.commit()
     except Exception as e:
-        print("Schema migration note:", e)
+        print(f"[Kizuno-AI DB] Schema migration notice: {e}")
 
     db = SessionLocal()
 
@@ -365,14 +405,15 @@ def init_db():
                 email="kumar.citizen@gmail.com",
                 name="Citizen Kumar",
                 password_hash=hashed_pw,
-                is_verified=True,
+                email_verified=True,
                 role="citizen",
-                auth_provider="email"
+                registration_method="email"
             ))
             db.commit()
-            print("Default citizen seeded in SQL users table: kumar.citizen@gmail.com / password123")
+            print("[Kizuno-AI DB] Default citizen verified in users table: kumar.citizen@gmail.com")
     except Exception as e:
-        print("Default user seed note:", e)
+        db.rollback()
+        print(f"[Kizuno-AI DB] Default user seed notice: {e}")
 
     try:
         # Seed default Officer if not exists
@@ -390,7 +431,11 @@ def init_db():
             existing_officer.name = "DILIP"
             existing_officer.email = "dilip.officer@gov.in"
             db.commit()
+    except Exception as e:
+        db.rollback()
+        print(f"[Kizuno-AI DB] Default officer seed notice: {e}")
 
+    try:
         # Ensure complaints from civictrack.db are preserved and merged into kizuno.db
         if os.path.exists("civictrack.db") and os.path.exists("kizuno.db"):
             try:
@@ -408,14 +453,14 @@ def init_db():
                         ))
                 db.commit()
                 c_conn.close()
-            except Exception as ex:
+            except Exception:
                 pass
 
-        print("SQL Database successfully initialized. Complaints count reflects real user submissions.")
+        print("[Kizuno-AI DB] SQL Database successfully initialized. Schema matches all models.")
 
     except Exception as e:
         db.rollback()
-        print(f"Database initialization note: {e}")
+        print(f"[Kizuno-AI DB] Database initialization notice: {e}")
     finally:
         db.close()
 
