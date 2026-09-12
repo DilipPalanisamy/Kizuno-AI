@@ -1109,6 +1109,40 @@
         let supabaseClient = null;
 
         // -------------------------------------------------------------
+        // SMART API BASE URL DETECTION
+        // Automatically connects to Render production, local dev, or same-origin backend
+        // -------------------------------------------------------------
+        let API_BASE = '';
+
+        async function detectAdminApiBase() {
+            const candidateUrls = [];
+            // 1. Same-origin (works when served from FastAPI backend on Render or local)
+            if (window.location.origin && window.location.origin !== 'null' && !window.location.hostname.includes('github.io')) {
+                candidateUrls.push(window.location.origin);
+            }
+            // 2. Render production
+            candidateUrls.push('https://kizuno-ai.onrender.com');
+            // 3. Local dev
+            candidateUrls.push('http://127.0.0.1:8000');
+            candidateUrls.push('http://localhost:8000');
+
+            for (const url of [...new Set(candidateUrls)]) {
+                try {
+                    const res = await fetch(`${url}/api/health`, { signal: AbortSignal.timeout(3000) });
+                    if (res.ok) {
+                        API_BASE = url;
+                        console.log(`[Admin] Connected to backend: ${url}`);
+                        return url;
+                    }
+                } catch (e) { }
+            }
+            // Fallback to same origin
+            API_BASE = window.location.origin || '';
+            console.warn('[Admin] No backend detected, using same-origin fallback');
+            return API_BASE;
+        }
+
+        // -------------------------------------------------------------
         // EXACT LOCAL TIMEZONE FORMATTER
         // Output Requirement: "12 Sep 2026, 12:35:42 PM"
         // Displays BOTH complete date AND exact time.
@@ -1209,7 +1243,7 @@
             errBox.style.display = "none";
 
             try {
-                const res = await fetch("/api/admin/verify-pin", {
+                const res = await fetch(`${API_BASE}/api/admin/verify-pin`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ pin })
@@ -1260,7 +1294,7 @@
 
             try {
                 // 1. Fetch live KPI stats
-                const statsRes = await fetch("/api/admin/stats", {
+                const statsRes = await fetch(`${API_BASE}/api/admin/stats`, {
                     headers: getAuthHeaders()
                 });
                 if (statsRes.status === 401 || statsRes.status === 403) {
@@ -1274,7 +1308,7 @@
                 }
 
                 // 2. Fetch live users list
-                const usersRes = await fetch("/api/admin/users", {
+                const usersRes = await fetch(`${API_BASE}/api/admin/users`, {
                     headers: getAuthHeaders()
                 });
                 if (usersRes.ok) {
@@ -1479,7 +1513,7 @@
             compList.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-muted);">Fetching connected grievances...</p>`;
 
             try {
-                const res = await fetch(`/api/admin/users/${userId}/details`, {
+                const res = await fetch(`${API_BASE}/api/admin/users/${userId}/details`, {
                     headers: getAuthHeaders()
                 });
                 if (res.ok) {
@@ -1535,7 +1569,7 @@
         function exportUsersToCSV() {
             if (!checkAdminAuth()) return;
             showToast("Generating live users.csv export...", "📥");
-            window.location.href = `/api/admin/export-users-csv?token=${encodeURIComponent(sessionStorage.getItem('kizuno_admin_token') || '')}`;
+            window.location.href = `${API_BASE}/api/admin/export-users-csv?token=${encodeURIComponent(sessionStorage.getItem('kizuno_admin_token') || '')}`;
         }
 
         // -------------------------------------------------------------
@@ -1543,7 +1577,7 @@
         // -------------------------------------------------------------
         async function setupSupabaseRealtime() {
             try {
-                const res = await fetch("/api/supabase/config");
+                const res = await fetch(`${API_BASE}/api/supabase/config`);
                 if (!res.ok) return;
                 const config = await res.json();
                 if (config.supabaseUrl && config.supabaseAnonKey && window.supabase) {
@@ -1580,7 +1614,8 @@
             }, 5000);
         }
 
-        window.addEventListener("DOMContentLoaded", () => {
+        window.addEventListener("DOMContentLoaded", async () => {
+            await detectAdminApiBase();
             if (checkAdminAuth()) {
                 initDashboard();
             }
