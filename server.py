@@ -255,6 +255,15 @@ class ComplaintCreateDTO(BaseModel):
     priority: Optional[str] = "Medium"
     citizen_email: Optional[str] = "kumar.citizen@gmail.com"
     citizen_name: Optional[str] = "Citizen Kumar"
+    id: Optional[str] = None
+    tracking_key: Optional[str] = None
+    status: Optional[str] = "Pending"
+    day_label: Optional[str] = "Day 0"
+    department: Optional[str] = None
+
+
+class BulkComplaintDTO(BaseModel):
+    complaints: List[ComplaintCreateDTO]
 
 
 class OfficerUpdateDTO(BaseModel):
@@ -641,21 +650,29 @@ def get_complaint(key_or_id: str, db: Session = Depends(get_db)):
 def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db)):
     """
     Registers a new citizen complaint in SQL:
-    1. Generates decoupled Internal ID (CIV-2026-XXXX) and Public Tracking Key (TN-GOV-XXXXXX).
+    1. Respects client-provided ID/TrackingKey (if syncing offline data) or generates new unique IDs.
     2. Inserts complaint record into SQL `complaints` table.
     3. Generates Day 0 Verified Milestone into SQL `timeline_events` table.
     """
-    # Generate unique IDs
-    random_id_num = random.randint(1000, 9999)
-    new_id = f"CIV-2026-{random_id_num}"
-    
-    # Ensure ID uniqueness in SQL
-    while db.query(Complaint).filter(Complaint.id == new_id).first():
+    # Check if a complaint with this ID already exists in SQL
+    if payload.id:
+        existing = db.query(Complaint).filter(Complaint.id == payload.id).first()
+        if existing:
+            return existing.to_dict()
+        new_id = payload.id
+    else:
+        # Generate unique IDs
         random_id_num = random.randint(1000, 9999)
         new_id = f"CIV-2026-{random_id_num}"
+        while db.query(Complaint).filter(Complaint.id == new_id).first():
+            random_id_num = random.randint(1000, 9999)
+            new_id = f"CIV-2026-{random_id_num}"
 
-    hex_suffix = "".join(random.choices("0123456789ABCDEF", k=6))
-    new_key = f"TN-GOV-X{hex_suffix}"
+    if payload.tracking_key:
+        new_key = payload.tracking_key
+    else:
+        hex_suffix = "".join(random.choices("0123456789ABCDEF", k=6))
+        new_key = f"TN-GOV-X{hex_suffix}"
 
     today_str = datetime.now().strftime("%b %d, %Y")
 
@@ -680,10 +697,10 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
         location=payload.location,
         photo_url=payload.photo_url or "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80",
         priority=payload.priority or "Medium",
-        status="Pending",
-        day_label="Day 0",
+        status=payload.status or "Pending",
+        day_label=payload.day_label or "Day 0",
         last_updated=f"Day 0 - {today_str}",
-        department=f"{payload.category} Division, Coimbatore Corporation",
+        department=payload.department or f"{payload.category} Division, Coimbatore Corporation",
         citizen_email=payload.citizen_email or "kumar.citizen@gmail.com",
         citizen_name=payload.citizen_name or "Citizen Kumar"
     )
@@ -708,6 +725,29 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
     db.refresh(new_complaint)
 
     return new_complaint.to_dict()
+
+
+@app.post("/api/complaints/bulk-sync")
+def bulk_sync_complaints(payload: BulkComplaintDTO, db: Session = Depends(get_db)):
+    """
+    Receives an array of complaints (e.g. offline-created complaints from citizens or friends)
+    and inserts any that are not already present in the SQL database.
+    """
+    synced_items = []
+    for item in payload.complaints:
+        if item.id:
+            existing = db.query(Complaint).filter(Complaint.id == item.id).first()
+            if existing:
+                synced_items.append(existing.to_dict())
+                continue
+        created = create_complaint(item, db)
+        synced_items.append(created)
+    return {
+        "success": True,
+        "syncedCount": len(synced_items),
+        "totalInSQL": db.query(Complaint).count(),
+        "complaints": synced_items
+    }
 
 
 @app.delete("/api/complaints/{id_or_key}")
@@ -858,25 +898,70 @@ def update_complaint_status(payload: OfficerUpdateDTO, db: Session = Depends(get
 
 
 # -------------------------------------------------------------
-# STATIC FILE HOSTING (SERVE index.html AT ROOT)
+# STATIC FILE HOSTING & MULTI-DEVICE NETWORK SHARING
 # -------------------------------------------------------------
+
+def get_local_ip() -> str:
+    """Detects primary local network IPv4 address for multi-device sharing"""
+    import socket
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return "127.0.0.1"
+
+
+@app.get("/api/network-info")
+def get_network_info():
+    """Returns local network address for friends and multiple citizens to connect"""
+    ip = get_local_ip()
+    port = int(os.environ.get("PORT", 8000))
+    return {
+        "local_ip": ip,
+        "port": port,
+        "local_url": f"http://localhost:{port}",
+        "network_url": f"http://{ip}:{port}",
+        "officer_url": f"http://{ip}:{port}/#officer",
+        "instructions": f"Any friend or citizen on the same Wi-Fi can open http://{ip}:{port} on their phone or laptop to submit complaints directly to your Officer Portal!"
+    }
+
 
 @app.get("/")
 def serve_index():
-    """Serves the CivicTrack single-page web app at http://localhost:8000/"""
+    """Serves the CivicTrack single-page web app at root"""
     index_path = os.path.join(os.path.dirname(__file__), "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path, media_type="text/html")
     raise HTTPException(status_code=404, detail="index.html not found.")
 
 
+@app.get("/{file_name}")
+def serve_static_assets(file_name: str):
+    """Serves root-level static assets (e.g. complaint images, icons)"""
+    file_path = os.path.normpath(os.path.join(os.path.dirname(__file__), file_name))
+    base_dir = os.path.dirname(__file__)
+    if file_path.startswith(base_dir) and os.path.isfile(file_path):
+        return FileResponse(file_path)
+    # Default to index.html for SPA routes
+    index_path = os.path.join(base_dir, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path, media_type="text/html")
+    raise HTTPException(status_code=404, detail="File not found.")
+
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     host = os.environ.get("HOST", "0.0.0.0")
-    print("=" * 60)
-    print(f"Kizuno-AI FastAPI & SQL Server Starting on port {port}...")
-    print(f"REST API available at: http://{host}:{port}/api/health")
-    print(f"Frontend Application at: http://{host}:{port}/")
-    print(f"SQL Database Dialect: {DB_DIALECT}")
-    print("=" * 60)
+    local_ip = get_local_ip()
+    print("=" * 66)
+    print(f"  [+] Kizuno-AI FastAPI & SQL Central Server Starting on port {port}...")
+    print(f"  [>] Local Access (You):           http://localhost:{port}/")
+    print(f"  [>] Multi-Device Wi-Fi (Friends): http://{local_ip}:{port}/")
+    print(f"  [>] Officer Dashboard:            http://{local_ip}:{port}/#officer")
+    print(f"  [>] REST API Health Check:        http://localhost:{port}/api/health")
+    print(f"  [>] SQL Database:                 {DB_DIALECT} (kizuno.db)")
+    print("=" * 66)
     uvicorn.run("server:app", host=host, port=port, reload=False)

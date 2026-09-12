@@ -36,13 +36,13 @@ if DATABASE_URL:
     )
     DB_DIALECT = "PostgreSQL"
 else:
-    # Use kizuno.db or fall back to existing civictrack.db
+    # Standardize on kizuno.db as primary database; sync with civictrack.db if present
     if os.path.exists("civictrack.db") and not os.path.exists("kizuno.db"):
         try:
             shutil.copyfile("civictrack.db", "kizuno.db")
         except Exception:
             pass
-    db_file = "./kizuno.db" if os.path.exists("kizuno.db") else "./civictrack.db"
+    db_file = "./kizuno.db"
     DATABASE_URL = f"sqlite:///{db_file}"
     engine = create_engine(
         DATABASE_URL,
@@ -304,7 +304,26 @@ def init_db():
             existing_officer.email = "dilip.officer@gov.in"
             db.commit()
 
-        # Database starts with 0 complaints by default. Complaints only appear when submitted by users.
+        # Ensure complaints from civictrack.db are preserved and merged into kizuno.db
+        if os.path.exists("civictrack.db") and os.path.exists("kizuno.db"):
+            try:
+                import sqlite3
+                c_conn = sqlite3.connect("civictrack.db")
+                c_cur = c_conn.cursor()
+                c_cur.execute("SELECT id, tracking_key, category, category_icon, title, description, location, photo_url, priority, status, day_label, last_updated, department, assigned_officer, citizen_email, citizen_name FROM complaints")
+                for row in c_cur.fetchall():
+                    if not db.query(Complaint).filter(Complaint.id == row[0]).first():
+                        db.add(Complaint(
+                            id=row[0], tracking_key=row[1], category=row[2], category_icon=row[3],
+                            title=row[4], description=row[5], location=row[6], photo_url=row[7],
+                            priority=row[8], status=row[9], day_label=row[10], last_updated=row[11],
+                            department=row[12], assigned_officer=row[13], citizen_email=row[14], citizen_name=row[15]
+                        ))
+                db.commit()
+                c_conn.close()
+            except Exception as ex:
+                pass
+
         print("SQL Database successfully initialized. Complaints count reflects real user submissions.")
 
     except Exception as e:
