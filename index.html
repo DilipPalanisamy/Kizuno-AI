@@ -2547,7 +2547,7 @@
                 <button type="button" class="nav-btn officer-btn" id="nav-officer" onclick="switchView('officer')">
                     👨‍💼 Officer Portal
                 </button>
-                <a href="/admin" class="nav-btn" id="nav-admin" title="Admin User Management (Supabase PostgreSQL)" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <a href="/admin" class="nav-btn" id="nav-admin" title="Admin User Management (Supabase PostgreSQL)" style="text-decoration: none; display: none; align-items: center; gap: 0.35rem; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; font-weight: 700;">
                     🛡️ Admin
                 </a>
             </div>
@@ -4999,6 +4999,9 @@
             const returnDashboardBtn = document.getElementById('login-return-dashboard-container');
             if (returnDashboardBtn) returnDashboardBtn.style.display = 'none';
 
+            const navAdminBtn = document.getElementById('nav-admin');
+            if (navAdminBtn) navAdminBtn.style.display = 'none';
+
             showToast('Signed out successfully', 'ℹ️');
             switchView('login');
             setTimeout(clearAllAuthFormInputs, 60);
@@ -5034,6 +5037,23 @@
             const dashGreetingEl = document.getElementById('dashboard-user-greeting');
             const citizenStats = document.getElementById('citizen-live-stats');
             const recentSection = document.getElementById('citizen-dashboard-recent-section');
+
+            // Admin Portal Visibility: STRICTLY VISIBLE ONLY TO DILIP (Administrator)
+            const isDilipAdmin = Boolean(
+                user && (
+                    (user.role && user.role.toLowerCase() === 'admin') ||
+                    (user.email && (
+                        user.email.toLowerCase().trim() === 'dilippalanisamy812@gmail.com' ||
+                        user.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com' ||
+                        user.email.toLowerCase().includes('dilip')
+                    )) ||
+                    (user.name && user.name.toLowerCase().includes('dilip'))
+                )
+            );
+            const navAdminBtn = document.getElementById('nav-admin');
+            if (navAdminBtn) {
+                navAdminBtn.style.display = isDilipAdmin ? 'inline-flex' : 'none';
+            }
 
             if (isOfficer) {
                 // Officer View: Show Officer portal, hide citizen submit/my-complaints
@@ -6709,6 +6729,8 @@
             } else {
                 // No authenticated session -> Cleanly route to Login / Account Creation
                 localStorage.removeItem('kizuno_auth_user');
+                const navAdminBtn = document.getElementById('nav-admin');
+                if (navAdminBtn) navAdminBtn.style.display = 'none';
                 clearAllAuthFormInputs();
                 const returnDashboardBtn = document.getElementById('login-return-dashboard-container');
                 if (returnDashboardBtn) returnDashboardBtn.style.display = 'none';

@@ -107,7 +107,7 @@ def run_tests():
 
     # 5. Normal Email / Gmail Registration & Duplicate Prevention
     print("\n[TEST 5] Normal Email/Gmail Registration & Duplicate Prevention...")
-    e_email = "kizuno.citizen.test@gmail.com"
+    e_email = f"kizuno.citizen.{int(time.time())}@gmail.com"
     e_password = "SecurePassword2026!"
     
     # Check verification request

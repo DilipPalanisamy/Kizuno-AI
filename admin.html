@@ -827,37 +827,39 @@
             </a>
 
             <div class="nav-actions">
-                <!-- LIVE SUPABASE PULSE BADGE -->
-                <div class="live-status-pill" id="live-pulse-badge" title="Live connection active with PostgreSQL Supabase">
-                    <div class="pulse-dot"></div>
-                    <span id="live-status-text">Supabase Live Sync</span>
-                </div>
+                <div id="adminAuthorizedNav" style="display: none; align-items: center; gap: 0.5rem;">
+                    <!-- LIVE SUPABASE PULSE BADGE -->
+                    <div class="live-status-pill" id="live-pulse-badge" title="Live connection active with PostgreSQL Supabase">
+                        <div class="pulse-dot"></div>
+                        <span id="live-status-text">Supabase Live Sync</span>
+                    </div>
 
-                <!-- EXPORT USERS TO CSV BUTTON -->
-                <button type="button" class="btn btn-export" onclick="exportUsersToCSV()" title="Download live users as CSV">
-                    📥 Export Users to CSV
-                </button>
+                    <!-- EXPORT USERS TO CSV BUTTON -->
+                    <button type="button" class="btn btn-export" onclick="exportUsersToCSV()" title="Download live users as CSV">
+                        📥 Export Users to CSV
+                    </button>
+
+                    <!-- LINK TO OFFICER DASHBOARD -->
+                    <a href="/officer" class="btn btn-secondary" title="Switch to Officer Console">
+                        👨‍💼 Officer Portal
+                    </a>
+
+                    <!-- LOCK / LOGOUT BUTTON -->
+                    <button type="button" class="btn btn-secondary" onclick="logoutAdmin()" title="Lock Admin Session">
+                        🔒 Lock
+                    </button>
+                </div>
 
                 <!-- LINK TO CITIZEN PORTAL -->
                 <a href="/" class="btn btn-secondary" title="Switch to Citizen Portal">
                     🏛️ Citizen Portal
                 </a>
-
-                <!-- LINK TO OFFICER DASHBOARD -->
-                <a href="/officer" class="btn btn-secondary" title="Switch to Officer Console">
-                    👨‍💼 Officer Portal
-                </a>
-
-                <!-- LOCK / LOGOUT BUTTON -->
-                <button type="button" class="btn btn-secondary" onclick="logoutAdmin()" title="Lock Admin Session">
-                    🔒 Lock
-                </button>
             </div>
         </div>
     </nav>
 
-    <!-- MAIN ADMIN VIEW -->
-    <main class="admin-main">
+    <!-- MAIN ADMIN VIEW - HIDDEN UNTIL AUTHENTICATION IS VERIFIED -->
+    <main class="admin-main" id="adminMainView" style="display: none;">
 
         <!-- 5 KPI STAT CARDS (REQUIRED BY SPEC) -->
         <section class="stats-grid">
@@ -1056,14 +1058,17 @@
         </div>
     </div>
 
-    <!-- ADMIN PIN LOGIN MODAL -->
-    <div id="adminAuthModal" class="modal-overlay" style="display: none;">
-        <div class="modal-card" style="max-width: 420px; text-align: center; padding: 2rem;">
-            <div style="width: 56px; height: 56px; border-radius: 14px; background: #0f172a; color: #ffffff; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.5rem;">
+    <!-- ADMIN PIN LOGIN MODAL / ACCESS GATE -->
+    <div id="adminAuthModal" class="modal-overlay" style="display: flex; background: #0b1120;">
+        <div class="modal-card" style="max-width: 440px; text-align: center; padding: 2.25rem 2rem; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);">
+            <div style="width: 60px; height: 60px; border-radius: 16px; background: #0f172a; border: 2px solid #3b82f6; color: #3b82f6; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 1.75rem; box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);">
                 🛡️
             </div>
-            <h3 style="font-size: 1.3rem; font-weight: 800; color: #0f172a; margin-bottom: 0.4rem;">Admin Authorization</h3>
-            <p style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+
+            <div id="authUserBadge" style="display: none; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #2563eb; font-size: 0.78rem; font-weight: 700; padding: 0.35rem 0.85rem; border-radius: 9999px; margin-bottom: 1rem;"></div>
+
+            <h3 id="authModalHeader" style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.45rem;">Admin Authorization</h3>
+            <p id="authModalDesc" style="font-size: 0.825rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5;">
                 Enter your Kizuno-AI Administrator Security PIN to access live Supabase user management.
             </p>
 
@@ -1072,13 +1077,19 @@
                     <input type="password" id="adminPinInput" class="pin-input" maxlength="8" placeholder="••••" autocomplete="current-password" autofocus required>
                 </div>
                 <div id="pinErrorMsg" style="color: #dc2626; font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem; display: none;"></div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-size: 0.9rem;">
-                    Unlock Admin Dashboard
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; font-size: 0.92rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;">
+                    <span>🛡️ Unlock Admin Dashboard</span>
                 </button>
-                <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 1rem;">
+            </form>
+
+            <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 0.65rem;">
+                <a href="/" class="btn btn-secondary" style="width: 100%; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.825rem;">
+                    ← Return to Citizen Portal
+                </a>
+                <p style="font-size: 0.72rem; color: var(--text-muted); margin: 0;">
                     Default Admin PIN: <code>1234</code> (Configurable via <code>ADMIN_PIN</code>)
                 </p>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -1145,15 +1156,63 @@
         }
 
         // -------------------------------------------------------------
-        // ADMIN AUTHORIZATION GATE
+        // ADMIN AUTHORIZATION GATE (DILIP PALANISAMY ONLY)
         // -------------------------------------------------------------
+        function renderAuthLockScreen() {
+            const userRaw = localStorage.getItem('kizuno_auth_user');
+            let user = null;
+            if (userRaw) {
+                try { user = JSON.parse(userRaw); } catch(e){}
+            }
+
+            const isDilip = Boolean(
+                user && (
+                    (user.role && user.role.toLowerCase() === 'admin') ||
+                    (user.email && (
+                        user.email.toLowerCase().trim() === 'dilippalanisamy812@gmail.com' ||
+                        user.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com' ||
+                        user.email.toLowerCase().includes('dilip')
+                    )) ||
+                    (user.name && user.name.toLowerCase().includes('dilip'))
+                )
+            );
+
+            const badge = document.getElementById("authUserBadge");
+            const header = document.getElementById("authModalHeader");
+            const desc = document.getElementById("authModalDesc");
+
+            if (isDilip) {
+                if (badge) {
+                    badge.style.display = "inline-flex";
+                    badge.innerHTML = `👑 Recognized as <strong>${user.name || 'Dilip Palanisamy'}</strong>`;
+                }
+                if (header) header.innerText = "Administrator Verification";
+                if (desc) desc.innerText = "Enter your Security PIN to unlock the live Supabase user registry.";
+            } else {
+                if (badge) badge.style.display = "none";
+                if (header) header.innerText = "Restricted Administrator Portal";
+                if (desc) desc.innerHTML = "This dashboard is strictly restricted to system administrators (<strong>Dilip Palanisamy</strong>). Public and citizen access is prohibited.<br>If you are the administrator, enter your Security PIN below:";
+            }
+        }
+
         function checkAdminAuth() {
             const token = sessionStorage.getItem("kizuno_admin_token");
             if (!token) {
+                const mainView = document.getElementById("adminMainView");
+                const navActions = document.getElementById("adminAuthorizedNav");
+                if (mainView) mainView.style.display = "none";
+                if (navActions) navActions.style.display = "none";
                 document.getElementById("adminAuthModal").style.display = "flex";
-                document.getElementById("adminPinInput").focus();
+                renderAuthLockScreen();
+                const pinInput = document.getElementById("adminPinInput");
+                if (pinInput) setTimeout(() => pinInput.focus(), 80);
                 return false;
             }
+            const mainView = document.getElementById("adminMainView");
+            const navActions = document.getElementById("adminAuthorizedNav");
+            if (mainView) mainView.style.display = "block";
+            if (navActions) navActions.style.display = "flex";
+            document.getElementById("adminAuthModal").style.display = "none";
             return true;
         }
 
@@ -1173,6 +1232,8 @@
                 if (res.ok && data.success) {
                     sessionStorage.setItem("kizuno_admin_token", data.token || pin);
                     document.getElementById("adminAuthModal").style.display = "none";
+                    document.getElementById("adminMainView").style.display = "block";
+                    document.getElementById("adminAuthorizedNav").style.display = "flex";
                     showToast("Admin session unlocked successfully!", "🛡️");
                     initDashboard();
                 } else {
@@ -1187,7 +1248,14 @@
 
         function logoutAdmin() {
             sessionStorage.removeItem("kizuno_admin_token");
-            window.location.reload();
+            allUsers = [];
+            filteredUsers = [];
+            const tbody = document.getElementById("user-table-tbody");
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="7"><div class="table-state-box"><p>Locked. Enter PIN to view users.</p></div></td></tr>`;
+            }
+            checkAdminAuth();
+            showToast("Admin session locked", "🔒");
         }
 
         function getAuthHeaders() {

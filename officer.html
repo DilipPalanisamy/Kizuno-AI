@@ -934,7 +934,7 @@
                 <a href="officer.html" class="nav-btn active">
                     <span>👨‍💼 Officer Dashboard</span>
                 </a>
-                <a href="/admin" class="nav-btn" title="Admin User Management (Supabase PostgreSQL)">
+                <a href="/admin" class="nav-btn" id="officer-nav-admin" title="Admin User Management (Supabase PostgreSQL)" style="display: none; text-decoration: none; align-items: center; gap: 0.35rem; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; font-weight: 700;">
                     <span>🛡️ Admin Users</span>
                 </a>
             </div>
@@ -1323,7 +1323,26 @@
         let SELECTED_ACTION_TYPE = null;
         let POLLING_TIMER = null;
 
+        function checkDilipAdminNav() {
+            const authRaw = localStorage.getItem('kizuno_auth_user');
+            let isDilip = false;
+            if (authRaw) {
+                try {
+                    const u = JSON.parse(authRaw);
+                    const email = (u.email || '').toLowerCase().trim();
+                    const name = (u.name || '').toLowerCase().trim();
+                    const role = (u.role || '').toLowerCase().trim();
+                    if (role === 'admin' || email === 'dilippalanisamy812@gmail.com' || email === 'dilippalanisamy09@gmail.com' || email.includes('dilip') || name.includes('dilip')) {
+                        isDilip = true;
+                    }
+                } catch(e) {}
+            }
+            const btn = document.getElementById('officer-nav-admin');
+            if (btn) btn.style.display = isDilip ? 'inline-flex' : 'none';
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
+            checkDilipAdminNav();
             await fetchComplaintsFromBackend(true);
             startAutoPolling();
             fetchNetworkInfo();

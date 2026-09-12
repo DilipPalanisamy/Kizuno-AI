@@ -1133,8 +1133,11 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
 
 
 @app.get("/api/auth/users")
-def list_authenticated_users(db: Session = Depends(get_db)):
-    """Retrieves all users authenticated in the database"""
+def list_authenticated_users(
+    db: Session = Depends(get_db),
+    _auth: bool = Depends(verify_admin_access)
+):
+    """Retrieves all users authenticated in the database (Protected for Admin only)"""
     users = db.query(User).order_by(User.last_login.desc()).all()
     return [u.to_dict() for u in users]
 
