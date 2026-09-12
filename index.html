@@ -4005,6 +4005,10 @@
             if (window.location.origin && window.location.origin !== 'null' && !window.location.hostname.includes('github.io')) {
                 candidateUrls.push(`${window.location.origin}/api`);
             }
+            if (isLocalHost || isFileProtocol) {
+                candidateUrls.push('http://127.0.0.1:8000/api');
+                candidateUrls.push('http://localhost:8000/api');
+            }
             candidateUrls.push('https://kizuno-ai.onrender.com/api');
             candidateUrls.push('http://127.0.0.1:8000/api');
             candidateUrls.push('http://localhost:8000/api');
@@ -4084,7 +4088,8 @@
         const TEST_COMPLAINT_IDS = new Set([
             'CIV-2026-6196', 'CIV-2026-4895', 'CIV-2026-7751', 'CIV-2026-3016',
             'CIV-2026-2463', 'CIV-2026-6490', 'CIV-2026-6991', 'CIV-2026-1449',
-            'CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041'
+            'CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041',
+            'CIV-2026-1493', 'CIV-2026-2239'
         ]);
 
         function isGenuineComplaint(c) {
@@ -4093,7 +4098,13 @@
             if (TEST_COMPLAINT_IDS.has(id)) return false;
 
             const email = String(c.citizenEmail || c.citizen_email || '').toLowerCase().trim();
-            if (email.includes('test') || email.includes('example.com') || email === 'kumar.citizen@gmail.com' || email === 'dilip.official09@gmail.com') {
+            if (
+                email.includes('test') ||
+                email.includes('example.com') ||
+                email === 'kumar.citizen@gmail.com' ||
+                email === 'dilip.official09@gmail.com' ||
+                email === 'dilippalanisamy09@gmail.com'
+            ) {
                 return false;
             }
 
@@ -4113,16 +4124,11 @@
                     let parsed = JSON.parse(saved);
                     if (Array.isArray(parsed)) {
                         const seenIds = new Set();
-                        const seenKeys = new Set();
                         const clean = [];
                         for (const c of parsed) {
                             if (!isGenuineComplaint(c)) continue;
-                            const title = String(c.title || '').trim().toLowerCase();
-                            const email = String(c.citizenEmail || c.citizen_email || '').toLowerCase().trim();
-                            const dedupKey = `${title}|${email}`;
-                            if (seenIds.has(c.id) || (title && email && seenKeys.has(dedupKey))) continue;
+                            if (seenIds.has(c.id)) continue;
                             seenIds.add(c.id);
-                            if (title && email) seenKeys.add(dedupKey);
                             clean.push(c);
                         }
                         KIZUNO_SQL_DB.complaints = clean;
@@ -4520,7 +4526,10 @@
                     body: JSON.stringify({
                         credential: response.credential || 'token',
                         client_id: GOOGLE_CLIENT_ID,
-                        role: role.toLowerCase()
+                        role: role.toLowerCase(),
+                        email: email,
+                        name: name,
+                        picture: picture
                     })
                 });
             } catch (err) { }
@@ -4910,13 +4919,14 @@
             }
         }
 
-        function simulateGoogleLogin(name, email, role) {
+        async function simulateGoogleLogin(name, email, role) {
+            const pic = role === 'officer'
+                ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
+                : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80";
             const authUser = {
                 name: name,
                 email: email,
-                picture: role === 'officer'
-                    ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
-                    : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                picture: pic,
                 role: role === 'officer' ? 'Officer' : 'Citizen',
                 authProvider: 'Google OAuth 2.0 (Verified)'
             };
@@ -4924,6 +4934,21 @@
             applyUserSession(authUser);
             closeLoginModal();
             showToast(`Signed in as ${name}`, '✓');
+
+            // Sync with backend /api/auth/google so SQL database and users.csv persist registration_method = "google"
+            try {
+                await fetch(`${API_BASE}/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        name: name,
+                        role: (role || 'citizen').toLowerCase(),
+                        picture: pic
+                    })
+                });
+            } catch (err) { }
+
             if (role === 'Officer' || role === 'officer') {
                 switchView('officer');
                 showToast(`Welcome ${name}! Officer Dashboard Loaded`, '👨‍💼');
@@ -6039,6 +6064,11 @@
             if (!citizenEmail) {
                 showToast('Please sign in or create an account to submit a grievance', '🔒');
                 switchView('login');
+                return;
+            }
+
+            if (citizenEmail === 'dilippalanisamy09@gmail.com') {
+                showToast('Founder account: Grievance submission is disabled for the founder.', '⚠️');
                 return;
             }
 

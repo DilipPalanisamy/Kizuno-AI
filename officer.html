@@ -1316,13 +1316,17 @@
 
         async function detectOfficerApiBase() {
             const candidateUrls = [];
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+            if (isLocal) {
+                candidateUrls.push('http://127.0.0.1:8000');
+                candidateUrls.push('http://localhost:8000');
+            }
             // 1. Same origin if running via web server
             if (window.location.origin && window.location.origin !== 'null' && !window.location.hostname.includes('github.io')) {
                 candidateUrls.push(window.location.origin.replace(/\/+$/, ''));
             }
             // 2. Render production backend
             candidateUrls.push('https://kizuno-ai.onrender.com');
-            // 3. Local dev server
             candidateUrls.push('http://127.0.0.1:8000');
             candidateUrls.push('http://localhost:8000');
 
@@ -1380,7 +1384,8 @@
             const TEST_IDS = new Set([
                 'CIV-2026-6196', 'CIV-2026-4895', 'CIV-2026-7751', 'CIV-2026-3016',
                 'CIV-2026-2463', 'CIV-2026-6490', 'CIV-2026-6991', 'CIV-2026-1449',
-                'CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041'
+                'CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041',
+                'CIV-2026-1493', 'CIV-2026-2239'
             ]);
             const seenIds = new Set();
             const clean = [];
@@ -1395,7 +1400,8 @@
                     email.includes('test') ||
                     email.includes('example.com') ||
                     email === 'kumar.citizen@gmail.com' ||
-                    email === 'dilip.official09@gmail.com'
+                    email === 'dilip.official09@gmail.com' ||
+                    email === 'dilippalanisamy09@gmail.com'
                 ) {
                     continue;
                 }

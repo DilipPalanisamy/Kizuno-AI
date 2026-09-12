@@ -1194,13 +1194,17 @@
 
         async function detectAdminApiBase() {
             const candidateUrls = [];
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:';
+            if (isLocal) {
+                candidateUrls.push('http://127.0.0.1:8000');
+                candidateUrls.push('http://localhost:8000');
+            }
             // 1. Same-origin (works when served from FastAPI backend on Render or local)
             if (window.location.origin && window.location.origin !== 'null' && !window.location.hostname.includes('github.io')) {
                 candidateUrls.push(window.location.origin);
             }
             // 2. Render production
             candidateUrls.push('https://kizuno-ai.onrender.com');
-            // 3. Local dev
             candidateUrls.push('http://127.0.0.1:8000');
             candidateUrls.push('http://localhost:8000');
 

@@ -372,6 +372,7 @@ def record_user_to_csv(
                 print(f"[Kizuno-AI CSV] Failed to create users.csv: {e}")
                 return {}
 
+        all_rows = []
         existing_user_row = None
         max_id = 0
 
@@ -383,13 +384,39 @@ def record_user_to_csv(
                     r_id = row.get("user_id", "").strip()
                     if r_id.isdigit():
                         max_id = max(max_id, int(r_id))
+                    r_dict = dict(row)
                     if row.get("gmail", "").strip().lower() == clean_email:
-                        existing_user_row = dict(row)
+                        existing_user_row = r_dict
+                    all_rows.append(r_dict)
         except Exception as e:
             print(f"[Kizuno-AI CSV] Error scanning users.csv: {e}")
 
-        # If user already exists, return existing row to preserve original timestamps
+        # If user already exists, update registration_method / verification status if upgraded to google
         if existing_user_row:
+            needs_rewrite = False
+            if norm_method == "google" and existing_user_row.get("registration_method") != "google":
+                existing_user_row["registration_method"] = "google"
+                needs_rewrite = True
+            if verified_str == "true" and existing_user_row.get("email_verified") != "true":
+                existing_user_row["email_verified"] = "true"
+                needs_rewrite = True
+            if clean_name and (not existing_user_row.get("name") or existing_user_row.get("name") == clean_email.split("@")[0]):
+                existing_user_row["name"] = clean_name
+                needs_rewrite = True
+
+            if needs_rewrite:
+                try:
+                    with open(USERS_CSV_FILE, mode="w", newline="", encoding="utf-8") as f:
+                        writer = csv.DictWriter(f, fieldnames=CSV_HEADERS)
+                        writer.writeheader()
+                        for r in all_rows:
+                            if r.get("gmail", "").strip().lower() == clean_email:
+                                writer.writerow(existing_user_row)
+                            else:
+                                writer.writerow(r)
+                    print(f"[Kizuno-AI CSV] Updated existing user {clean_email} in users.csv (method={existing_user_row.get('registration_method')})")
+                except Exception as e:
+                    print(f"[Kizuno-AI CSV] Failed to update existing user in users.csv: {e}")
             return existing_user_row
 
         # Assign user_id (either database user_id or sequential max + 1)
@@ -763,9 +790,12 @@ class OfficerUpdateDTO(BaseModel):
 
 
 class GoogleAuthDTO(BaseModel):
-    credential: str
+    credential: Optional[str] = None
     client_id: Optional[str] = None
     role: Optional[str] = "citizen"
+    email: Optional[str] = None
+    name: Optional[str] = None
+    picture: Optional[str] = None
 
 
 class SendVerificationDTO(BaseModel):
@@ -1066,17 +1096,17 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
     3. Does NOT store Google password, OAuth secrets, access tokens, or refresh tokens.
     4. Returns authenticated session object with real SQL user ID.
     """
-    token_data = decode_jwt_unverified(payload.credential)
-    if not token_data or "email" not in token_data:
+    token_data = decode_jwt_unverified(payload.credential) if payload.credential else {}
+    email = (token_data.get("email") or payload.email or "").strip().lower()
+    if not email:
         raise HTTPException(
             status_code=400,
-            detail="Invalid Google OAuth credential token."
+            detail="Invalid Google OAuth credential token or missing email."
         )
 
-    google_id = token_data.get("sub")
-    email = token_data.get("email", "").strip().lower()
-    name = (token_data.get("name") or email.split("@")[0]).strip()
-    avatar_url = token_data.get("picture")
+    google_id = token_data.get("sub") or f"google_{email.split('@')[0]}"
+    name = (token_data.get("name") or payload.name or email.split("@")[0]).strip()
+    avatar_url = token_data.get("picture") or payload.picture
     role = payload.role or ("officer" if "officer" in email else "citizen")
     now_ist = datetime.now(timezone(timedelta(hours=5, minutes=30)))
 
@@ -1085,10 +1115,11 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
     if user:
         # Existing user: update last_login and profile info; DO NOT touch created_at
         user.name = name or user.name
-        user.avatar_url = avatar_url or user.avatar_url
+        if avatar_url:
+            user.avatar_url = avatar_url
         user.role = role or user.role
         user.email_verified = True
-        user.registration_method = user.registration_method or "google"
+        user.registration_method = "google"
         user.last_login = now_ist
     else:
         # New user: store with permanent creation timestamp
@@ -1126,8 +1157,8 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
             "email": email,
             "name": name,
             "picture": avatar_url,
-            "givenName": token_data.get("given_name"),
-            "emailVerified": token_data.get("email_verified", True)
+            "givenName": token_data.get("given_name") or name.split()[0],
+            "emailVerified": True
         }
     }
 
@@ -1388,13 +1419,15 @@ def list_complaints(
     test_ids = {
         "CIV-2026-6196", "CIV-2026-4895", "CIV-2026-7751", "CIV-2026-3016",
         "CIV-2026-2463", "CIV-2026-6490", "CIV-2026-6991", "CIV-2026-1449",
-        "CIV-2026-1042", "CIV-2026-1040", "CIV-2026-1038", "CIV-2026-1041"
+        "CIV-2026-1042", "CIV-2026-1040", "CIV-2026-1038", "CIV-2026-1041",
+        "CIV-2026-1493", "CIV-2026-2239"
     }
     query = db.query(Complaint).filter(~Complaint.id.in_(test_ids))
     query = query.filter(
         ~Complaint.citizen_email.ilike("%test%"),
         ~Complaint.citizen_email.ilike("%dilip.official09%"),
-        ~Complaint.citizen_email.ilike("%kumar.citizen%")
+        ~Complaint.citizen_email.ilike("%kumar.citizen%"),
+        ~Complaint.citizen_email.ilike("dilippalanisamy09@gmail.com")
     )
 
     if status and isinstance(status, str) and status != "All":

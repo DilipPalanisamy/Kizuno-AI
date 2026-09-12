@@ -115,7 +115,9 @@ class Complaint(Base):
             "department": self.department,
             "assignedOfficer": self.assigned_officer,
             "citizenEmail": self.citizen_email or "",
+            "citizen_email": self.citizen_email or "",
             "citizenName": self.citizen_name or "Citizen",
+            "citizen_name": self.citizen_name or "Citizen",
             "createdAt": created_str,
             "created_at": created_str,
             "timeline": [event.to_dict() for event in self.timeline_events]
