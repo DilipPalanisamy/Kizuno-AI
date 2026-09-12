@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Kizuno-AI — Evidence-Based Citizen Grievance Tracking Engine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1944,12 +1944,75 @@
         }
 
         @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden !important;
+                width: 100% !important;
+                max-width: 100vw !important;
+                -webkit-tap-highlight-color: transparent !important;
+            }
+
             body {
-                padding-bottom: 78px !important;
+                padding-bottom: calc(84px + env(safe-area-inset-bottom, 15px)) !important;
             }
 
             .mobile-bottom-nav {
                 display: flex !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                height: calc(64px + env(safe-area-inset-bottom, 12px)) !important;
+                padding: 0.4rem 0.5rem calc(0.4rem + env(safe-area-inset-bottom, 12px)) 0.5rem !important;
+                background: rgba(255, 255, 255, 0.94) !important;
+                backdrop-filter: blur(20px) !important;
+                -webkit-backdrop-filter: blur(20px) !important;
+                border-top: 1px solid var(--border-light) !important;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
+                z-index: 9999 !important;
+                justify-content: space-around !important;
+                align-items: center !important;
+            }
+
+            [data-theme="dark"] .mobile-bottom-nav,
+            [data-theme="terminal-cyan"] .mobile-bottom-nav,
+            [data-theme="high-contrast"] .mobile-bottom-nav {
+                background: rgba(15, 23, 42, 0.94) !important;
+            }
+
+            .mobile-nav-item {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 0.35rem 0.55rem !important;
+                border-radius: 12px !important;
+                min-width: 54px !important;
+                color: var(--text-muted) !important;
+                font-size: 0.68rem !important;
+                font-weight: 700 !important;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                text-decoration: none !important;
+                touch-action: manipulation !important;
+                -webkit-tap-highlight-color: transparent !important;
+            }
+
+            .mobile-nav-item:active {
+                transform: scale(0.92) !important;
+            }
+
+            .mobile-nav-item.active {
+                color: var(--brand-primary) !important;
+                background: rgba(37, 99, 235, 0.1) !important;
+                box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.2) !important;
+            }
+
+            .mobile-nav-item .mob-nav-icon {
+                font-size: 1.25rem !important;
+                line-height: 1 !important;
+            }
+
+            .mobile-nav-item.active .mob-nav-icon {
+                transform: translateY(-1px) scale(1.08) !important;
             }
 
             .nav-links {
@@ -1958,6 +2021,7 @@
 
             .nav-container {
                 padding: 0.65rem 0.85rem !important;
+                gap: 0.4rem !important;
             }
 
             .brand-tagline {
@@ -1973,7 +2037,22 @@
             }
 
             #theme-toggle-btn {
-                padding: 0.4rem 0.6rem !important;
+                padding: 0.45rem 0.65rem !important;
+            }
+
+            #mobile-share-btn {
+                padding: 0.45rem 0.65rem !important;
+            }
+
+            .user-profile-btn {
+                max-width: 140px !important;
+            }
+
+            .user-profile-btn span:first-of-type {
+                max-width: 75px !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
             }
 
             .app-view {
@@ -1981,12 +2060,12 @@
             }
 
             .hero-section {
-                padding: 1.8rem 1.15rem !important;
-                border-radius: 16px !important;
+                padding: 1.75rem 1.15rem !important;
+                border-radius: 20px !important;
             }
 
             .hero-title {
-                font-size: 1.6rem !important;
+                font-size: 1.55rem !important;
                 line-height: 1.25 !important;
             }
 
@@ -2003,21 +2082,92 @@
             .hero-cta-buttons button {
                 width: 100% !important;
                 justify-content: center !important;
+                padding: 0.85rem 1.25rem !important;
+                font-size: 0.95rem !important;
             }
 
+            .hero-pillars {
+                gap: 0.75rem 1.25rem !important;
+                padding-top: 0.85rem !important;
+            }
+
+            .pillar-item {
+                font-size: 0.8rem !important;
+            }
+
+            /* Sleek horizontal native mobile action cards */
             .action-cards-grid {
                 grid-template-columns: 1fr !important;
-                gap: 0.85rem !important;
+                gap: 0.75rem !important;
+                margin-bottom: 1.5rem !important;
             }
 
+            .action-card {
+                min-height: auto !important;
+                padding: 1.1rem 1.25rem !important;
+                border-radius: 16px !important;
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                gap: 1rem !important;
+            }
+
+            .action-card > div:first-child {
+                display: flex !important;
+                align-items: center !important;
+                gap: 1rem !important;
+                width: 100% !important;
+            }
+
+            .action-card-icon {
+                margin-bottom: 0 !important;
+                flex-shrink: 0 !important;
+                width: 44px !important;
+                height: 44px !important;
+                background: rgba(255, 255, 255, 0.22) !important;
+                border-radius: 12px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .action-card-title {
+                font-size: 1.05rem !important;
+                margin-bottom: 0.2rem !important;
+            }
+
+            .action-card-desc {
+                font-size: 0.78rem !important;
+                line-height: 1.35 !important;
+                opacity: 0.92 !important;
+            }
+
+            /* Responsive 2-column KPI grid with balanced 5th card */
             .citizen-dashboard-kpis {
                 grid-template-columns: repeat(2, 1fr) !important;
-                gap: 0.75rem !important;
+                gap: 0.65rem !important;
+            }
+
+            .citizen-dashboard-kpis > :last-child:nth-child(odd) {
+                grid-column: span 2 !important;
+            }
+
+            .kpi-card {
+                padding: 0.95rem 0.85rem !important;
+                border-radius: 14px !important;
+            }
+
+            .kpi-value, .kpi-number {
+                font-size: 1.6rem !important;
+            }
+
+            .kpi-label {
+                font-size: 0.7rem !important;
             }
 
             .form-card {
                 padding: 1.25rem 0.95rem !important;
-                border-radius: 16px !important;
+                border-radius: 18px !important;
             }
 
             .form-control {
@@ -2027,8 +2177,13 @@
 
             .login-dialog {
                 padding: 1.5rem 1.15rem !important;
+                border-radius: 20px !important;
+                max-width: 95vw !important;
+            }
+
+            .stepper-card {
+                padding: 1.15rem 0.85rem !important;
                 border-radius: 16px !important;
-                max-width: 94vw !important;
             }
 
             .stepper-header {
@@ -2040,7 +2195,12 @@
             .stepper-track {
                 overflow-x: auto !important;
                 -webkit-overflow-scrolling: touch !important;
-                padding-bottom: 0.5rem !important;
+                padding-bottom: 0.75rem !important;
+            }
+
+            .stepper {
+                min-width: 330px !important;
+                padding: 0.25rem 0.5rem !important;
             }
 
             .table-responsive {
@@ -2049,16 +2209,47 @@
             }
 
             .theme-dropdown-menu {
-                max-width: 90vw !important;
+                max-width: 92vw !important;
                 min-width: 260px !important;
+            }
+
+            .track-search-card {
+                padding: 1.5rem 1rem !important;
+                border-radius: 18px !important;
             }
 
             .track-search-form {
                 flex-direction: column !important;
+                gap: 0.65rem !important;
+            }
+
+            .track-search-input {
+                font-size: 16px !important;
+                width: 100% !important;
+                padding: 0.85rem 1rem !important;
+                text-align: center !important;
+            }
+
+            .track-search-form button {
+                width: 100% !important;
+                padding: 0.85rem !important;
+                font-size: 0.95rem !important;
             }
 
             .keys-actions {
                 flex-direction: column !important;
+                width: 100% !important;
+            }
+
+            .keys-actions button {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+
+            .modal-content, .modal-dialog {
+                max-width: 95vw !important;
+                margin: auto !important;
+                border-radius: 18px !important;
             }
         }
 
