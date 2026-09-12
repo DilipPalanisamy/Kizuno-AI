@@ -1326,17 +1326,26 @@
         function checkDilipAdminNav() {
             const authRaw = localStorage.getItem('kizuno_auth_user');
             let isDilip = false;
+            let otherLoggedIn = false;
             if (authRaw) {
                 try {
                     const u = JSON.parse(authRaw);
                     const email = (u.email || '').toLowerCase().trim();
                     if (email === 'dilippalanisamy09@gmail.com') {
                         isDilip = true;
+                    } else if (email) {
+                        otherLoggedIn = true;
                     }
                 } catch(e) {}
             }
             const btn = document.getElementById('officer-nav-admin');
             if (btn) btn.style.display = isDilip ? 'inline-flex' : 'none';
+
+            if (otherLoggedIn) {
+                alert("Access Restricted: Officer Portal is reserved for authorized personnel.");
+                window.location.replace("index.html");
+                return;
+            }
         }
 
         document.addEventListener('DOMContentLoaded', async () => {

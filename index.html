@@ -2544,7 +2544,7 @@
                     Complaint</button>
                 <button type="button" class="nav-btn" id="nav-my" onclick="switchView('my-complaints')">My
                     Complaints</button>
-                <button type="button" class="nav-btn officer-btn" id="nav-officer" onclick="switchView('officer')">
+                <button type="button" class="nav-btn officer-btn" id="nav-officer" onclick="switchView('officer')" style="display: none;">
                     👨‍💼 Officer Portal
                 </button>
                 <a href="admin.html" class="nav-btn" id="nav-admin" title="Admin User Management (Supabase PostgreSQL)" style="text-decoration: none; display: none; align-items: center; gap: 0.35rem; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; font-weight: 700;">
@@ -2756,7 +2756,7 @@
             </div>
 
             <!-- Role Tabs -->
-            <div class="login-role-tabs" style="margin-bottom: 1.75rem;">
+            <div class="login-role-tabs" style="margin-bottom: 1.75rem; display: none;">
                 <button type="button" class="role-tab-btn active" id="page-role-citizen"
                     onclick="selectPageRole('citizen')">Citizen</button>
                 <button type="button" class="role-tab-btn" id="page-role-officer"
@@ -3773,7 +3773,7 @@
                     PIN</p>
             </div>
 
-            <div class="login-role-tabs">
+            <div class="login-role-tabs" style="display: none;">
                 <button type="button" class="role-tab-btn active" id="role-citizen"
                     onclick="selectRole('citizen')">Citizen</button>
                 <button type="button" class="role-tab-btn" id="role-officer"
@@ -4316,7 +4316,18 @@
 
                 // Role-based dashboard redirect: if an Officer asks for 'dashboard', go to 'officer'
                 if (viewId === 'dashboard' && currentUser && (currentUser.role === 'Officer' || currentUser.role === 'officer')) {
-                    viewId = 'officer';
+                    const isDilip = Boolean(currentUser.email && currentUser.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com');
+                    if (isDilip) {
+                        viewId = 'officer';
+                    }
+                }
+
+                if (viewId === 'officer') {
+                    const isDilip = Boolean(currentUser && currentUser.email && currentUser.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com');
+                    if (!isDilip) {
+                        showToast('Access Restricted: Officer Portal is reserved for administrator.', '🔒');
+                        viewId = 'dashboard';
+                    }
                 }
 
                 currentView = viewId;
@@ -5002,6 +5013,8 @@
 
             const navAdminBtn = document.getElementById('nav-admin');
             if (navAdminBtn) navAdminBtn.style.display = 'none';
+            const navOfficerBtn = document.getElementById('nav-officer');
+            if (navOfficerBtn) navOfficerBtn.style.display = 'none';
 
             showToast('Signed out successfully', 'ℹ️');
             switchView('login');
@@ -5048,8 +5061,8 @@
                 navAdminBtn.style.display = isDilipAdmin ? 'inline-flex' : 'none';
             }
 
-            if (isOfficer) {
-                // Officer View: Show Officer portal, hide citizen submit/my-complaints
+            if (isOfficer && isDilipAdmin) {
+                // Officer View: Show Officer portal ONLY for Dilip, hide citizen submit/my-complaints
                 if (navOfficerBtn) navOfficerBtn.style.display = 'inline-flex';
                 if (navSubmitBtn) navSubmitBtn.style.display = 'none';
                 if (navMyBtn) navMyBtn.style.display = 'none';
@@ -5058,8 +5071,8 @@
                 if (citizenStats) citizenStats.style.display = 'none';
                 if (recentSection) recentSection.style.display = 'none';
             } else {
-                // Citizen View: STRICTLY HIDE Officer Portal from citizens
-                if (navOfficerBtn) navOfficerBtn.style.display = 'none';
+                // Citizen View & All Other Users: STRICTLY HIDE Officer Portal from others
+                if (navOfficerBtn) navOfficerBtn.style.display = isDilipAdmin ? 'inline-flex' : 'none';
                 if (navSubmitBtn) navSubmitBtn.style.display = 'inline-flex';
                 if (navMyBtn) navMyBtn.style.display = 'inline-flex';
                 if (navDashboardBtn) navDashboardBtn.innerText = '📊 Dashboard';

@@ -892,7 +892,7 @@
                     </button>
 
                     <!-- LINK TO OFFICER DASHBOARD -->
-                    <a href="officer.html" class="btn btn-secondary" title="Switch to Officer Console">
+                    <a href="officer.html" class="btn btn-secondary" id="admin-officer-btn" style="display: none;" title="Switch to Officer Console">
                         👨‍💼 Officer Portal
                     </a>
 
@@ -1315,6 +1315,20 @@
             const navActions = document.getElementById("adminAuthorizedNav");
             if (mainView) mainView.style.display = "block";
             if (navActions) navActions.style.display = "flex";
+
+            const userRaw = localStorage.getItem('kizuno_auth_user');
+            let isDilip = false;
+            if (userRaw) {
+                try {
+                    const u = JSON.parse(userRaw);
+                    if (u.email && u.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com') {
+                        isDilip = true;
+                    }
+                } catch (e) { }
+            }
+            const offBtn = document.getElementById("admin-officer-btn");
+            if (offBtn) offBtn.style.display = isDilip ? "inline-flex" : "none";
+
             document.getElementById("adminAuthModal").style.display = "none";
             return true;
         }
