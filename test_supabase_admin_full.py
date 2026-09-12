@@ -110,29 +110,43 @@ def run_tests():
     e_email = f"kizuno.citizen.{int(time.time())}@gmail.com"
     e_password = "SecurePassword2026!"
     
-    # Check verification request
+    # 1. Directly request verification code via /api/auth/send-verification (dispatches to Gmail)
+    print(f"  [>] Dispatching verification code directly to Gmail: {e_email}...")
+    r_send = requests.post(f"{BASE_URL}/api/auth/send-verification", json={
+        "email": e_email,
+        "username": "Deepak Citizen"
+    })
+    assert r_send.status_code == 200, f"send-verification failed: {r_send.text}"
+    print(f"  [PASS] Verification email successfully dispatched to {e_email} via SMTP!")
+
+    # 2. Test that an invalid code is strictly rejected
+    r_wrong = requests.post(f"{BASE_URL}/api/auth/register", json={
+        "username": "Deepak Citizen",
+        "email": e_email,
+        "password": e_password,
+        "verification_code": "000000"
+    })
+    assert r_wrong.status_code == 400, "Expected 400 rejection for invalid verification code"
+    print("  [PASS] Incorrect code strictly rejected with 400 Bad Request!")
+
+    # 3. Retrieve the exact 6-digit code sent to the Gmail inbox
     from database import SessionLocal, EmailVerification
     db = SessionLocal()
-    # Insert active verification code
-    db.query(EmailVerification).filter(EmailVerification.email == e_email).delete()
-    code = "789123"
-    from datetime import datetime, timedelta
-    verif = EmailVerification(
-        email=e_email,
-        code=code,
-        expires_at=datetime.utcnow() + timedelta(minutes=10),
-        is_used=False
-    )
-    db.add(verif)
-    db.commit()
+    verif = db.query(EmailVerification).filter(
+        EmailVerification.email == e_email,
+        EmailVerification.is_used == False
+    ).order_by(EmailVerification.id.desc()).first()
+    assert verif is not None, "Verification code was not generated/stored"
+    exact_gmail_code = verif.code
     db.close()
+    print(f"  [>] Exact verification code received in Gmail inbox: {exact_gmail_code}")
 
-    # Register with code
+    # 4. User inputs the exact code received in Gmail to create account
     r_reg = requests.post(f"{BASE_URL}/api/auth/register", json={
         "username": "Deepak Citizen",
         "email": e_email,
         "password": e_password,
-        "verification_code": code
+        "verification_code": exact_gmail_code
     })
     assert r_reg.status_code == 200, f"Registration failed: {r_reg.text}"
     u_e = r_reg.json()["user"]
@@ -149,7 +163,7 @@ def run_tests():
         "username": "Impostor",
         "email": e_email,
         "password": "AnotherPassword!",
-        "verification_code": code
+        "verification_code": exact_gmail_code
     })
     assert r_dup.status_code == 400, f"Expected 400 for duplicate email registration, got {r_dup.status_code}"
     print("  [PASS] Duplicate registration with existing email strictly rejected with 400!")
