@@ -1,20 +1,4 @@
 user_id,gmail,name,registration_method,email_verified,created_date,created_time,created_at
-1,dilip.tester@gmail.com,Dilip Palanisamy,google,true,2026-09-09,14:51:43,2026-09-09 14:51:43
-2,test.citizen.new@gmail.com,Kavitha Citizen,email,true,2026-09-09,16:42:15,2026-09-09 16:42:15
-3,kumar.citizen@gmail.com,Citizen Kumar,email,true,2026-09-09,16:47:09,2026-09-09 16:47:09
-4,test.citizen99@gmail.com,Test Citizen 99,email,true,2026-09-09,16:49:16,2026-09-09 16:49:16
-5,test.citizen.1788972590@gmail.com,Test Citizen 99,email,true,2026-09-09,16:49:50,2026-09-09 16:49:50
-6,test.citizen.1788972604@gmail.com,Test Citizen 99,email,true,2026-09-09,16:50:04,2026-09-09 16:50:04
-7,test.citizen.1788973014@gmail.com,Test Citizen 99,email,true,2026-09-09,16:56:54,2026-09-09 16:56:54
-8,test.citizen.1788973590@gmail.com,Test Citizen 99,email,true,2026-09-09,17:06:30,2026-09-09 17:06:30
-9,testcitizen@gmail.com,Testcitizen,email,true,2026-09-10,12:47:56,2026-09-10 12:47:56
-10,dilip.palanisamy@gmail.com,Dilip Palanisamy,email,true,2026-09-10,12:54:19,2026-09-10 12:54:19
-11,dilippalanisamy09@gmail.com,dilip,email,true,2026-09-10,13:07:26,2026-09-10 13:07:26
-12,dilip09082008@gmail.com,dilip,email,true,2026-09-10,13:26:15,2026-09-10 13:26:15
-13,newcitizen_verif_test@gmail.com,New Citizen,email,true,2026-09-12,07:07:06,2026-09-12 07:07:06
-14,arun.kumar.test@gmail.com,Arun Kumar,google,true,2026-09-12,07:35:44,2026-09-12 07:35:44
-15,kizuno.citizen.test@gmail.com,Deepak Citizen,email,true,2026-09-12,07:35:52,2026-09-12 07:35:52
-16,kizuno.citizen.1789200642@gmail.com,Deepak Citizen,email,true,2026-09-12,08:10:46,2026-09-12 08:10:46
-17,kizuno.citizen.1789201202@gmail.com,Deepak Citizen,email,true,2026-09-12,08:20:19,2026-09-12 08:20:19
-18,kizuno.citizen.1789201282@gmail.com,Deepak Citizen,email,true,2026-09-12,08:21:42,2026-09-12 08:21:42
-19,dilip.official09@gmail.com,ddddd,email,true,2026-09-12,08:27:06,2026-09-12 08:27:06
+1,dilip.palanisamy@gmail.com,Dilip Palanisamy,email,true,2026-09-10,12:54:19,2026-09-10 12:54:19
+2,dilippalanisamy09@gmail.com,dilip,email,true,2026-09-10,13:07:26,2026-09-10 13:07:26
+3,dilip09082008@gmail.com,dilip,email,true,2026-09-10,13:26:15,2026-09-10 13:26:15
