@@ -1202,7 +1202,7 @@
                         id="action-thumb" style="width: 75px; height: 75px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border-light); flex-shrink: 0;" onerror="this.src='https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80'">
                     <div style="flex: 1; min-width: 0;">
                         <div style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);" id="action-title">Streetlight Failure</div>
-                        <div style="font-size: 0.825rem; color: var(--text-secondary); margin-top: 2px;" id="action-citizen-info">👤 Citizen Kumar (kumar.citizen@gmail.com)</div>
+                        <div style="font-size: 0.825rem; color: var(--text-secondary); margin-top: 2px;" id="action-citizen-info">👤 Citizen</div>
                         <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;" id="action-location">Gandhipuram, Coimbatore</div>
                         <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
                             <span class="status-pill delayed" id="action-status-pill">Delayed</span>
@@ -1356,32 +1356,100 @@
         });
 
         /**
+         * Sanitizes complaints list:
+         * 1. Purges all test IDs and test email submitters
+         * 2. Deduplicates records by ID and by title+email
+         */
+        function sanitizeComplaints(complaints) {
+            if (!Array.isArray(complaints)) return [];
+            const TEST_IDS = new Set([
+                'CIV-2026-6196', 'CIV-2026-4895', 'CIV-2026-7751', 'CIV-2026-3016',
+                'CIV-2026-2463', 'CIV-2026-6490', 'CIV-2026-6991', 'CIV-2026-1449',
+                'CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041'
+            ]);
+            const seenIds = new Set();
+            const seenKeys = new Set();
+            const clean = [];
+
+            for (const c of complaints) {
+                if (!c || !c.id) continue;
+                const id = String(c.id).trim();
+                if (TEST_IDS.has(id)) continue;
+
+                const email = String(c.citizenEmail || c.citizen_email || '').toLowerCase().trim();
+                if (
+                    email.includes('test') ||
+                    email.includes('example.com') ||
+                    email === 'kumar.citizen@gmail.com' ||
+                    email === 'dilip.official09@gmail.com'
+                ) {
+                    continue;
+                }
+
+                const title = String(c.title || '').trim().toLowerCase();
+                if (title.includes('[test]') || title.startsWith('test ')) continue;
+
+                // Deduplication: check ID and (title + citizenEmail)
+                const dedupKey = `${title}|${email}`;
+                if (seenIds.has(id) || (title && email && seenKeys.has(dedupKey))) {
+                    continue;
+                }
+
+                seenIds.add(id);
+                if (title && email) seenKeys.add(dedupKey);
+                clean.push(c);
+            }
+            return clean;
+        }
+
+        /**
          * Fetches all complaints from FastAPI / SQLite
          */
         async function fetchComplaintsFromBackend(isSilent = false) {
+            let fetchedData = null;
             try {
-                const res = await fetch(`${API_BASE}/complaints`);
-                if (res.ok) {
+                let res = await fetch(`${API_BASE}/api/complaints`);
+                if (!res.ok) {
+                    res = await fetch(`${API_BASE}/complaints`);
+                }
+                const contentType = res.headers.get('content-type') || '';
+                if (res.ok && contentType.includes('application/json')) {
                     const data = await res.json();
-                    ALL_COMPLAINTS = Array.isArray(data) ? data : [];
-                    renderTable();
-                    updateKpis();
-                    updateSyncBadge(true);
-                    if (!isSilent) showToast(`Synced ${ALL_COMPLAINTS.length} grievances from SQLite Database!`, '💾');
-                    return;
+                    if (Array.isArray(data)) {
+                        fetchedData = data;
+                    }
                 }
             } catch (err) {
                 console.warn('Backend SQLite fetch warning:', err);
-                updateSyncBadge(false);
+            }
+
+            if (fetchedData !== null) {
+                ALL_COMPLAINTS = sanitizeComplaints(fetchedData);
+                // Clean browser localStorage caches immediately so dirty records are gone permanently
+                try {
+                    localStorage.setItem('kizuno_complaints_backup', JSON.stringify(ALL_COMPLAINTS));
+                    localStorage.setItem('kizuno_saved_complaints', JSON.stringify(ALL_COMPLAINTS));
+                } catch (e) {}
+                renderTable();
+                updateKpis();
+                updateSyncBadge(true);
+                if (!isSilent) showToast(`Synced ${ALL_COMPLAINTS.length} verified grievances from Database!`, '💾');
+                return;
             }
 
             // LocalStorage fallback if backend offline
-            const cached = localStorage.getItem('kizuno_complaints_backup');
+            let cachedList = [];
+            const cached = localStorage.getItem('kizuno_complaints_backup') || localStorage.getItem('kizuno_saved_complaints');
             if (cached) {
                 try {
-                    ALL_COMPLAINTS = JSON.parse(cached);
-                } catch (e) { }
+                    cachedList = JSON.parse(cached);
+                } catch (e) {}
             }
+            ALL_COMPLAINTS = sanitizeComplaints(cachedList);
+            try {
+                localStorage.setItem('kizuno_complaints_backup', JSON.stringify(ALL_COMPLAINTS));
+                localStorage.setItem('kizuno_saved_complaints', JSON.stringify(ALL_COMPLAINTS));
+            } catch (e) {}
             renderTable();
             updateKpis();
             updateSyncBadge(false);
@@ -1689,9 +1757,14 @@
 
             try {
                 const key = complaint.trackingKey || complaint.id;
-                const res = await fetch(`${API_BASE}/complaints/${encodeURIComponent(key)}?requester_email=dilip.officer@gov.in&requester_role=officer&user_email=dilip.officer@gov.in&role=officer`, {
+                let res = await fetch(`${API_BASE}/api/complaints/${encodeURIComponent(key)}?requester_email=dilip.officer@gov.in&requester_role=officer&user_email=dilip.officer@gov.in&role=officer`, {
                     method: 'DELETE'
                 });
+                if (!res.ok) {
+                    res = await fetch(`${API_BASE}/complaints/${encodeURIComponent(key)}?requester_email=dilip.officer@gov.in&requester_role=officer&user_email=dilip.officer@gov.in&role=officer`, {
+                        method: 'DELETE'
+                    });
+                }
                 if (res.ok) {
                     showToast(`Grievance ${complaint.id} deleted from database!`, '🗑️');
                     await fetchComplaintsFromBackend(true);
@@ -1702,6 +1775,10 @@
             }
 
             ALL_COMPLAINTS = ALL_COMPLAINTS.filter(c => c.id !== complaintId);
+            try {
+                localStorage.setItem('kizuno_complaints_backup', JSON.stringify(ALL_COMPLAINTS));
+                localStorage.setItem('kizuno_saved_complaints', JSON.stringify(ALL_COMPLAINTS));
+            } catch (e) {}
             renderTable();
             updateKpis();
             showToast(`Grievance ${complaintId} removed locally`, '🗑️');

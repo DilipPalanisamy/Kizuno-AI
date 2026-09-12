@@ -4079,26 +4079,52 @@
             }
         }
 
+        const TEST_COMPLAINT_IDS = new Set([
+            'CIV-2026-6196', 'CIV-2026-4895', 'CIV-2026-7751', 'CIV-2026-3016',
+            'CIV-2026-2463', 'CIV-2026-6490', 'CIV-2026-6991', 'CIV-2026-1449',
+            'CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041'
+        ]);
+
+        function isGenuineComplaint(c) {
+            if (!c || !c.id) return false;
+            const id = String(c.id).trim();
+            if (TEST_COMPLAINT_IDS.has(id)) return false;
+
+            const email = String(c.citizenEmail || c.citizen_email || '').toLowerCase().trim();
+            if (email.includes('test') || email.includes('example.com') || email === 'kumar.citizen@gmail.com' || email === 'dilip.official09@gmail.com') {
+                return false;
+            }
+
+            const title = String(c.title || '').trim().toLowerCase();
+            if (title.includes('[test]') || title.startsWith('test ')) return false;
+
+            return true;
+        }
+
         /**
-         * Loads complaints from localStorage on startup and purges obsolete dummy data
+         * Loads complaints from localStorage on startup and purges obsolete test/duplicate data
          */
         function loadComplaintsFromStorage() {
             try {
                 const saved = localStorage.getItem('kizuno_saved_complaints');
-                const DUMMY_IDS = new Set(['CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041']);
                 if (saved) {
                     let parsed = JSON.parse(saved);
                     if (Array.isArray(parsed)) {
-                        // Purge any legacy dummy complaints
-                        parsed = parsed.filter(c => c && c.id && !DUMMY_IDS.has(c.id));
-                        const existingMap = new Map();
-                        parsed.forEach(c => { if (c && c.id) existingMap.set(c.id, c); });
-                        (KIZUNO_SQL_DB.complaints || []).forEach(c => {
-                            if (c && c.id && !DUMMY_IDS.has(c.id) && !existingMap.has(c.id)) {
-                                existingMap.set(c.id, c);
-                            }
-                        });
-                        KIZUNO_SQL_DB.complaints = Array.from(existingMap.values());
+                        const seenIds = new Set();
+                        const seenKeys = new Set();
+                        const clean = [];
+                        for (const c of parsed) {
+                            if (!isGenuineComplaint(c)) continue;
+                            const title = String(c.title || '').trim().toLowerCase();
+                            const email = String(c.citizenEmail || c.citizen_email || '').toLowerCase().trim();
+                            const dedupKey = `${title}|${email}`;
+                            if (seenIds.has(c.id) || (title && email && seenKeys.has(dedupKey))) continue;
+                            seenIds.add(c.id);
+                            if (title && email) seenKeys.add(dedupKey);
+                            clean.push(c);
+                        }
+                        KIZUNO_SQL_DB.complaints = clean;
+                        persistComplaintsToStorage();
                     }
                 }
             } catch (e) {
@@ -4622,9 +4648,7 @@
 
             // GitHub Pages / Cloud Fallback authentication
             const registeredUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
-            const defaultAccounts = [
-                { email: 'kumar.citizen@gmail.com', name: 'Citizen Kumar', role: 'Citizen', picture: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80' }
-            ];
+            const defaultAccounts = [];
             const allUsers = [...registeredUsers, ...defaultAccounts];
             const matched = allUsers.find(u => (u.email || '').toLowerCase() === email);
 
@@ -5739,10 +5763,9 @@
                 ]);
                 if (complaintsRes.ok) {
                     const sqlComplaints = await complaintsRes.json();
-                    const DUMMY_IDS = new Set(['CIV-2026-1042', 'CIV-2026-1040', 'CIV-2026-1038', 'CIV-2026-1041']);
-                    const cleanSql = sqlComplaints.filter(c => c && c.id && !DUMMY_IDS.has(c.id));
+                    const cleanSql = (Array.isArray(sqlComplaints) ? sqlComplaints : []).filter(isGenuineComplaint);
                     const sqlIds = new Set(cleanSql.map(c => c.id));
-                    const pendingLocal = (KIZUNO_SQL_DB.complaints || []).filter(c => c && c.id && !sqlIds.has(c.id) && !DUMMY_IDS.has(c.id));
+                    const pendingLocal = (KIZUNO_SQL_DB.complaints || []).filter(c => c && c.id && !sqlIds.has(c.id) && isGenuineComplaint(c));
 
                     // AUTO-PUSH: If client has any locally submitted complaints not yet in SQL, push them immediately!
                     if (pendingLocal.length > 0) {
@@ -5776,7 +5799,7 @@
                                 const refreshRes = await fetch(`${API_BASE}/complaints`);
                                 if (refreshRes.ok) {
                                     const refreshed = await refreshRes.json();
-                                    KIZUNO_SQL_DB.complaints = refreshed.filter(c => c && c.id && !DUMMY_IDS.has(c.id));
+                                    KIZUNO_SQL_DB.complaints = (Array.isArray(refreshed) ? refreshed : []).filter(isGenuineComplaint);
                                     persistComplaintsToStorage();
                                     updateOfficerSyncBadge();
                                     renderOfficerTable();

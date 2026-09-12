@@ -1392,47 +1392,119 @@
         // -------------------------------------------------------------
         // FETCH DATA & LIVE SYNC
         // -------------------------------------------------------------
+        function sanitizeUsers(users) {
+            if (!Array.isArray(users)) return [];
+            const seenEmails = new Set();
+            const clean = [];
+
+            for (const u of users) {
+                if (!u) continue;
+                const email = String(u.email || '').toLowerCase().trim();
+                const name = String(u.name || '').toLowerCase().trim();
+
+                // Proactively filter out any test accounts, dummy emails, or test submitters
+                if (
+                    email.includes('test') ||
+                    email.startsWith('kizuno.citizen.') ||
+                    email.endsWith('@example.com') ||
+                    email === 'kumar.citizen@gmail.com' ||
+                    email === 'dilip.official09@gmail.com' ||
+                    name === 'ddddd' ||
+                    name.includes('test')
+                ) {
+                    continue;
+                }
+
+                // Strictly deduplicate users by email (keep only first unique entry)
+                if (email) {
+                    if (seenEmails.has(email)) continue;
+                    seenEmails.add(email);
+                }
+
+                clean.push(u);
+            }
+            return clean;
+        }
+
+        function purgeDirtyLocalStorage() {
+            try {
+                const regUsers = localStorage.getItem('kizuno_registered_users');
+                if (regUsers) {
+                    let parsed = JSON.parse(regUsers);
+                    if (Array.isArray(parsed)) {
+                        const seen = new Set();
+                        parsed = parsed.filter(u => {
+                            if (!u) return false;
+                            const email = (u.email || '').toLowerCase().trim();
+                            const name = (u.name || '').toLowerCase().trim();
+                            if (email.includes('test') || email.startsWith('kizuno.citizen.') || email === 'kumar.citizen@gmail.com' || email === 'dilip.official09@gmail.com' || name === 'ddddd' || seen.has(email)) {
+                                return false;
+                            }
+                            seen.add(email);
+                            return true;
+                        });
+                        localStorage.setItem('kizuno_registered_users', JSON.stringify(parsed));
+                    }
+                }
+            } catch (e) {}
+        }
+
         async function loadDashboardData(showSuccessToast = false) {
             if (!checkAdminAuth()) return;
+            purgeDirtyLocalStorage();
 
             try {
-                // 1. Fetch live KPI stats
-                const statsRes = await fetch(`${API_BASE}/api/admin/stats`, {
+                // 1. Fetch live users list
+                const usersRes = await fetch(`${API_BASE}/api/admin/users`, {
                     headers: getAuthHeaders()
                 });
-                if (statsRes.status === 401 || statsRes.status === 403) {
+                if (usersRes.status === 401 || usersRes.status === 403) {
                     sessionStorage.removeItem("kizuno_admin_token");
                     checkAdminAuth();
                     return;
                 }
-                if (statsRes.ok) {
-                    const stats = await statsRes.json();
-                    updateKPIs(stats);
-                }
-
-                // 2. Fetch live users list
-                const usersRes = await fetch(`${API_BASE}/api/admin/users`, {
-                    headers: getAuthHeaders()
-                });
                 if (usersRes.ok) {
                     const users = await usersRes.json();
-                    allUsers = users || [];
+                    allUsers = sanitizeUsers(users || []);
                     applyFiltersAndRender();
+                    updateKPIs();
                     if (showSuccessToast) {
-                        showToast(`Synchronized ${allUsers.length} users from database!`, "🔄");
+                        showToast(`Synchronized ${allUsers.length} verified citizens from database!`, "🔄");
                     }
                 }
+
+                // 2. Fetch live KPI stats from server as secondary check
+                try {
+                    const statsRes = await fetch(`${API_BASE}/api/admin/stats`, {
+                        headers: getAuthHeaders()
+                    });
+                    if (statsRes.ok) {
+                        const stats = await statsRes.json();
+                        updateKPIs(stats);
+                    }
+                } catch (se) {}
             } catch (err) {
                 console.warn("[Admin Dashboard] Sync error:", err);
             }
         }
 
-        function updateKPIs(stats) {
-            document.getElementById("kpi-total-users").innerText = stats.total_users ?? allUsers.length;
-            document.getElementById("kpi-google-users").innerText = stats.google_users ?? 0;
-            document.getElementById("kpi-email-users").innerText = stats.email_users ?? 0;
-            document.getElementById("kpi-verified-users").innerText = stats.verified_users ?? 0;
-            document.getElementById("kpi-new-today").innerText = stats.new_today ?? 0;
+        function updateKPIs(stats = {}) {
+            const total = allUsers.length;
+            const googleCount = allUsers.filter(u => (u.registration_method || u.registrationMethod || "").toLowerCase() === 'google').length;
+            const emailCount = allUsers.filter(u => (u.registration_method || u.registrationMethod || "").toLowerCase() === 'email').length;
+            const verifiedCount = allUsers.filter(u => Boolean(u.email_verified || u.emailVerified || u.is_verified)).length;
+
+            const todayStr = new Date().toDateString();
+            const newTodayCount = allUsers.filter(u => {
+                const d = u.created_at || u.createdAt;
+                return d && new Date(d).toDateString() === todayStr;
+            }).length;
+
+            document.getElementById("kpi-total-users").innerText = total;
+            document.getElementById("kpi-google-users").innerText = googleCount;
+            document.getElementById("kpi-email-users").innerText = emailCount;
+            document.getElementById("kpi-verified-users").innerText = verifiedCount;
+            document.getElementById("kpi-new-today").innerText = newTodayCount;
         }
 
         // -------------------------------------------------------------

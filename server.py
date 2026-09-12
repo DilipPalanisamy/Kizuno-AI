@@ -1178,23 +1178,31 @@ def get_admin_user_stats(
 ):
     """
     Computes live registered user statistics directly from SQL / Supabase:
-    - Total Users
+    - Total Users (excluding test/dummy accounts)
     - Google Users
     - Email Users
     - Verified Users
     - New Today (created within last 24h / today)
     """
-    total_users = db.query(User).count()
-    google_users = db.query(User).filter(User.registration_method == "google").count()
-    email_users = db.query(User).filter(User.registration_method == "email").count()
-    verified_users = db.query(User).filter(User.email_verified == True).count()
+    raw_users = db.query(User).all()
+    unique_users = {}
+    for u in raw_users:
+        em = (u.email or "").strip().lower()
+        nm = (u.name or "").strip().lower()
+        if not em or "test" in em or em.startswith("kizuno.citizen.") or em.endswith("@example.com") or em == "kumar.citizen@gmail.com" or em == "dilip.official09@gmail.com" or nm == "ddddd":
+            continue
+        if em not in unique_users:
+            unique_users[em] = u
+
+    clean_users = list(unique_users.values())
+    total_users = len(clean_users)
+    google_users = sum(1 for u in clean_users if (u.registration_method or "").lower() == "google")
+    email_users = sum(1 for u in clean_users if (u.registration_method or "").lower() == "email")
+    verified_users = sum(1 for u in clean_users if u.email_verified)
 
     now_ist = datetime.now(timezone(timedelta(hours=5, minutes=30)))
-    today_start = datetime(now_ist.year, now_ist.month, now_ist.day, tzinfo=timezone(timedelta(hours=5, minutes=30)))
-    try:
-        new_today = db.query(User).filter(User.created_at >= today_start).count()
-    except Exception:
-        new_today = db.query(User).filter(User.created_at >= today_start.replace(tzinfo=None)).count()
+    today_date = now_ist.date()
+    new_today = sum(1 for u in clean_users if u.created_at and (u.created_at.date() == today_date if hasattr(u.created_at, 'date') else False))
 
     return {
         "total_users": total_users,
@@ -1214,12 +1222,23 @@ def get_admin_users(
 ):
     """
     Retrieves live registered users list with search, sorting, and complaint counts.
+    Strictly filters out test accounts and duplicate emails.
     Protected: Only authorized administrators can access.
     """
     query = db.query(User)
-    if search:
+    if search and isinstance(search, str):
         clean_search = f"%{search.strip()}%"
         query = query.filter((User.name.ilike(clean_search)) | (User.email.ilike(clean_search)))
+
+    # Exclude test and dummy accounts
+    query = query.filter(
+        ~User.email.ilike("%test%"),
+        ~User.email.ilike("%kumar.citizen%"),
+        ~User.email.ilike("%dilip.official09%"),
+        ~User.email.ilike("kizuno.citizen.%"),
+        ~User.email.ilike("%@example.com"),
+        User.name != "ddddd"
+    )
 
     if sort == "newest":
         query = query.order_by(User.created_at.desc())
@@ -1237,7 +1256,17 @@ def get_admin_users(
         query = query.order_by(User.created_at.desc())
 
     users = query.all()
-    return [u.to_dict() for u in users]
+    # Deduplicate users by email (case-insensitive)
+    seen_emails = set()
+    clean_users = []
+    for u in users:
+        em = (u.email or "").strip().lower()
+        if not em or em in seen_emails:
+            continue
+        seen_emails.add(em)
+        clean_users.append(u.to_dict())
+
+    return clean_users
 
 
 @app.get("/api/admin/users/{user_id}/details")
@@ -1341,32 +1370,63 @@ def health_check(db: Session = Depends(get_db)):
 
 
 @app.get("/api/kpis")
+@app.get("/kpis")
 def get_kpis(db: Session = Depends(get_db)):
     """Calculates live KPI metrics directly via SQL queries"""
     return calculate_kpis(db)
 
 
 @app.get("/api/complaints")
+@app.get("/complaints")
 def list_complaints(
     status: Optional[str] = Query(None, description="Filter by status: Pending, In Progress, Delayed, Resolved"),
     category: Optional[str] = Query(None, description="Filter by category"),
     citizen_email: Optional[str] = Query(None, description="Filter by citizen email"),
     db: Session = Depends(get_db)
 ):
-    """Retrieves all complaints from SQL with optional filtering"""
-    query = db.query(Complaint)
-    if status and status != "All":
+    """Retrieves all complaints from SQL with optional filtering, strictly removing test/duplicate records"""
+    test_ids = {
+        "CIV-2026-6196", "CIV-2026-4895", "CIV-2026-7751", "CIV-2026-3016",
+        "CIV-2026-2463", "CIV-2026-6490", "CIV-2026-6991", "CIV-2026-1449",
+        "CIV-2026-1042", "CIV-2026-1040", "CIV-2026-1038", "CIV-2026-1041"
+    }
+    query = db.query(Complaint).filter(~Complaint.id.in_(test_ids))
+    query = query.filter(
+        ~Complaint.citizen_email.ilike("%test%"),
+        ~Complaint.citizen_email.ilike("%dilip.official09%"),
+        ~Complaint.citizen_email.ilike("%kumar.citizen%")
+    )
+
+    if status and isinstance(status, str) and status != "All":
         query = query.filter(Complaint.status == status)
-    if category and category != "All":
+    if category and isinstance(category, str) and category != "All":
         query = query.filter(Complaint.category == category)
-    if citizen_email:
+    if citizen_email and isinstance(citizen_email, str):
         query = query.filter(Complaint.citizen_email == citizen_email.strip().lower())
 
     complaints = query.order_by(Complaint.created_at.desc()).all()
-    return [c.to_dict() for c in complaints]
+
+    # Deduplicate complaints by id and by (title + citizen_email)
+    seen_ids = set()
+    seen_keys = set()
+    unique_complaints = []
+    for c in complaints:
+        cid = (c.id or "").strip()
+        ctitle = (c.title or "").strip().lower()
+        cemail = (c.citizen_email or "").strip().lower()
+        key = f"{ctitle}|{cemail}"
+        if cid in seen_ids or (ctitle and cemail and key in seen_keys):
+            continue
+        seen_ids.add(cid)
+        if ctitle and cemail:
+            seen_keys.add(key)
+        unique_complaints.append(c.to_dict())
+
+    return unique_complaints
 
 
 @app.get("/api/complaints/{key_or_id}")
+@app.get("/complaints/{key_or_id}")
 def get_complaint(key_or_id: str, db: Session = Depends(get_db)):
     """
     Retrieves full complaint record and its ordered day-wise timeline from SQL
@@ -1387,6 +1447,7 @@ def get_complaint(key_or_id: str, db: Session = Depends(get_db)):
 
 
 @app.post("/api/complaints", status_code=201)
+@app.post("/complaints", status_code=201)
 def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db)):
     """
     Registers a new citizen complaint in SQL:
@@ -1480,6 +1541,7 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
 
 
 @app.post("/api/complaints/bulk-sync")
+@app.post("/complaints/bulk-sync")
 def bulk_sync_complaints(payload: BulkComplaintDTO, db: Session = Depends(get_db)):
     """
     Receives an array of complaints (e.g. offline-created complaints from citizens or friends)
@@ -1504,6 +1566,7 @@ def bulk_sync_complaints(payload: BulkComplaintDTO, db: Session = Depends(get_db
 
 
 @app.delete("/api/complaints/{id_or_key}")
+@app.delete("/complaints/{id_or_key}")
 def delete_complaint(
     id_or_key: str,
     requester_email: Optional[str] = Query(None, description="Email of citizen or officer requesting deletion"),
@@ -1580,6 +1643,7 @@ def delete_complaint(
 
 
 @app.post("/api/officer/update")
+@app.post("/officer/update")
 def update_complaint_status(payload: OfficerUpdateDTO, db: Session = Depends(get_db)):
     """
     Officer Operational Action Console endpoint:
@@ -1708,6 +1772,7 @@ def get_local_ip() -> str:
 
 
 @app.get("/api/network-info")
+@app.get("/network-info")
 def get_network_info():
     """Returns local network address for friends and multiple citizens to connect"""
     ip = get_local_ip()

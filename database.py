@@ -317,9 +317,9 @@ def init_db():
                 if "user_id" not in existing_cols:
                     conn.execute(text("ALTER TABLE complaints ADD COLUMN user_id INTEGER REFERENCES users(id)"))
                 if "citizen_email" not in existing_cols:
-                    conn.execute(text("ALTER TABLE complaints ADD COLUMN citizen_email VARCHAR(128) DEFAULT 'kumar.citizen@gmail.com'"))
+                    conn.execute(text("ALTER TABLE complaints ADD COLUMN citizen_email VARCHAR(128)"))
                 if "citizen_name" not in existing_cols:
-                    conn.execute(text("ALTER TABLE complaints ADD COLUMN citizen_name VARCHAR(128) DEFAULT 'Citizen Kumar'"))
+                    conn.execute(text("ALTER TABLE complaints ADD COLUMN citizen_name VARCHAR(128)"))
                 if "department" not in existing_cols:
                     conn.execute(text("ALTER TABLE complaints ADD COLUMN department VARCHAR(128) DEFAULT 'Coimbatore Municipal Corporation'"))
                 if "assigned_officer" not in existing_cols:
@@ -393,27 +393,8 @@ def init_db():
 
     db = SessionLocal()
 
-    # Ensure default verified citizen exists in SQL users table
-    try:
-        default_user = db.query(User).filter(User.email == "kumar.citizen@gmail.com").first()
-        if not default_user:
-            import hashlib
-            salt = "4a8c9b2f1e0d3c5b"
-            key = hashlib.pbkdf2_hmac('sha256', b'password123', salt.encode('utf-8'), 100000)
-            hashed_pw = f"{salt}${key.hex()}"
-            db.add(User(
-                email="kumar.citizen@gmail.com",
-                name="Citizen Kumar",
-                password_hash=hashed_pw,
-                email_verified=True,
-                role="citizen",
-                registration_method="email"
-            ))
-            db.commit()
-            print("[Kizuno-AI DB] Default citizen verified in users table: kumar.citizen@gmail.com")
-    except Exception as e:
-        db.rollback()
-        print(f"[Kizuno-AI DB] Default user seed notice: {e}")
+    # Verified clean user registry: No artificial dummy or test citizens auto-created.
+    # Users are registered genuinely via registration or Google OAuth.
 
     try:
         # Seed default Officer if not exists
