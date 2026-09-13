@@ -1,0 +1,9 @@
+.git
+.env
+__pycache__/
+*.pyc
+test_sql_full.py
+test_supabase_admin_full.py
+run.py
+civictrack.db
+PROJECT_CONCEPT.md

@@ -6,6 +6,7 @@ day-wise timeline audit events, and municipal officer actions.
 
 import os
 import shutil
+import tempfile
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 from sqlalchemy import (
@@ -23,27 +24,49 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
+is_serverless = os.environ.get("VERCEL") == "1" or os.environ.get("AWS_LAMBDA_FUNCTION_NAME") is not None
 DATABASE_URL = os.environ.get("DATABASE_URL")
+engine = None
+DB_DIALECT = "SQLite"
 
 if DATABASE_URL:
-    # Render and Supabase provide postgres:// which SQLAlchemy 1.4+ requires as postgresql://
-    if DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-    engine = create_engine(
-        DATABASE_URL,
-        pool_pre_ping=True,
-        echo=False
-    )
-    DB_DIALECT = "PostgreSQL"
-else:
-    # Standardize on kizuno.db as primary database; sync with civictrack.db if present
-    if os.path.exists("civictrack.db") and not os.path.exists("kizuno.db"):
-        try:
-            shutil.copyfile("civictrack.db", "kizuno.db")
-        except Exception:
-            pass
-    db_file = "./kizuno.db"
-    DATABASE_URL = f"sqlite:///{db_file}"
+    clean_url = DATABASE_URL.strip()
+    if clean_url.startswith("postgres://"):
+        clean_url = clean_url.replace("postgres://", "postgresql://", 1)
+    try:
+        engine = create_engine(
+            clean_url,
+            pool_pre_ping=True,
+            echo=False
+        )
+        DB_DIALECT = "PostgreSQL"
+        DATABASE_URL = clean_url
+    except Exception as e:
+        print(f"[Kizuno-AI DB] Note on PostgreSQL connection: {e}")
+        engine = None
+
+if engine is None:
+    if is_serverless:
+        tmp_dir = tempfile.gettempdir()
+        db_file = os.path.join(tmp_dir, "kizuno.db")
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        base_db = os.path.join(base_dir, "kizuno.db")
+        if os.path.exists(base_db) and not os.path.exists(db_file):
+            try:
+                shutil.copyfile(base_db, db_file)
+            except Exception:
+                pass
+    else:
+        if os.path.exists("civictrack.db") and not os.path.exists("kizuno.db"):
+            try:
+                shutil.copyfile("civictrack.db", "kizuno.db")
+            except Exception:
+                pass
+        db_file = "./kizuno.db"
+
+    # Normalize path for SQLite URL format
+    norm_db_file = db_file.replace("\\", "/")
+    DATABASE_URL = f"sqlite:///{norm_db_file}"
     engine = create_engine(
         DATABASE_URL,
         connect_args={"check_same_thread": False},
@@ -307,7 +330,14 @@ def init_db():
     Initializes database tables and populates realistic grievance datasets.
     Performs safe auto-migrations for both SQLite and PostgreSQL (Supabase).
     """
-    Base.metadata.create_all(bind=engine)
+    if engine is None:
+        print("[Kizuno-AI DB] Warning: database engine is not initialized, skipping table creation.")
+        return
+
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print(f"[Kizuno-AI DB] Table creation notice: {e}")
 
     # Ensure citizen ownership columns and user auth columns exist for existing databases
     try:

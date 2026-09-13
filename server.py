@@ -15,6 +15,8 @@ import hmac
 import smtplib
 import threading
 import io
+import shutil
+import tempfile
 from datetime import datetime, timedelta, timezone
 from email.message import EmailMessage
 from typing import Optional, List, Any, Dict
@@ -23,6 +25,8 @@ from dotenv import load_dotenv
 
 # Load local environment variables from .env if present
 load_dotenv()
+
+is_serverless = os.environ.get("VERCEL") == "1" or os.environ.get("AWS_LAMBDA_FUNCTION_NAME") is not None
 
 import uvicorn
 from fastapi import FastAPI, Depends, HTTPException, Query, Header, Response
@@ -282,7 +286,16 @@ GOOGLE_CLIENT_ID = "485227555296-5jqikr8c4ruddifkp7uj2k3h82sfivd1.apps.googleuse
 # methods (Google OAuth & Email-OTP). Thread-safe & duplicate-proof.
 # -------------------------------------------------------------
 
-USERS_CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "users.csv")
+if is_serverless:
+    USERS_CSV_FILE = os.path.join(tempfile.gettempdir(), "users.csv")
+    _base_users_csv = os.path.join(os.path.dirname(os.path.abspath(__file__)), "users.csv")
+    if os.path.exists(_base_users_csv) and not os.path.exists(USERS_CSV_FILE):
+        try:
+            shutil.copyfile(_base_users_csv, USERS_CSV_FILE)
+        except Exception:
+            pass
+else:
+    USERS_CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "users.csv")
 CSV_LOCK = threading.Lock()
 CSV_HEADERS = [
     "user_id",
@@ -498,8 +511,24 @@ def sync_sql_users_to_csv(db: Session):
 # Synchronized with SQL, officer portal, and tracking flows.
 # -------------------------------------------------------------
 
-COMPLAINTS_CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "complaints.csv")
-DELETED_COMPLAINTS_CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "deleted_complaints.csv")
+if is_serverless:
+    COMPLAINTS_CSV_FILE = os.path.join(tempfile.gettempdir(), "complaints.csv")
+    DELETED_COMPLAINTS_CSV_FILE = os.path.join(tempfile.gettempdir(), "deleted_complaints.csv")
+    _base_complaints_csv = os.path.join(os.path.dirname(os.path.abspath(__file__)), "complaints.csv")
+    if os.path.exists(_base_complaints_csv) and not os.path.exists(COMPLAINTS_CSV_FILE):
+        try:
+            shutil.copyfile(_base_complaints_csv, COMPLAINTS_CSV_FILE)
+        except Exception:
+            pass
+    _base_del_csv = os.path.join(os.path.dirname(os.path.abspath(__file__)), "deleted_complaints.csv")
+    if os.path.exists(_base_del_csv) and not os.path.exists(DELETED_COMPLAINTS_CSV_FILE):
+        try:
+            shutil.copyfile(_base_del_csv, DELETED_COMPLAINTS_CSV_FILE)
+        except Exception:
+            pass
+else:
+    COMPLAINTS_CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "complaints.csv")
+    DELETED_COMPLAINTS_CSV_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "deleted_complaints.csv")
 
 COMPLAINTS_CSV_HEADERS = [
     "complaint_id",
@@ -733,20 +762,29 @@ def sync_sql_complaints_to_csv(db: Session):
         print(f"[Kizuno-AI CSV] Warning during SQL to complaints.csv sync: {e}")
 
 
-# Initialize database tables on server start
-init_db()
+# Initialize database tables on server start (guarded against cold-start serverless crashes)
+try:
+    init_db()
+except Exception as e:
+    print(f"[Kizuno-AI Server] Warning during init_db: {e}")
 
 # Initialize users.csv, complaints.csv, and deleted_complaints.csv on startup
-init_users_csv()
-init_complaints_csv()
-init_deleted_complaints_csv()
-
-_sync_session = SessionLocal()
 try:
-    sync_sql_users_to_csv(_sync_session)
-    sync_sql_complaints_to_csv(_sync_session)
-finally:
-    _sync_session.close()
+    init_users_csv()
+    init_complaints_csv()
+    init_deleted_complaints_csv()
+except Exception as e:
+    print(f"[Kizuno-AI Server] Warning during CSV init: {e}")
+
+try:
+    _sync_session = SessionLocal()
+    try:
+        sync_sql_users_to_csv(_sync_session)
+        sync_sql_complaints_to_csv(_sync_session)
+    finally:
+        _sync_session.close()
+except Exception as e:
+    print(f"[Kizuno-AI Server] Warning during SQL to CSV sync: {e}")
 
 app = FastAPI(
     title="Kizuno-AI REST API",

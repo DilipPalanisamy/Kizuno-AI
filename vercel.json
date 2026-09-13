@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.py" },
+    { "source": "/api", "destination": "/api/index.py" },
+    { "source": "/officer", "destination": "/officer.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/admin/users", "destination": "/admin.html" },
+    { "source": "/kpis", "destination": "/api/index.py" },
+    { "source": "/complaints/(.*)", "destination": "/api/index.py" },
+    { "source": "/complaints", "destination": "/api/index.py" }
+  ]
+}
