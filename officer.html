@@ -1500,7 +1500,7 @@
             <!-- QR CODE BOX -->
             <div style="display: flex; justify-content: center; margin-bottom: 1.15rem;">
                 <div style="background: #ffffff; padding: 0.75rem; border-radius: 12px; border: 1.5px solid var(--border-light); box-shadow: var(--shadow-sm); display: inline-block;">
-                    <img id="officer-qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://kizuno-ai.onrender.com" alt="Mobile QR Code" style="width: 165px; height: 165px; display: block; border-radius: 6px;">
+                    <img id="officer-qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://kizuno-ai.vercel.app" alt="Mobile QR Code" style="width: 165px; height: 165px; display: block; border-radius: 6px;">
                 </div>
             </div>
 
@@ -1515,9 +1515,9 @@
             </div>
 
             <div style="background: var(--bg-canvas); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; text-align: left;">
-                <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">☁️ Global Cloud Live Address:</div>
+                <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">☁️ Global Cloud Live Address (Vercel):</div>
                 <div style="font-size: 1.05rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--brand-primary); margin: 0.35rem 0;" id="cloud-share-url">
-                    https://kizuno-ai.onrender.com
+                    https://kizuno-ai.vercel.app
                 </div>
                 <button type="button" class="btn-secondary" onclick="copyCloudOfficerUrl()" style="padding: 0.35rem 0.75rem; font-size: 0.8rem; margin-top: 0.2rem;">
                     📋 Copy Cloud Link
@@ -1537,7 +1537,7 @@
         /**
          * Kizuno-AI Officer Administration Engine
          */
-        let API_BASE = 'https://kizuno-ai.onrender.com';
+        let API_BASE = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : 'http://localhost:8000';
 
         async function detectOfficerApiBase() {
             const candidateUrls = [];
@@ -1550,8 +1550,6 @@
             if (window.location.origin && window.location.origin !== 'null' && !window.location.hostname.includes('github.io')) {
                 candidateUrls.push(window.location.origin.replace(/\/+$/, ''));
             }
-            // 2. Render production backend
-            candidateUrls.push('https://kizuno-ai.onrender.com');
             candidateUrls.push('http://127.0.0.1:8000');
             candidateUrls.push('http://localhost:8000');
 
@@ -2111,7 +2109,7 @@
                     if (el) el.innerText = shareUrl;
                     const qrImg = document.getElementById('officer-qr-code-img');
                     if (qrImg) {
-                        const targetUrl = (window.location.hostname.includes('render.com')) ? 'https://kizuno-ai.onrender.com' : shareUrl;
+                        const targetUrl = (window.location.origin && window.location.origin !== 'null' && !window.location.origin.includes('localhost')) ? window.location.origin : (shareUrl || 'https://kizuno-ai.vercel.app');
                         qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(targetUrl)}`;
                     }
                 }
@@ -2135,7 +2133,7 @@
         }
 
         function copyCloudOfficerUrl() {
-            const url = document.getElementById('cloud-share-url')?.innerText || 'https://kizuno-ai.onrender.com';
+            const url = document.getElementById('cloud-share-url')?.innerText || (window.location.origin && window.location.origin !== 'null' ? window.location.origin : 'https://kizuno-ai.vercel.app');
             navigator.clipboard.writeText(url).then(() => {
                 showToast('Cloud link copied!', '☁️');
             });

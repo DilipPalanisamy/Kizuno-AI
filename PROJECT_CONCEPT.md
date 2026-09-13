@@ -224,7 +224,7 @@ CivicTrack is engineered to interface directly with existing e-Governance platfo
 
 ## 9. Real FastAPI Backend & PostgreSQL / SQLite Database Implementation
 
-Kizuno-AI is implemented with a production-ready Python backend and an ACID-compliant SQL database architecture supporting both **PostgreSQL** (production on Render/Supabase) and **SQLite** (local development):
+Kizuno-AI is implemented with a production-ready Python backend and an ACID-compliant SQL database architecture supporting both **PostgreSQL** (production on Vercel/Supabase) and **SQLite** (local development):
 
 - **Backend Framework**: Python 3.12 with **FastAPI** and **Uvicorn** (`server.py`).
 - **SQL Database**: **PostgreSQL & SQLite** managed via **SQLAlchemy ORM** (`database.py` with `psycopg2-binary` driver), dynamically selecting PostgreSQL when `DATABASE_URL` is set, and SQLite (`kizuno.db`) for zero-configuration local development.
@@ -236,6 +236,6 @@ Kizuno-AI is implemented with a production-ready Python backend and an ACID-comp
   - `POST /api/complaints`: Inserts new citizen grievance, generates unique keys, and writes Day 0 verified milestone into SQL.
   - `POST /api/officer/update`: Applies officer action, writes verified audit event into SQL `timeline_events`, and updates complaint status.
   - `POST /api/auth/google`: Ingests and decodes Google ID token, saves user to SQL `users` table, and returns verified profile payload.
-- **Render Deployment**: Fully equipped with `requirements.txt` and `render.yaml` for 1-click cloud deployment.
+- **Cloud Deployment**: Deployed and configured for Vercel cloud hosting.
 - **Frontend Integration**: Single-page application in `index.html` with start-at-login security flow, single official Google OAuth 2.0 button, and immediate post-login redirection to the citizen/officer dashboard.
 

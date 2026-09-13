@@ -30,7 +30,7 @@ def main():
     print(f"  [📱 Mobile Phone (Wi-Fi)]  http://{local_ip}:8000")
     print(f"  [👨‍💼 Officer Console]       http://{local_ip}:8000/officer")
     print(f"  [🛡️ Admin Console]         http://{local_ip}:8000/admin")
-    print(f"  [☁️ Global Cloud Live]      https://kizuno-ai.onrender.com")
+    print(f"  [☁️ Global Cloud Live (Vercel)] https://kizuno-ai.vercel.app")
     print("=" * 65 + "\n")
 
     # Start server.py on 0.0.0.0 so mobile phones on the same Wi-Fi can connect

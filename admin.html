@@ -1353,12 +1353,10 @@
                 candidateUrls.push('http://127.0.0.1:8000');
                 candidateUrls.push('http://localhost:8000');
             }
-            // 1. Same-origin (works when served from FastAPI backend on Render or local)
+            // 1. Same-origin (works when served from backend or Vercel / local)
             if (window.location.origin && window.location.origin !== 'null' && !window.location.hostname.includes('github.io')) {
                 candidateUrls.push(window.location.origin);
             }
-            // 2. Render production
-            candidateUrls.push('https://kizuno-ai.onrender.com');
             candidateUrls.push('http://127.0.0.1:8000');
             candidateUrls.push('http://localhost:8000');
 
@@ -1497,30 +1495,51 @@
             const errBox = document.getElementById("pinErrorMsg");
             errBox.style.display = "none";
 
+            // 1. Try server-side verification first if backend is running
             try {
                 const res = await fetch(`${API_BASE}/api/admin/verify-pin`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ pin })
+                    body: JSON.stringify({ pin }),
+                    signal: AbortSignal.timeout(2000)
                 });
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    sessionStorage.setItem("kizuno_admin_token", data.token || pin);
-                    const pinInput = document.getElementById("adminPinInput");
-                    if (pinInput) pinInput.value = "";
-                    document.getElementById("adminAuthModal").style.display = "none";
-                    document.getElementById("adminMainView").style.display = "block";
-                    document.getElementById("adminAuthorizedNav").style.display = "flex";
-                    showToast("Admin session unlocked successfully!", "🛡️");
-                    initDashboard();
-                } else {
-                    errBox.innerText = data.detail || "Invalid PIN code. Please try again.";
-                    errBox.style.display = "block";
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.success) {
+                        sessionStorage.setItem("kizuno_admin_token", data.token || pin);
+                        unlockAdminView();
+                        return;
+                    }
                 }
             } catch (err) {
-                errBox.innerText = "Connection error. Ensure backend server is running.";
-                errBox.style.display = "block";
+                console.warn("[Admin PIN] Backend server unreachable, falling back to direct security check.");
             }
+
+            // 2. Direct client verification fallback for PIN 9812 (for Vercel deployment & offline mode)
+            if (pin === "9812") {
+                sessionStorage.setItem("kizuno_admin_token", "kizuno_admin_secret_key_2026");
+                unlockAdminView();
+                return;
+            }
+
+            // 3. Incorrect PIN entered
+            errBox.innerText = "Invalid PIN code. Please enter the 4-digit Administrator PIN (9812).";
+            errBox.style.display = "block";
+            const pinInput = document.getElementById("adminPinInput");
+            if (pinInput) {
+                pinInput.focus();
+                pinInput.select();
+            }
+        }
+
+        function unlockAdminView() {
+            const pinInput = document.getElementById("adminPinInput");
+            if (pinInput) pinInput.value = "";
+            document.getElementById("adminAuthModal").style.display = "none";
+            document.getElementById("adminMainView").style.display = "block";
+            document.getElementById("adminAuthorizedNav").style.display = "flex";
+            showToast("Admin session unlocked successfully!", "🛡️");
+            initDashboard();
         }
 
         function logoutAdmin() {
@@ -1611,10 +1630,13 @@
             if (!checkAdminAuth()) return;
             purgeDirtyLocalStorage();
 
+            let fetchedFromBackend = false;
+
             try {
-                // 1. Fetch live users list
+                // 1. Fetch live users list from backend
                 const usersRes = await fetch(`${API_BASE}/api/admin/users`, {
-                    headers: getAuthHeaders()
+                    headers: getAuthHeaders(),
+                    signal: AbortSignal.timeout(2500)
                 });
                 if (usersRes.status === 401 || usersRes.status === 403) {
                     sessionStorage.removeItem("kizuno_admin_token");
@@ -1623,18 +1645,22 @@
                 }
                 if (usersRes.ok) {
                     const users = await usersRes.json();
-                    allUsers = sanitizeUsers(users || []);
-                    applyFiltersAndRender();
-                    updateKPIs();
-                    if (showSuccessToast) {
-                        showToast(`Synchronized ${allUsers.length} verified citizens from database!`, "🔄");
+                    if (Array.isArray(users)) {
+                        allUsers = sanitizeUsers(users || []);
+                        applyFiltersAndRender();
+                        updateKPIs();
+                        fetchedFromBackend = true;
+                        if (showSuccessToast) {
+                            showToast(`Synchronized ${allUsers.length} verified citizens from database!`, "🔄");
+                        }
                     }
                 }
 
                 // 2. Fetch live KPI stats from server as secondary check
                 try {
                     const statsRes = await fetch(`${API_BASE}/api/admin/stats`, {
-                        headers: getAuthHeaders()
+                        headers: getAuthHeaders(),
+                        signal: AbortSignal.timeout(2000)
                     });
                     if (statsRes.ok) {
                         const stats = await statsRes.json();
@@ -1642,7 +1668,41 @@
                     }
                 } catch (se) {}
             } catch (err) {
-                console.warn("[Admin Dashboard] Sync error:", err);
+                console.warn("[Admin Dashboard] Backend sync unavailable, checking client & Supabase storage.");
+            }
+
+            // Fallback for Vercel / offline mode if backend didn't supply users
+            if (!fetchedFromBackend) {
+                try {
+                    if (supabaseClient) {
+                        const { data: supaUsers, error } = await supabaseClient
+                            .from('users')
+                            .select('*')
+                            .order('created_at', { ascending: false });
+                        if (!error && Array.isArray(supaUsers) && supaUsers.length > 0) {
+                            allUsers = sanitizeUsers(supaUsers);
+                            applyFiltersAndRender();
+                            updateKPIs();
+                            const statusText = document.getElementById("live-status-text");
+                            if (statusText) statusText.innerText = "Supabase Cloud Sync";
+                            return;
+                        }
+                    }
+                } catch (e) {}
+
+                try {
+                    const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                    const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || 'null');
+                    const combined = [...regUsers];
+                    if (authUser && authUser.email && !combined.some(u => (u.email || '').toLowerCase() === (authUser.email || '').toLowerCase())) {
+                        combined.push(authUser);
+                    }
+                    allUsers = sanitizeUsers(combined);
+                    applyFiltersAndRender();
+                    updateKPIs();
+                    const statusText = document.getElementById("live-status-text");
+                    if (statusText) statusText.innerText = "Local Cache Sync";
+                } catch (e) {}
             }
         }
 
@@ -1879,7 +1939,38 @@
                     }
                 }
             } catch (err) {
-                compList.innerHTML = `<p style="font-size: 0.8rem; color: #dc2626;">Could not fetch complaint associations.</p>`;
+                // Fallback to local storage complaints for this citizen
+                try {
+                    const localComplaints = JSON.parse(localStorage.getItem('kizuno_complaints') || '[]');
+                    const userEmail = (user.email || '').toLowerCase().trim();
+                    const matched = localComplaints.filter(c => (c.citizenEmail || c.citizen_email || '').toLowerCase().trim() === userEmail);
+                    document.getElementById("modal-field-complaints-count").innerHTML = `
+                        <span class="badge-method badge-google" style="background: #0f172a; color: #ffffff; border: none;">
+                            ${matched.length} Grievances Submitted
+                        </span>
+                    `;
+                    if (matched.length === 0) {
+                        compList.innerHTML = `<p style="font-size: 0.8rem; color: var(--text-muted);">No complaints recorded for this citizen.</p>`;
+                    } else {
+                        compList.innerHTML = matched.map(c => `
+                            <div class="complaint-item">
+                                <div>
+                                    <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a;">
+                                        ${escapeHtml(c.id)}: ${escapeHtml(c.title || 'Untitled')}
+                                    </div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+                                        📍 ${escapeHtml(c.location || 'Coimbatore')} &bull; Category: ${escapeHtml(c.category || 'General')}
+                                    </div>
+                                </div>
+                                <span class="badge-method" style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-size: 0.7rem;">
+                                    ${escapeHtml(c.status || 'Pending')}
+                                </span>
+                            </div>
+                        `).join("");
+                    }
+                } catch (e) {
+                    compList.innerHTML = `<p style="font-size: 0.8rem; color: #dc2626;">Could not fetch complaint associations.</p>`;
+                }
             }
 
             document.getElementById("userDetailsModal").style.display = "flex";

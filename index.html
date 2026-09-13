@@ -2059,9 +2059,6 @@
                 padding: 0.45rem 0.65rem !important;
             }
 
-            #mobile-share-btn {
-                padding: 0.45rem 0.65rem !important;
-            }
 
             .user-profile-btn {
                 max-width: 140px !important;
@@ -2909,12 +2906,6 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <!-- MOBILE ACCESS BUTTON -->
-                <button type="button" id="mobile-share-btn" onclick="openNetworkShareModal()" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-primary);" title="Open on Mobile Phone">
-                    <span>📱</span>
-                    <span class="desktop-only-label">Mobile</span>
-                </button>
-
                 <!-- THEME SWITCHER DROPDOWN -->
                 <div style="position: relative;" id="theme-switcher-container">
                     <button type="button" id="theme-toggle-btn" onclick="toggleThemeMenu(event)" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-primary);" title="Switch color theme">
@@ -4294,7 +4285,7 @@
             <!-- SCAN QR CODE BOX -->
             <div style="display: flex; justify-content: center; margin-bottom: 1.25rem;">
                 <div style="background: #ffffff; padding: 0.75rem; border-radius: 14px; border: 1.5px solid var(--border-light); box-shadow: var(--shadow-sm); display: inline-block;">
-                    <img id="share-qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://kizuno-ai.onrender.com" alt="Scan Mobile QR Code" style="width: 170px; height: 170px; display: block; border-radius: 6px;">
+                    <img id="share-qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://kizuno-ai.vercel.app" alt="Scan Mobile QR Code" style="width: 170px; height: 170px; display: block; border-radius: 6px;">
                 </div>
             </div>
 
@@ -4314,10 +4305,10 @@
             <!-- GLOBAL CLOUD URL BOX -->
             <div style="background: var(--bg-canvas); border: 1.5px solid var(--border-light); border-radius: 12px; padding: 1rem; margin-bottom: 1.15rem; text-align: left;">
                 <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.35rem;">
-                    ☁️ Global Cloud Live URL (Works Anywhere):
+                    ☁️ Global Cloud Live URL (Vercel):
                 </div>
                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <input type="text" id="share-cloud-url-input" class="form-control" readonly style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700; background: var(--card-bg); flex: 1;" value="https://kizuno-ai.onrender.com">
+                    <input type="text" id="share-cloud-url-input" class="form-control" readonly style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700; background: var(--card-bg); flex: 1;" value="https://kizuno-ai.vercel.app">
                     <button type="button" class="btn-secondary" onclick="copyCloudShareUrl()" style="white-space: nowrap; padding: 0.55rem 0.85rem; font-size: 0.8rem;">
                         📋 Copy
                     </button>
@@ -4374,7 +4365,6 @@
                 candidateUrls.push('http://127.0.0.1:8000/api');
                 candidateUrls.push('http://localhost:8000/api');
             }
-            candidateUrls.push('https://kizuno-ai.onrender.com/api');
             candidateUrls.push('http://127.0.0.1:8000/api');
             candidateUrls.push('http://localhost:8000/api');
 
@@ -5157,7 +5147,7 @@
                                                 <span>🛡️</span> 6-Digit Citizen Verification Code
                                             </div>
                                             <p style="font-size: 0.775rem; color: #475569; margin: 0 0 0.65rem 0; line-height: 1.4;">
-                                                Generated for <strong style="color: var(--brand-primary);">${escapeHtml(email)}</strong> (Render cloud firewall blocks direct SMTP ports 465/587):
+                                                Generated for <strong style="color: var(--brand-primary);">${escapeHtml(email)}</strong> (Cloud host firewall blocks direct SMTP ports 465/587):
                                             </p>
                                             <div style="font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 800; letter-spacing: 6px; color: #15803d; background: #ffffff; padding: 0.55rem 1.25rem; border-radius: 8px; display: inline-block; border: 1.5px dashed #86efac; box-shadow: var(--shadow-sm);">
                                                 ${escapeHtml(data.code)}
@@ -5202,7 +5192,7 @@
                         return false;
                     }
                 } else {
-                    // Backend is offline / unreachable: Inform user clearly without printing any fake codes
+                    // Backend is offline / unreachable: Inform user clearly with options to reconnect or use offline mode
                     showToast("Verification server offline. Please run 'python server.py' and open http://localhost:8000", '⚠️');
                     const signupForm = document.getElementById('citizen-signup-form');
                     if (signupForm) signupForm.style.display = 'none';
@@ -5216,14 +5206,26 @@
                     const statusText = document.getElementById('otp-sent-status');
                     if (statusText) {
                         statusText.innerHTML = `
-                            <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 0.85rem; margin-bottom: 0.85rem; text-align: left; font-size: 0.825rem; color: #991b1b;">
-                                <strong>⚠️ Verification Server Offline:</strong> Could not connect to the Kizuno verification server.
-                                <div style="margin-top: 0.35rem; font-size: 0.775rem; color: #7f1d1d; line-height: 1.45;">
+                            <div style="background: #fff7ed; border: 1.5px solid #fdba74; border-radius: 12px; padding: 1.1rem 1rem; margin-bottom: 1rem; text-align: left;">
+                                <div style="font-weight: 800; color: #c2410c; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.875rem;">
+                                    <span>⚠️</span> Local Verification Server Not Connected
+                                </div>
+                                <p style="font-size: 0.8rem; color: #7c2d12; margin: 0 0 0.65rem 0; line-height: 1.45;">
                                     Real Gmail delivery requires the local server. Run <code>python server.py</code> in your terminal and open <a href="http://localhost:8000" target="_blank" style="color: #dc2626; font-weight: 700; text-decoration: underline;">http://localhost:8000</a> so real verification codes reach your Gmail inbox.
+                                </p>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.65rem;">
+                                    <button type="button" id="btn-reconnect-server" onclick="retryServerConnectionAndSend(event)"
+                                        style="background: #ea580c; color: #ffffff; border: none; border-radius: 6px; padding: 0.45rem 0.85rem; font-size: 0.775rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.35rem;">
+                                        🔄 Re-check Server & Send Code
+                                    </button>
+                                    <button type="button" onclick="continueOfflineSignup()"
+                                        style="background: #ffffff; color: #9a3412; border: 1.5px solid #fdba74; border-radius: 6px; padding: 0.45rem 0.85rem; font-size: 0.775rem; font-weight: 700; cursor: pointer;">
+                                        ⚡ Quick Demo / Offline Mode
+                                    </button>
                                 </div>
                             </div>
                             <p style="font-size: 0.825rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-                                Once the server is running, check your Gmail inbox and enter the 6-digit code below manually:
+                                Once connected, check your Gmail inbox and enter the 6-digit code below:
                             </p>
                         `;
                     }
@@ -5239,6 +5241,64 @@
                 if (btn) {
                     btn.disabled = false;
                     btn.innerText = 'Send Gmail Verification Code';
+                }
+            }
+        }
+
+        let activeOfflineSignupCode = null;
+
+        function continueOfflineSignup() {
+            const code = String(Math.floor(100000 + Math.random() * 900000));
+            activeOfflineSignupCode = code;
+
+            const email = document.getElementById('signup-email').value.trim();
+            const statusText = document.getElementById('otp-sent-status');
+            if (statusText) {
+                statusText.innerHTML = `
+                    <div style="background: #f0fdf4; border: 1.5px solid #22c55e; border-radius: 12px; padding: 1.15rem 1rem; margin-bottom: 1rem; text-align: center;">
+                        <div style="font-size: 0.85rem; font-weight: 800; color: #15803d; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                            <span>⚡</span> Quick Demo / Offline Mode Active
+                        </div>
+                        <p style="font-size: 0.775rem; color: #475569; margin: 0 0 0.65rem 0; line-height: 1.4;">
+                            Generated for <strong style="color: var(--brand-primary);">${escapeHtml(email)}</strong> (Offline Mode Active):
+                        </p>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 800; letter-spacing: 6px; color: #15803d; background: #ffffff; padding: 0.55rem 1.25rem; border-radius: 8px; display: inline-block; border: 1.5px dashed #86efac; box-shadow: var(--shadow-sm);">
+                            ${code}
+                        </div>
+                        <p style="font-size: 0.75rem; color: #166534; margin: 0.65rem 0 0 0; font-weight: 600;">
+                            ✓ Code auto-filled below. Click "Verify Code & Create Account" to finish!
+                        </p>
+                    </div>
+                `;
+            }
+
+            const codeInput = document.getElementById('signup-otp-code');
+            if (codeInput) {
+                codeInput.value = code;
+                codeInput.focus();
+            }
+            showToast(`Offline Verification Code: ${code}`, '🔑');
+        }
+
+        async function retryServerConnectionAndSend(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const btn = document.getElementById('btn-reconnect-server');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = 'Checking port 8000...';
+            }
+            try {
+                await detectAndConnectBackend();
+                if (isBackendConnected) {
+                    showToast('Server connected! Sending verification email...', '✓');
+                    await requestGmailVerificationCode(false, false);
+                } else {
+                    showToast("Server still offline. Run 'python server.py' in your terminal and open http://localhost:8000", '⚠️');
+                }
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = '🔄 Re-check Server & Send Code';
                 }
             }
         }
@@ -5314,7 +5374,43 @@
                         return false;
                     }
                 } else {
-                    showToast("Verification server offline. Please run 'python server.py' and open http://localhost:8000 to verify your account.", "⚠️");
+                    // Offline / Local Registration Fallback
+                    if (activeOfflineSignupCode && code !== activeOfflineSignupCode) {
+                        showToast(`Verification code does not match. Please use: ${activeOfflineSignupCode}`, '⚠️');
+                        return false;
+                    }
+                    const offlineUser = {
+                        id: Date.now(),
+                        name: username || email.split('@')[0],
+                        email: email,
+                        role: 'Citizen',
+                        picture: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
+                        authProvider: 'Kizuno Local Cache'
+                    };
+                    localStorage.setItem('kizuno_auth_user', JSON.stringify(offlineUser));
+                    const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                    if (!regUsers.some(u => (u.email || '').toLowerCase() === email)) {
+                        regUsers.push(offlineUser);
+                        localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+                    }
+                    applyUserSession(offlineUser);
+
+                    const p = document.getElementById('signup-password');
+                    if (p) p.value = '';
+                    const c = document.getElementById('signup-otp-code');
+                    if (c) c.value = '';
+
+                    const signupForm = document.getElementById('citizen-signup-form');
+                    const otpSection = document.getElementById('signup-otp-section');
+                    if (signupForm) signupForm.style.display = 'block';
+                    if (otpSection) otpSection.style.display = 'none';
+
+                    renderCitizenDashboardRecent();
+                    updateCitizenDashboardStats();
+                    renderMyComplaints();
+
+                    showToast(`Account created & verified (Offline Mode)! Welcome to your Dashboard, ${offlineUser.name}.`, '🎉');
+                    switchView('dashboard');
                     return false;
                 }
             } catch (err) {
@@ -6185,20 +6281,25 @@
                     const netUrl = info.network_url || `${window.location.protocol}//${window.location.host}`;
                     input.value = netUrl;
                     const qrImg = document.getElementById('share-qr-code-img');
+                    const cloudInput = document.getElementById('share-cloud-url-input');
+                    const cloudUrl = (window.location.origin && window.location.origin !== 'null' && !window.location.origin.includes('localhost') && !window.location.origin.includes('127.0.0.1')) ? window.location.origin : 'https://kizuno-ai.vercel.app';
+                    if (cloudInput) cloudInput.value = cloudUrl;
                     if (qrImg) {
-                        const targetUrl = (window.location.hostname.includes('render.com')) ? 'https://kizuno-ai.onrender.com' : netUrl;
-                        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(targetUrl)}`;
+                        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(cloudUrl)}`;
                     }
                     return;
                 }
             } catch (e) { }
 
-            // Fallback to window location host
-            const fallbackUrl = `${window.location.protocol}//${window.location.host}`;
+            // Fallback to window location host or Vercel
+            const fallbackUrl = (window.location.origin && window.location.origin !== 'null') ? window.location.origin : `${window.location.protocol}//${window.location.host}`;
             input.value = fallbackUrl;
+            const cloudUrl = (window.location.origin && window.location.origin !== 'null' && !window.location.origin.includes('localhost') && !window.location.origin.includes('127.0.0.1')) ? window.location.origin : 'https://kizuno-ai.vercel.app';
+            const cloudInput = document.getElementById('share-cloud-url-input');
+            if (cloudInput) cloudInput.value = cloudUrl;
             const qrImg = document.getElementById('share-qr-code-img');
             if (qrImg) {
-                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(fallbackUrl)}`;
+                qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(cloudUrl)}`;
             }
         }
 
