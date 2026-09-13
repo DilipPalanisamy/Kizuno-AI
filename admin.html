@@ -1449,8 +1449,12 @@
             }
         }
 
+        function getAdminToken() {
+            return localStorage.getItem("kizuno_admin_token") || sessionStorage.getItem("kizuno_admin_token") || "";
+        }
+
         function checkAdminAuth() {
-            const token = sessionStorage.getItem("kizuno_admin_token");
+            const token = getAdminToken();
             if (!token) {
                 const mainView = document.getElementById("adminMainView");
                 const navActions = document.getElementById("adminAuthorizedNav");
@@ -1477,7 +1481,7 @@
             if (userRaw) {
                 try {
                     const u = JSON.parse(userRaw);
-                    if (u.email && u.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com') {
+                    if (u.email && (u.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com' || u.email.toLowerCase().trim() === 'dilip.official09@gmail.com')) {
                         isDilip = true;
                     }
                 } catch (e) { }
@@ -1506,7 +1510,9 @@
                 if (res.ok) {
                     const data = await res.json();
                     if (data && data.success) {
-                        sessionStorage.setItem("kizuno_admin_token", data.token || pin);
+                        const tkn = data.token || pin;
+                        sessionStorage.setItem("kizuno_admin_token", tkn);
+                        localStorage.setItem("kizuno_admin_token", tkn);
                         unlockAdminView();
                         return;
                     }
@@ -1518,6 +1524,7 @@
             // 2. Direct client verification fallback for PIN 9812 (for Vercel deployment & offline mode)
             if (pin === "9812") {
                 sessionStorage.setItem("kizuno_admin_token", "kizuno_admin_secret_key_2026");
+                localStorage.setItem("kizuno_admin_token", "kizuno_admin_secret_key_2026");
                 unlockAdminView();
                 return;
             }
@@ -1544,6 +1551,7 @@
 
         function logoutAdmin() {
             sessionStorage.removeItem("kizuno_admin_token");
+            localStorage.removeItem("kizuno_admin_token");
             const pinInput = document.getElementById("adminPinInput");
             if (pinInput) pinInput.value = "";
             const errBox = document.getElementById("pinErrorMsg");
@@ -1559,7 +1567,7 @@
         }
 
         function getAuthHeaders() {
-            const token = sessionStorage.getItem("kizuno_admin_token") || "";
+            const token = getAdminToken();
             return {
                 "Authorization": `Bearer ${token}`,
                 "X-Admin-Pin": token
@@ -1577,60 +1585,21 @@
             for (const u of users) {
                 if (!u) continue;
                 const email = String(u.email || '').toLowerCase().trim();
-                const name = String(u.name || '').toLowerCase().trim();
-
-                // Proactively filter out any test accounts, dummy emails, or test submitters
-                if (
-                    email.includes('test') ||
-                    email.startsWith('kizuno.citizen.') ||
-                    email.endsWith('@example.com') ||
-                    email === 'kumar.citizen@gmail.com' ||
-                    email === 'dilip.official09@gmail.com' ||
-                    name === 'ddddd' ||
-                    name.includes('test')
-                ) {
-                    continue;
-                }
+                if (!email || !email.includes('@')) continue;
 
                 // Strictly deduplicate users by email (keep only first unique entry)
-                if (email) {
-                    if (seenEmails.has(email)) continue;
-                    seenEmails.add(email);
-                }
+                if (seenEmails.has(email)) continue;
+                seenEmails.add(email);
 
                 clean.push(u);
             }
             return clean;
         }
 
-        function purgeDirtyLocalStorage() {
-            try {
-                const regUsers = localStorage.getItem('kizuno_registered_users');
-                if (regUsers) {
-                    let parsed = JSON.parse(regUsers);
-                    if (Array.isArray(parsed)) {
-                        const seen = new Set();
-                        parsed = parsed.filter(u => {
-                            if (!u) return false;
-                            const email = (u.email || '').toLowerCase().trim();
-                            const name = (u.name || '').toLowerCase().trim();
-                            if (email.includes('test') || email.startsWith('kizuno.citizen.') || email === 'kumar.citizen@gmail.com' || email === 'dilip.official09@gmail.com' || name === 'ddddd' || seen.has(email)) {
-                                return false;
-                            }
-                            seen.add(email);
-                            return true;
-                        });
-                        localStorage.setItem('kizuno_registered_users', JSON.stringify(parsed));
-                    }
-                }
-            } catch (e) {}
-        }
-
         async function loadDashboardData(showSuccessToast = false) {
             if (!checkAdminAuth()) return;
-            purgeDirtyLocalStorage();
 
-            let fetchedFromBackend = false;
+            let fetchedUsers = [];
 
             try {
                 // 1. Fetch live users list from backend
@@ -1640,19 +1609,14 @@
                 });
                 if (usersRes.status === 401 || usersRes.status === 403) {
                     sessionStorage.removeItem("kizuno_admin_token");
+                    localStorage.removeItem("kizuno_admin_token");
                     checkAdminAuth();
                     return;
                 }
                 if (usersRes.ok) {
-                    const users = await usersRes.json();
-                    if (Array.isArray(users)) {
-                        allUsers = sanitizeUsers(users || []);
-                        applyFiltersAndRender();
-                        updateKPIs();
-                        fetchedFromBackend = true;
-                        if (showSuccessToast) {
-                            showToast(`Synchronized ${allUsers.length} verified citizens from database!`, "🔄");
-                        }
+                    const data = await usersRes.json();
+                    if (Array.isArray(data)) {
+                        fetchedUsers = data;
                     }
                 }
 
@@ -1668,41 +1632,50 @@
                     }
                 } catch (se) {}
             } catch (err) {
-                console.warn("[Admin Dashboard] Backend sync unavailable, checking client & Supabase storage.");
+                console.warn("[Admin Dashboard] Backend sync note:", err);
             }
 
-            // Fallback for Vercel / offline mode if backend didn't supply users
-            if (!fetchedFromBackend) {
-                try {
-                    if (supabaseClient) {
-                        const { data: supaUsers, error } = await supabaseClient
-                            .from('users')
-                            .select('*')
-                            .order('created_at', { ascending: false });
-                        if (!error && Array.isArray(supaUsers) && supaUsers.length > 0) {
-                            allUsers = sanitizeUsers(supaUsers);
-                            applyFiltersAndRender();
-                            updateKPIs();
-                            const statusText = document.getElementById("live-status-text");
-                            if (statusText) statusText.innerText = "Supabase Cloud Sync";
-                            return;
-                        }
-                    }
-                } catch (e) {}
+            // Always combine all available user sources so emails are NEVER lost across refresh
+            const localRegUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+            const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || 'null');
+            const localComplaints = JSON.parse(localStorage.getItem('kizuno_saved_complaints') || '[]');
+            const backupComplaints = JSON.parse(localStorage.getItem('kizuno_complaints_backup') || '[]');
 
-                try {
-                    const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
-                    const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || 'null');
-                    const combined = [...regUsers];
-                    if (authUser && authUser.email && !combined.some(u => (u.email || '').toLowerCase() === (authUser.email || '').toLowerCase())) {
-                        combined.push(authUser);
-                    }
-                    allUsers = sanitizeUsers(combined);
-                    applyFiltersAndRender();
-                    updateKPIs();
-                    const statusText = document.getElementById("live-status-text");
-                    if (statusText) statusText.innerText = "Local Cache Sync";
-                } catch (e) {}
+            const pool = [...fetchedUsers, ...localRegUsers];
+            if (authUser && authUser.email) {
+                pool.push(authUser);
+            }
+
+            // Also extract citizen emails from grievances submitted by citizens
+            const allComplaints = [...localComplaints, ...backupComplaints];
+            for (const c of allComplaints) {
+                if (!c) continue;
+                const cEmail = (c.citizenEmail || c.citizen_email || '').trim().toLowerCase();
+                const cName = (c.citizenName || c.citizen_name || 'Citizen').trim();
+                if (cEmail && cEmail.includes('@') && !pool.some(u => (u.email || '').toLowerCase() === cEmail)) {
+                    pool.push({
+                        id: `C-${c.id || Date.now()}`,
+                        name: cName,
+                        email: cEmail,
+                        registration_method: 'email',
+                        email_verified: true,
+                        created_at: c.createdAt || c.created_at || new Date().toISOString(),
+                        last_login: c.createdAt || c.created_at || new Date().toISOString()
+                    });
+                }
+            }
+
+            allUsers = sanitizeUsers(pool);
+            applyFiltersAndRender();
+            updateKPIs();
+
+            // Permanently persist the complete merged citizen user registry in localStorage
+            try {
+                localStorage.setItem('kizuno_registered_users', JSON.stringify(allUsers));
+            } catch (e) {}
+
+            if (showSuccessToast) {
+                showToast(`Synchronized ${allUsers.length} verified citizens!`, "🔄");
             }
         }
 

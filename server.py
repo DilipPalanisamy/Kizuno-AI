@@ -1278,8 +1278,7 @@ def get_admin_user_stats(
     unique_users = {}
     for u in raw_users:
         em = (u.email or "").strip().lower()
-        nm = (u.name or "").strip().lower()
-        if not em or "test" in em or em.startswith("kizuno.citizen.") or em.endswith("@example.com") or em == "kumar.citizen@gmail.com" or em == "dilip.official09@gmail.com" or nm == "ddddd":
+        if not em:
             continue
         if em not in unique_users:
             unique_users[em] = u
@@ -1312,23 +1311,12 @@ def get_admin_users(
 ):
     """
     Retrieves live registered users list with search, sorting, and complaint counts.
-    Strictly filters out test accounts and duplicate emails.
     Protected: Only authorized administrators can access.
     """
-    query = db.query(User)
+    query = db.query(User).filter(User.email.isnot(None), User.email != "")
     if search and isinstance(search, str):
         clean_search = f"%{search.strip()}%"
         query = query.filter((User.name.ilike(clean_search)) | (User.email.ilike(clean_search)))
-
-    # Exclude test and dummy accounts
-    query = query.filter(
-        ~User.email.ilike("%test%"),
-        ~User.email.ilike("%kumar.citizen%"),
-        ~User.email.ilike("%dilip.official09%"),
-        ~User.email.ilike("kizuno.citizen.%"),
-        ~User.email.ilike("%@example.com"),
-        User.name != "ddddd"
-    )
 
     if sort == "newest":
         query = query.order_by(User.created_at.desc())
@@ -1482,12 +1470,6 @@ def list_complaints(
         "CIV-2026-1493", "CIV-2026-2239"
     }
     query = db.query(Complaint).filter(~Complaint.id.in_(test_ids))
-    query = query.filter(
-        ~Complaint.citizen_email.ilike("%test%"),
-        ~Complaint.citizen_email.ilike("%dilip.official09%"),
-        ~Complaint.citizen_email.ilike("%kumar.citizen%"),
-        ~Complaint.citizen_email.ilike("dilippalanisamy09@gmail.com")
-    )
 
     if status and isinstance(status, str) and status != "All":
         query = query.filter(Complaint.status == status)

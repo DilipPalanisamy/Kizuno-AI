@@ -4453,13 +4453,7 @@
             if (TEST_COMPLAINT_IDS.has(id)) return false;
 
             const email = String(c.citizenEmail || c.citizen_email || '').toLowerCase().trim();
-            if (
-                email.includes('test') ||
-                email.includes('example.com') ||
-                email === 'kumar.citizen@gmail.com' ||
-                email === 'dilip.official09@gmail.com' ||
-                email === 'dilippalanisamy09@gmail.com'
-            ) {
+            if (email === 'kumar.citizen@gmail.com') {
                 return false;
             }
 
