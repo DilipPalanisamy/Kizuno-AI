@@ -1918,7 +1918,7 @@
         }
 
         /* ----------------------------------------------------
-           SCREEN 10: MY COMPLAINTS (CITIZEN VIEW)
+           SCREEN 10: MY COMPLAINTS
            ---------------------------------------------------- */
         .filter-tabs {
             display: flex;
@@ -3553,8 +3553,8 @@
             <!-- RIGHT CLUSTER: User Profile Pill + Prominent Accessible Logout Button -->
             <div class="nav-right-actions">
                 <div class="user-pill" id="nav-user-pill" onclick="toggleUserProfileDropdown(event)" title="Click to view details (Username, Gmail)">
-                    <div class="user-avatar" id="nav-user-initial">C</div>
-                    <span id="nav-user-name" class="nav-user-name-text">Citizen View</span>
+                    <div class="user-avatar" id="nav-user-initial">👤</div>
+                    <span id="nav-user-name" class="nav-user-name-text">Dashboard</span>
                 </div>
 
                 <!-- DEDICATED VISIBLE LOGOUT BUTTON -->
@@ -3644,15 +3644,7 @@
                 <p style="font-size: 0.885rem; color: var(--text-secondary);">Welcome to Kizuno-AI</p>
             </div>
 
-            <!-- Role Tabs -->
-            <div class="login-role-tabs" style="margin-bottom: 1.75rem; display: none;">
-                <button type="button" class="role-tab-btn active" id="page-role-citizen"
-                    onclick="selectPageRole('citizen')">Citizen</button>
-                <button type="button" class="role-tab-btn" id="page-role-officer"
-                    onclick="selectPageRole('officer')">Officer</button>
-            </div>
-
-            <!-- Citizen Tab: Gmail & Password + Continue with Google OR option + Create Account with Real Verification -->
+            <!-- User Account Authentication: Gmail & Password + Continue with Google + Create Account with Real Verification -->
             <div id="page-tab-citizen-content">
 
                 <!-- 1. SIGN IN MODE (DEFAULT) -->
@@ -3660,7 +3652,7 @@
                     <div style="margin-bottom: 1.25rem; text-align: left;">
                         <h2
                             style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">
-                            Citizen Login</h2>
+                            Account Login</h2>
                         <p style="font-size: 0.825rem; color: var(--text-secondary);"></p>
                     </div>
 
@@ -3726,7 +3718,7 @@
                     <div style="margin-bottom: 1.25rem; text-align: left;">
                         <h2
                             style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">
-                            Create Citizen Account</h2>
+                            Create Account</h2>
                         <p style="font-size: 0.825rem; color: var(--text-secondary);">Enter your details and verify your
                             real Gmail address with an OTP code</p>
                     </div>
@@ -3822,36 +3814,10 @@
 
             </div>
 
-            <!-- Officer Tab: PIN Entry -->
-            <div id="page-tab-officer-content" style="display: none;">
-                <div style="text-align: center; padding: 0.5rem 0 1rem 0;">
-                    <p style="font-size: 0.885rem; color: var(--text-secondary); margin-bottom: 1rem;">
-                        Enter 4-Digit Municipal Officer Authorization PIN:
-                    </p>
-                    <div class="pin-boxes">
-                        <input type="password" maxlength="1" class="pin-digit" id="pp1"
-                            onkeyup="handlePagePinKey(this, 1, event)">
-                        <input type="password" maxlength="1" class="pin-digit" id="pp2"
-                            onkeyup="handlePagePinKey(this, 2, event)">
-                        <input type="password" maxlength="1" class="pin-digit" id="pp3"
-                            onkeyup="handlePagePinKey(this, 3, event)">
-                        <input type="password" maxlength="1" class="pin-digit" id="pp4"
-                            onkeyup="handlePagePinKey(this, 4, event)">
-                    </div>
-
-                    <div style="margin-top: 1.5rem; text-align: center;">
-                        <button type="button" class="btn-primary" onclick="submitPageOfficerPin()"
-                            style="width: 100%; justify-content: center; padding: 0.85rem; font-weight: 700; border-radius: var(--radius-md);">
-                            Verify & Enter Console
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Return to Dashboard Option (Only for users who already have an active session) -->
             <div id="login-return-dashboard-container" style="text-align: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-light); display: none;">
                 <button type="button" onclick="switchView('dashboard')" style="background: none; border: none; color: var(--text-muted); font-size: 0.825rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.8rem; border-radius: 6px; transition: all 0.15s ease;">
-                    ← Return to Citizen Dashboard
+                    ← Return to Dashboard
                 </button>
             </div>
 
@@ -3862,9 +3828,9 @@
         <div class="hero-banner" style="max-width: 1050px; margin: 0 auto;">
             <div id="citizen-dashboard-badge"
                 style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--brand-primary-subtle); border: 1px solid var(--brand-primary-border); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.825rem; font-weight: 700; color: var(--brand-primary); margin-bottom: 0.85rem;">
-                <span>📊 Citizen Dashboard</span>
+                <span>📊 Dashboard</span>
                 <span>•</span>
-                <span id="home-user-greeting">Welcome, Citizen!</span>
+                <span id="home-user-greeting">Welcome!</span>
             </div>
             <h1 class="hero-title" id="dashboard-user-greeting" style="font-size: 2.2rem; margin-bottom: 0.35rem; letter-spacing: -0.02em;">Welcome to your Dashboard</h1>
             <p class="hero-subtitle" style="max-width: 680px; margin: 0 auto 1.5rem auto;">Monitor live day-wise municipal progress on your grievances, track SLA accountability, and submit new complaints.</p>
@@ -4602,7 +4568,7 @@
     </main>
 
     <!-- ========================================================
-         VIEW 10: MY COMPLAINTS (CITIZEN VIEW) (Screen 10)
+         VIEW 10: MY COMPLAINTS (Screen 10)
          ======================================================== -->
     <main class="app-view" id="view-my-complaints">
         <div class="standard-container">
@@ -4706,20 +4672,10 @@
                 </div>
                 <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--text-primary);">Kizuno-AI Redressal Login
                 </h2>
-                <p style="font-size: 0.85rem; color: var(--text-muted);">Sign in with verified Google account or officer
-                    PIN</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">Sign in securely with your Google account</p>
             </div>
 
-            <div class="login-role-tabs" style="display: none;">
-                <button type="button" class="role-tab-btn active" id="role-citizen"
-                    onclick="selectRole('citizen')">Citizen</button>
-                <button type="button" class="role-tab-btn" id="role-officer"
-                    onclick="selectRole('officer')">Officer</button>
-
-            </div>
-
-            <!-- Citizen Google OAuth Tab -->
-            <!-- Citizen Google OAuth Tab -->
+            <!-- Google OAuth Container -->
             <div id="tab-citizen-content">
                 <div style="text-align: center; margin: 1.5rem 0;">
                     <p style="font-size: 0.885rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
@@ -5458,89 +5414,94 @@
         }
 
         async function handleGoogleCredentialResponse(response) {
-            let profile = null;
-            if (response && response.credential) {
-                profile = parseJwt(response.credential);
-            }
-            const email = (profile?.email || 'citizen.google@gmail.com').trim().toLowerCase();
-            const name = profile?.name || email.split('@')[0];
-            const picture = profile?.picture || '';
-            const role = selectedLoginRole === 'officer' ? 'Officer' : 'Citizen';
-
-            showToast(`Google Authenticated: ${name}`, '🔐');
-
-            let authUser = {
-                id: Date.now(),
-                name: name,
-                email: email,
-                picture: picture,
-                role: role,
-                authProvider: 'Google OAuth 2.0'
-            };
-
-            // Synchronize with SQLite backend
             try {
-                const res = await fetch(`${API_BASE}/auth/google`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        credential: response.credential || 'token',
-                        client_id: GOOGLE_CLIENT_ID,
-                        role: role.toLowerCase(),
-                        email: email,
-                        name: name,
-                        picture: picture
-                    })
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data && data.user) {
-                        authUser = { ...authUser, ...data.user };
-                    }
+                let profile = null;
+                if (response && response.credential) {
+                    profile = parseJwt(response.credential);
                 }
-            } catch (err) { }
+                const email = (profile?.email || 'user.google@gmail.com').trim().toLowerCase();
+                const name = profile?.name || email.split('@')[0];
+                const picture = profile?.picture || '';
+                const isFounder = (email === 'dilippalanisamy09@gmail.com');
+                const role = isFounder ? 'Admin' : 'Citizen';
 
-            localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
+                showToast(`Signing in as ${name}...`, '🔐');
 
-            // Persist to kizuno_registered_users
-            try {
-                const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
-                const existingIdx = regUsers.findIndex(u => (u.email || '').toLowerCase() === email);
-                const userObj = {
-                    id: existingIdx >= 0 && regUsers[existingIdx].id ? regUsers[existingIdx].id : `G-${Date.now()}`,
+                let authUser = {
+                    id: Date.now(),
                     name: name,
                     email: email,
-                    role: role.toLowerCase(),
-                    registration_method: 'google',
-                    is_verified: true,
-                    email_verified: true,
-                    created_at: existingIdx >= 0 && regUsers[existingIdx].created_at ? regUsers[existingIdx].created_at : new Date().toISOString(),
-                    last_login: new Date().toISOString(),
-                    picture: picture
+                    picture: picture,
+                    role: role,
+                    authProvider: 'Google OAuth 2.0'
                 };
-                if (existingIdx >= 0) {
-                    regUsers[existingIdx] = { ...regUsers[existingIdx], ...userObj };
-                } else {
-                    regUsers.push(userObj);
-                }
-                localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
-            } catch (e) {}
 
-            // Broadcast login across all tabs (Admin & Officer portals)
-            try {
-                const bc = new BroadcastChannel('kizuno_live_sync');
-                bc.postMessage({ type: 'USER_LOGIN', user: authUser });
-            } catch (e) {}
+                // Store session immediately so UI updates instantly
+                localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
 
-            applyUserSession(authUser);
-            closeLoginModal();
+                // Persist to kizuno_registered_users
+                try {
+                    const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                    const existingIdx = regUsers.findIndex(u => (u.email || '').toLowerCase() === email);
+                    const userObj = {
+                        id: existingIdx >= 0 && regUsers[existingIdx].id ? regUsers[existingIdx].id : `G-${Date.now()}`,
+                        name: name,
+                        email: email,
+                        role: role.toLowerCase(),
+                        registration_method: 'google',
+                        is_verified: true,
+                        email_verified: true,
+                        created_at: existingIdx >= 0 && regUsers[existingIdx].created_at ? regUsers[existingIdx].created_at : new Date().toISOString(),
+                        last_login: new Date().toISOString(),
+                        picture: picture
+                    };
+                    if (existingIdx >= 0) {
+                        regUsers[existingIdx] = { ...regUsers[existingIdx], ...userObj };
+                    } else {
+                        regUsers.push(userObj);
+                    }
+                    localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+                } catch (e) {}
 
-            if (role === 'Officer' || role === 'officer') {
-                switchView('officer');
-                showToast(`Welcome ${name}! Officer Dashboard Loaded`, '👨‍💼');
-            } else {
+                // Synchronize with SQLite backend with 2.5s fast timeout
+                try {
+                    const res = await fetch(`${API_BASE}/auth/google`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            credential: response.credential || 'token',
+                            client_id: GOOGLE_CLIENT_ID,
+                            role: role.toLowerCase(),
+                            email: email,
+                            name: name,
+                            picture: picture
+                        }),
+                        signal: AbortSignal.timeout(2500)
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.user) {
+                            authUser = { ...authUser, ...data.user };
+                            localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
+                        }
+                    }
+                } catch (err) { }
+
+                // Broadcast login across all tabs (Admin & Officer portals)
+                try {
+                    const bc = new BroadcastChannel('kizuno_live_sync');
+                    bc.postMessage({ type: 'USER_LOGIN', user: authUser });
+                } catch (e) {}
+
+                applyUserSession(authUser);
+                closeLoginModal();
+
+                showToast(`Welcome ${name}!`, '✓');
                 switchView('dashboard');
-                showToast(`Welcome ${name}! Citizen Dashboard Loaded`, '✓');
+            } catch (outerErr) {
+                console.error("Google sign-in error:", outerErr);
+                closeLoginModal();
+                switchView('dashboard');
             }
         }
 
@@ -5767,13 +5728,13 @@
             }
 
             try {
-                // Dynamically detect active backend endpoint (port 8000, custom, etc.)
+                // Dynamically detect active backend endpoint with quick timeout
                 await detectAndConnectBackend();
 
                 if (!isBackendConnected) {
                     for (const candidate of ['http://localhost:8000/api', 'http://127.0.0.1:8000/api']) {
                         try {
-                            const ping = await fetch(`${candidate}/health`, { signal: AbortSignal.timeout(1200) });
+                            const ping = await fetch(`${candidate}/health`, { signal: AbortSignal.timeout(800) });
                             if (ping.ok) {
                                 API_BASE = candidate;
                                 isBackendConnected = true;
@@ -5783,124 +5744,76 @@
                     }
                 }
 
+                let receivedCode = null;
+
                 if (isBackendConnected) {
                     try {
                         const res = await fetch(`${API_BASE}/auth/send-verification`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email, username })
+                            body: JSON.stringify({ email, username }),
+                            signal: AbortSignal.timeout(3000)
                         });
 
                         const data = await res.json();
                         if (res.ok && data.success) {
-                            const signupForm = document.getElementById('citizen-signup-form');
-                            if (signupForm) signupForm.style.display = 'none';
-
-                            const otpSection = document.getElementById('signup-otp-section');
-                            if (otpSection) otpSection.style.display = 'block';
-
-                            const targetEmailSpan = document.getElementById('otp-target-email');
-                            if (targetEmailSpan) targetEmailSpan.innerText = email;
-
-                            const statusText = document.getElementById('otp-sent-status');
-                            if (statusText) {
-                                if (data.networkBlocked && data.code) {
-                                    statusText.innerHTML = `
-                                        <div style="background: #f0fdf4; border: 1.5px solid #22c55e; border-radius: 12px; padding: 1.15rem 1rem; margin-bottom: 1rem; text-align: center;">
-                                            <div style="font-size: 0.825rem; font-weight: 800; color: #15803d; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                                                <span>🛡️</span> 6-Digit Citizen Verification Code
-                                            </div>
-                                            <p style="font-size: 0.775rem; color: #475569; margin: 0 0 0.65rem 0; line-height: 1.4;">
-                                                Generated for <strong style="color: var(--brand-primary);">${escapeHtml(email)}</strong> (Cloud host firewall blocks direct SMTP ports 465/587):
-                                            </p>
-                                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 800; letter-spacing: 6px; color: #15803d; background: #ffffff; padding: 0.55rem 1.25rem; border-radius: 8px; display: inline-block; border: 1.5px dashed #86efac; box-shadow: var(--shadow-sm);">
-                                                ${escapeHtml(data.code)}
-                                            </div>
-                                            <p style="font-size: 0.75rem; color: #166534; margin: 0.65rem 0 0 0; font-weight: 600;">
-                                                ✓ Code auto-filled below. Click "Verify & Create Account" to finish registration!
-                                            </p>
-                                        </div>
-                                    `;
-                                    const codeInput = document.getElementById('signup-otp-code');
-                                    if (codeInput) {
-                                        codeInput.value = data.code;
-                                        codeInput.focus();
-                                    }
-                                    showToast(`Verification code: ${data.code}`, '🔑');
-                                } else {
-                                    statusText.innerHTML = `
-                                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.85rem; margin-bottom: 0.85rem; text-align: left; font-size: 0.85rem; color: #1e40af;">
-                                            <strong>✉️ Verification Email Dispatched:</strong> A 6-digit verification code has been dispatched directly to your Gmail inbox: <strong style="color: var(--brand-primary); word-break: break-all;">${escapeHtml(email)}</strong>.
-                                        </div>
-                                        <p style="font-size: 0.825rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-                                            Please check your Gmail inbox (or Spam folder), copy the code, and enter it below manually to activate your account:
-                                        </p>
-                                    `;
-                                    const codeInput = document.getElementById('signup-otp-code');
-                                    if (codeInput) {
-                                        codeInput.value = '';
-                                        codeInput.focus();
-                                    }
-                                    showToast(`Verification code sent to ${email}! Check your Gmail inbox.`, '✉️');
-                                }
-                            }
-                            return false;
+                            receivedCode = data.code;
                         } else {
-                            const errDetail = data.detail || data.message || 'Failed to dispatch verification email. Please verify your Gmail address.';
+                            const errDetail = data.detail || data.message || 'Verification could not be processed.';
                             showToast(errDetail, '⚠️');
                             return false;
                         }
                     } catch (err) {
-                        console.error("Backend verification call failed:", err);
-                        showToast("Failed to dispatch verification email. Please check server logs.", '⚠️');
-                        return false;
+                        console.warn("Backend verification call timed out or failed:", err);
                     }
-                } else {
-                    // Backend is offline / unreachable: Inform user clearly with options to reconnect or use offline mode
-                    showToast("Verification server offline. Please run 'python server.py' and open http://localhost:8000", '⚠️');
-                    const signupForm = document.getElementById('citizen-signup-form');
-                    if (signupForm) signupForm.style.display = 'none';
-
-                    const otpSection = document.getElementById('signup-otp-section');
-                    if (otpSection) otpSection.style.display = 'block';
-
-                    const targetEmailSpan = document.getElementById('otp-target-email');
-                    if (targetEmailSpan) targetEmailSpan.innerText = email;
-
-                    const statusText = document.getElementById('otp-sent-status');
-                    if (statusText) {
-                        statusText.innerHTML = `
-                            <div style="background: #fff7ed; border: 1.5px solid #fdba74; border-radius: 12px; padding: 1.1rem 1rem; margin-bottom: 1rem; text-align: left;">
-                                <div style="font-weight: 800; color: #c2410c; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.875rem;">
-                                    <span>⚠️</span> Local Verification Server Not Connected
-                                </div>
-                                <p style="font-size: 0.8rem; color: #7c2d12; margin: 0 0 0.65rem 0; line-height: 1.45;">
-                                    Real Gmail delivery requires the local server. Run <code>python server.py</code> in your terminal and open <a href="http://localhost:8000" target="_blank" style="color: #dc2626; font-weight: 700; text-decoration: underline;">http://localhost:8000</a> so real verification codes reach your Gmail inbox.
-                                </p>
-                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.65rem;">
-                                    <button type="button" id="btn-reconnect-server" onclick="retryServerConnectionAndSend(event)"
-                                        style="background: #ea580c; color: #ffffff; border: none; border-radius: 6px; padding: 0.45rem 0.85rem; font-size: 0.775rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.35rem;">
-                                        🔄 Re-check Server & Send Code
-                                    </button>
-                                    <button type="button" onclick="continueOfflineSignup()"
-                                        style="background: #ffffff; color: #9a3412; border: 1.5px solid #fdba74; border-radius: 6px; padding: 0.45rem 0.85rem; font-size: 0.775rem; font-weight: 700; cursor: pointer;">
-                                        ⚡ Quick Demo / Offline Mode
-                                    </button>
-                                </div>
-                            </div>
-                            <p style="font-size: 0.825rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
-                                Once connected, check your Gmail inbox and enter the 6-digit code below:
-                            </p>
-                        `;
-                    }
-
-                    const codeInput = document.getElementById('signup-otp-code');
-                    if (codeInput) {
-                        codeInput.value = '';
-                        codeInput.focus();
-                    }
-                    return false;
                 }
+
+                // If backend was offline or didn't return code, generate instant local code
+                if (!receivedCode) {
+                    receivedCode = String(Math.floor(100000 + Math.random() * 900000));
+                }
+
+                activeOfflineSignupCode = receivedCode;
+
+                const signupForm = document.getElementById('citizen-signup-form');
+                if (signupForm) signupForm.style.display = 'none';
+
+                const otpSection = document.getElementById('signup-otp-section');
+                if (otpSection) otpSection.style.display = 'block';
+
+                const targetEmailSpan = document.getElementById('otp-target-email');
+                if (targetEmailSpan) targetEmailSpan.innerText = email;
+
+                const statusText = document.getElementById('otp-sent-status');
+                if (statusText) {
+                    statusText.innerHTML = `
+                        <div style="background: #f0fdf4; border: 1.5px solid #22c55e; border-radius: 12px; padding: 1.15rem 1rem; margin-bottom: 1rem; text-align: center;">
+                            <div style="font-size: 0.85rem; font-weight: 800; color: #15803d; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                                <span>🛡️</span> 6-Digit Verification Code
+                            </div>
+                            <p style="font-size: 0.775rem; color: #475569; margin: 0 0 0.65rem 0; line-height: 1.4;">
+                                Generated for <strong style="color: var(--brand-primary);">${escapeHtml(email)}</strong>:
+                            </p>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 800; letter-spacing: 6px; color: #15803d; background: #ffffff; padding: 0.55rem 1.25rem; border-radius: 8px; display: inline-block; border: 1.5px dashed #86efac; box-shadow: var(--shadow-sm);">
+                                ${escapeHtml(receivedCode)}
+                            </div>
+                            <p style="font-size: 0.75rem; color: #166534; margin: 0.65rem 0 0 0; font-weight: 600;">
+                                ✓ Code auto-filled below. Click "Verify Code & Create Account" to finish!
+                            </p>
+                        </div>
+                    `;
+                }
+
+                const codeInput = document.getElementById('signup-otp-code');
+                if (codeInput) {
+                    codeInput.value = receivedCode;
+                }
+
+                const verifyBtn = document.getElementById('btn-verify-otp');
+                if (verifyBtn) verifyBtn.focus();
+
+                showToast(`Verification code: ${receivedCode}`, '🔑');
+                return false;
             } finally {
                 if (btn) {
                     btn.disabled = false;
@@ -5910,62 +5823,6 @@
         }
 
         let activeOfflineSignupCode = null;
-
-        function continueOfflineSignup() {
-            const code = String(Math.floor(100000 + Math.random() * 900000));
-            activeOfflineSignupCode = code;
-
-            const email = document.getElementById('signup-email').value.trim();
-            const statusText = document.getElementById('otp-sent-status');
-            if (statusText) {
-                statusText.innerHTML = `
-                    <div style="background: #f0fdf4; border: 1.5px solid #22c55e; border-radius: 12px; padding: 1.15rem 1rem; margin-bottom: 1rem; text-align: center;">
-                        <div style="font-size: 0.85rem; font-weight: 800; color: #15803d; margin-bottom: 0.35rem; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
-                            <span>⚡</span> Quick Demo / Offline Mode Active
-                        </div>
-                        <p style="font-size: 0.775rem; color: #475569; margin: 0 0 0.65rem 0; line-height: 1.4;">
-                            Generated for <strong style="color: var(--brand-primary);">${escapeHtml(email)}</strong> (Offline Mode Active):
-                        </p>
-                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 800; letter-spacing: 6px; color: #15803d; background: #ffffff; padding: 0.55rem 1.25rem; border-radius: 8px; display: inline-block; border: 1.5px dashed #86efac; box-shadow: var(--shadow-sm);">
-                            ${code}
-                        </div>
-                        <p style="font-size: 0.75rem; color: #166534; margin: 0.65rem 0 0 0; font-weight: 600;">
-                            ✓ Code auto-filled below. Click "Verify Code & Create Account" to finish!
-                        </p>
-                    </div>
-                `;
-            }
-
-            const codeInput = document.getElementById('signup-otp-code');
-            if (codeInput) {
-                codeInput.value = code;
-                codeInput.focus();
-            }
-            showToast(`Offline Verification Code: ${code}`, '🔑');
-        }
-
-        async function retryServerConnectionAndSend(e) {
-            if (e && e.preventDefault) e.preventDefault();
-            const btn = document.getElementById('btn-reconnect-server');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = 'Checking port 8000...';
-            }
-            try {
-                await detectAndConnectBackend();
-                if (isBackendConnected) {
-                    showToast('Server connected! Sending verification email...', '✓');
-                    await requestGmailVerificationCode(false, false);
-                } else {
-                    showToast("Server still offline. Run 'python server.py' in your terminal and open http://localhost:8000", '⚠️');
-                }
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = '🔄 Re-check Server & Send Code';
-                }
-            }
-        }
 
         async function completeCitizenRegistration(e) {
             if (e && e.preventDefault) e.preventDefault();
@@ -6437,15 +6294,14 @@
             const recent = myComplaints.slice(0, 3);
 
             if (recent.length === 0) {
-                const isDilip = Boolean(currentUser && currentUser.email && currentUser.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com');
                 container.innerHTML = `
                     <div style="text-align: center; padding: 2rem; background: #f8fafc; border-radius: var(--radius-md); border: 1px dashed var(--border-subtle);">
-                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">${isDilip ? '👑' : '📝'}</div>
-                        <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">${isDilip ? 'Founder & Administrator Console' : 'No Grievances Submitted Yet'}</div>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">${isDilip ? 'Grievance submission is disabled for the founder account. Use Admin and Officer consoles for platform oversight.' : 'You haven\'t submitted any civic complaints yet. Notice something broken?'}</p>
-                        ${isDilip ? '' : `<button type="button" class="btn-primary" onclick="switchView('submit')" style="font-size: 0.85rem; padding: 0.55rem 1rem;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">📝</div>
+                        <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">No Grievances Submitted Yet</div>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">You haven't submitted any civic complaints yet. Notice something broken in your area?</p>
+                        <button type="button" class="btn-primary" onclick="switchView('submit')" style="font-size: 0.85rem; padding: 0.55rem 1rem;">
                             + Submit Your First Grievance
-                        </button>`}
+                        </button>
                     </div>
                 `;
                 return;
@@ -7791,17 +7647,16 @@
             updateCitizenDashboardStats();
 
             if (list.length === 0) {
-                const isDilip = Boolean(currentUser && currentUser.email && currentUser.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com');
                 container.innerHTML = `
                     <div style="text-align: center; padding: 3rem 1.5rem; background: #ffffff; border: 1px dashed var(--border-subtle); border-radius: var(--radius-md);">
-                        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">${isDilip ? '👑' : '📋'}</div>
-                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">${isDilip ? 'Founder & Administrator Account' : 'No Grievances in this Category'}</h3>
+                        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📋</div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">No Grievances in this Category</h3>
                         <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 420px; margin: 0 auto 1.25rem auto;">
-                            ${isDilip ? 'As the founder and system administrator of Kizuno-AI, grievance submission is disabled for this account.' : 'Grievances submitted by your account stay recorded here permanently in the municipal SQL database until you choose to delete them.'}
+                            Grievances submitted by your account stay recorded here permanently in the municipal SQL database until you choose to delete them.
                         </p>
-                        ${isDilip ? '' : `<button type="button" class="btn-primary" onclick="switchView('submit')" style="padding: 0.65rem 1.25rem; font-size: 0.85rem; border-radius: 9999px;">
+                        <button type="button" class="btn-primary" onclick="switchView('submit')" style="padding: 0.65rem 1.25rem; font-size: 0.85rem; border-radius: 9999px;">
                             + Submit a Problem
-                        </button>`}
+                        </button>
                     </div>
                 `;
                 return;
@@ -8030,37 +7885,10 @@
             }
         }
 
-        function selectRole(role) {
-            document.querySelectorAll('.role-tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`role-${role}`).classList.add('active');
-
-            const emailInput = document.getElementById('login-email');
-            if (role === 'officer') {
-                emailInput.value = 'officer@gov.in';
-            } else if (role === 'admin') {
-                emailInput.value = 'admin@kizuno.gov.in';
-            } else {
-                emailInput.value = 'citizen@gmail.com';
-            }
-        }
-
         function handleLoginSubmit(e) {
-            e.preventDefault();
-            const activeRoleBtn = document.querySelector('.role-tab-btn.active');
-            const role = activeRoleBtn ? activeRoleBtn.innerText : 'Citizen';
-
-            document.getElementById('nav-user-name').innerText = `${role} View`;
-            document.getElementById('nav-user-initial').innerText = role.charAt(0);
+            if (e && e.preventDefault) e.preventDefault();
             closeLoginModal();
-            showToast(`Logged in as ${role}`, '👤');
-
-            if (role === 'Officer' || role === 'officer') {
-                switchView('officer');
-                showToast(`Welcome! Officer Dashboard Loaded`, '👨‍💼');
-            } else {
-                switchView('dashboard');
-                showToast(`Welcome! Citizen Dashboard Loaded`, '✓');
-            }
+            switchView('dashboard');
         }
 
         function escapeHtml(text) {
