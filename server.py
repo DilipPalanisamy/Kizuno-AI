@@ -821,6 +821,7 @@ class ComplaintCreateDTO(BaseModel):
     priority: Optional[str] = "Medium"
     citizen_email: Optional[str] = None
     citizen_name: Optional[str] = "Citizen"
+    user_id: Optional[Any] = None
     id: Optional[str] = None
     tracking_key: Optional[str] = None
     status: Optional[str] = "Pending"
@@ -1240,8 +1241,14 @@ def list_authenticated_users(
     db: Session = Depends(get_db),
     _auth: bool = Depends(verify_admin_access)
 ):
-    """Retrieves all users authenticated in the database (Protected for Admin only)"""
-    users = db.query(User).order_by(User.last_login.desc()).all()
+    """Retrieves all citizen users authenticated in the database (Excludes admin accounts)"""
+    admin_emails = {"admin@kizuno.gov.in", "admin@kizuno-ai.gov.in"}
+    users = db.query(User).filter(
+        User.email.isnot(None),
+        User.email != "",
+        User.role != "admin",
+        ~User.email.in_(admin_emails)
+    ).order_by(User.last_login.desc()).all()
     return [u.to_dict() for u in users]
 
 
@@ -1280,18 +1287,20 @@ def get_admin_user_stats(
     _auth: bool = Depends(verify_admin_access)
 ):
     """
-    Computes live registered user statistics directly from SQL / Supabase:
-    - Total Users (excluding test/dummy accounts)
-    - Google Users
-    - Email Users
-    - Verified Users
-    - New Today (created within last 24h / today)
+    Computes live registered citizen statistics directly from SQL / Supabase:
+    Excludes admin accounts (role === 'admin' and admin emails).
     """
-    raw_users = db.query(User).all()
+    admin_emails = {"admin@kizuno.gov.in", "admin@kizuno-ai.gov.in"}
+    raw_users = db.query(User).filter(
+        User.email.isnot(None),
+        User.email != "",
+        User.role != "admin",
+        ~User.email.in_(admin_emails)
+    ).all()
     unique_users = {}
     for u in raw_users:
         em = (u.email or "").strip().lower()
-        if not em:
+        if not em or (u.role or "").lower() == "admin" or em in admin_emails:
             continue
         if em not in unique_users:
             unique_users[em] = u
@@ -1308,10 +1317,15 @@ def get_admin_user_stats(
 
     return {
         "total_users": total_users,
+        "totalUsers": total_users,
         "google_users": google_users,
+        "googleUsers": google_users,
         "email_users": email_users,
+        "emailUsers": email_users,
         "verified_users": verified_users,
-        "new_today": new_today
+        "verifiedUsers": verified_users,
+        "new_today": new_today,
+        "newToday": new_today
     }
 
 
@@ -1323,10 +1337,17 @@ def get_admin_users(
     _auth: bool = Depends(verify_admin_access)
 ):
     """
-    Retrieves live registered users list with search, sorting, and complaint counts.
+    Retrieves live registered citizen users list with search, sorting, and complaint counts.
     Protected: Only authorized administrators can access.
+    Exclusion Rule: Strictly excludes role === 'admin' or admin email addresses.
     """
-    query = db.query(User).filter(User.email.isnot(None), User.email != "")
+    admin_emails = {"admin@kizuno.gov.in", "admin@kizuno-ai.gov.in"}
+    query = db.query(User).filter(
+        User.email.isnot(None),
+        User.email != "",
+        User.role != "admin",
+        ~User.email.in_(admin_emails)
+    )
     if search and isinstance(search, str):
         clean_search = f"%{search.strip()}%"
         query = query.filter((User.name.ilike(clean_search)) | (User.email.ilike(clean_search)))
@@ -1347,12 +1368,12 @@ def get_admin_users(
         query = query.order_by(User.created_at.desc())
 
     users = query.all()
-    # Deduplicate users by email (case-insensitive)
+    # Deduplicate users by email (case-insensitive) and enforce admin exclusion
     seen_emails = set()
     clean_users = []
     for u in users:
         em = (u.email or "").strip().lower()
-        if not em or em in seen_emails:
+        if not em or em in seen_emails or (u.role or "").lower() == "admin" or em in admin_emails:
             continue
         seen_emails.add(em)
         clean_users.append(u.to_dict())
@@ -1571,13 +1592,42 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
 
     # Relational foreign key: Link complaint to users table (complaints.user_id -> users.id)
     user_fk = None
+    if payload.user_id:
+        try:
+            user_fk = int(payload.user_id)
+        except (ValueError, TypeError):
+            pass
+
     if payload.citizen_email:
         clean_cemail = payload.citizen_email.strip().lower()
         matched_user = db.query(User).filter(User.email == clean_cemail).first()
         if matched_user:
             user_fk = matched_user.id
+        elif clean_cemail and "@" in clean_cemail and (payload.citizen_name or "").lower() != "officer":
+            # Auto-persist real citizen user on grievance submission
+            now_ist = datetime.now(timezone(timedelta(hours=5, minutes=30)))
+            new_u = User(
+                email=clean_cemail,
+                name=(payload.citizen_name or clean_cemail.split("@")[0]).strip(),
+                role="citizen",
+                registration_method="email",
+                email_verified=True,
+                created_at=now_ist,
+                last_login=now_ist
+            )
+            db.add(new_u)
+            db.flush()
+            user_fk = new_u.id
+            record_user_to_csv(
+                user_id=new_u.id,
+                email=new_u.email,
+                name=new_u.name,
+                registration_method="email",
+                email_verified=True,
+                created_at=new_u.created_at
+            )
 
-    # Insert into SQL complaints table
+    # Insert into SQL complaints table with real submitted payload only (no mock fallbacks)
     new_complaint = Complaint(
         id=new_id,
         tracking_key=new_key,
@@ -1587,7 +1637,7 @@ def create_complaint(payload: ComplaintCreateDTO, db: Session = Depends(get_db))
         title=payload.title,
         description=payload.description,
         location=payload.location,
-        photo_url=payload.photo_url or "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80",
+        photo_url=payload.photo_url or "",
         priority=payload.priority or "Medium",
         status=payload.status or "Pending",
         day_label=payload.day_label or "Day 0",

@@ -123,6 +123,7 @@ class Complaint(Base):
         return {
             "id": self.id,
             "trackingKey": self.tracking_key,
+            "tracking_key": self.tracking_key,
             "userId": self.user_id,
             "user_id": self.user_id,
             "category": self.category,

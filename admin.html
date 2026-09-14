@@ -1747,11 +1747,16 @@
             if (!Array.isArray(users)) return [];
             const seenEmails = new Set();
             const clean = [];
+            const adminEmails = new Set(['admin@kizuno.gov.in', 'admin@kizuno-ai.gov.in', 'admin@gov.in']);
 
             for (const u of users) {
                 if (!u) continue;
                 const email = String(u.email || '').toLowerCase().trim();
+                const role = String(u.role || '').toLowerCase().trim();
                 if (!email || !email.includes('@')) continue;
+
+                // Exclusion Rule: Strictly exclude admin accounts from citizen user tracking
+                if (role === 'admin' || adminEmails.has(email) || email.startsWith('admin@')) continue;
 
                 // Strictly deduplicate users by email (keep only first unique entry)
                 if (seenEmails.has(email)) continue;

@@ -2143,6 +2143,10 @@
                 if (res.ok) {
                     const result = await res.json();
                     showToast(`SQL Milestone Saved: ${result.message}`, '✅');
+                    try {
+                        const bc = new BroadcastChannel('kizuno_live_sync');
+                        bc.postMessage({ type: 'COMPLAINT_UPDATED', id: CURRENT_ACTIVE_ACTION_ID });
+                    } catch (e) {}
                     await fetchComplaintsFromBackend(true);
                     closeOfficerActionPanel();
                     return;
@@ -2156,6 +2160,12 @@
             if (complaint) {
                 if (SELECTED_ACTION_TYPE === 'start') complaint.status = 'In Progress';
                 if (SELECTED_ACTION_TYPE === 'resolve') complaint.status = 'Resolved';
+                try {
+                    localStorage.setItem('kizuno_complaints_backup', JSON.stringify(ALL_COMPLAINTS));
+                    localStorage.setItem('kizuno_saved_complaints', JSON.stringify(ALL_COMPLAINTS));
+                    const bc = new BroadcastChannel('kizuno_live_sync');
+                    bc.postMessage({ type: 'COMPLAINT_UPDATED', id: CURRENT_ACTIVE_ACTION_ID });
+                } catch (e) {}
                 renderTable();
                 updateKpis();
                 closeOfficerActionPanel();
@@ -2183,6 +2193,10 @@
                 }
                 if (res.ok) {
                     showToast(`Grievance ${complaint.id} deleted from database!`, '🗑️');
+                    try {
+                        const bc = new BroadcastChannel('kizuno_live_sync');
+                        bc.postMessage({ type: 'COMPLAINT_DELETED', id: complaintId });
+                    } catch (e) {}
                     await fetchComplaintsFromBackend(true);
                     return;
                 }
@@ -2194,6 +2208,8 @@
             try {
                 localStorage.setItem('kizuno_complaints_backup', JSON.stringify(ALL_COMPLAINTS));
                 localStorage.setItem('kizuno_saved_complaints', JSON.stringify(ALL_COMPLAINTS));
+                const bc = new BroadcastChannel('kizuno_live_sync');
+                bc.postMessage({ type: 'COMPLAINT_DELETED', id: complaintId });
             } catch (e) {}
             renderTable();
             updateKpis();

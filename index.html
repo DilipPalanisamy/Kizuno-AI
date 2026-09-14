@@ -7394,6 +7394,7 @@
             if (isBackendConnected) {
                 try {
                     const payload = {
+                        user_id: authUser.id || null,
                         category,
                         title,
                         description: desc,
@@ -8224,7 +8225,7 @@
             try {
                 const liveSyncChannel = new BroadcastChannel('kizuno_live_sync');
                 liveSyncChannel.onmessage = async (ev) => {
-                    if (ev.data && (ev.data.type === 'NEW_COMPLAINT' || ev.data.type === 'COMPLAINT_UPDATED')) {
+                    if (ev.data && (ev.data.type === 'NEW_COMPLAINT' || ev.data.type === 'COMPLAINT_UPDATED' || ev.data.type === 'COMPLAINT_DELETED')) {
                         await syncFromSQL(true);
                         renderOfficerTable();
                         renderMyComplaints();
