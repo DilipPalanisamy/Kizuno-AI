@@ -946,22 +946,16 @@ def send_verification_code(payload: SendVerificationDTO, db: Session = Depends(g
 
     if not smtp_res.get("sent"):
         err_msg = smtp_res.get("error", "SMTP delivery unavailable.")
-        print(f"[Kizuna-AI Auth] Direct SMTP notice for {clean_email} ({err_msg}). Returning verified SQL code: {code}")
-        return {
-            "success": True,
-            "sent": False,
-            "networkBlocked": True,
-            "code": code,
-            "message": f"Verification code generated in database. Code: {code}",
-            "email": clean_email,
-            "expiresInMinutes": 10
-        }
+        print(f"[Kizuna-AI Auth] Direct SMTP notice for {clean_email} ({err_msg})")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to deliver verification code to {clean_email}. Error: {err_msg}"
+        )
 
     return {
         "success": True,
         "sent": True,
         "networkBlocked": False,
-        "code": code,
         "message": f"Verification code sent to {clean_email}. Please check your Gmail inbox.",
         "email": clean_email,
         "expiresInMinutes": 10
