@@ -4915,6 +4915,9 @@
             }
             candidateUrls.push('http://127.0.0.1:8000/api');
             candidateUrls.push('http://localhost:8000/api');
+            // Cloud Live Real-Time Dataset on Render
+            candidateUrls.push('https://kizuno-ai.onrender.com/api');
+            candidateUrls.push('https://kizuno-ai.onrender.com');
 
             const uniqueCandidates = [...new Set(candidateUrls)];
             for (const url of uniqueCandidates) {

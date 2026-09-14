@@ -26,11 +26,12 @@ def main():
 
     print("\n" + "=" * 65)
     print("  🌐 ACCESS URLS:")
-    print(f"  [💻 Computer Browser]      http://localhost:8000")
-    print(f"  [📱 Mobile Phone (Wi-Fi)]  http://{local_ip}:8000")
-    print(f"  [👨‍💼 Officer Console]       http://{local_ip}:8000/officer")
-    print(f"  [🛡️ Admin Console]         http://{local_ip}:8000/admin")
+    print(f"  [💻 Computer Browser]          http://localhost:8000")
+    print(f"  [📱 Mobile Phone (Wi-Fi)]      http://{local_ip}:8000")
+    print(f"  [👨‍💼 Officer Console]           http://{local_ip}:8000/officer")
+    print(f"  [🛡️ Admin Console]             http://{local_ip}:8000/admin")
     print(f"  [☁️ Global Cloud Live (Vercel)] https://kizuno-ai.vercel.app")
+    print(f"  [⚡ Render Real-Time Dataset]   https://kizuno-ai.onrender.com")
     print("=" * 65 + "\n")
 
     # Start server.py on 0.0.0.0 so mobile phones on the same Wi-Fi can connect
