@@ -5289,33 +5289,6 @@
                     viewId = 'login';
                 }
 
-                // Role-based dashboard redirect: if an Officer asks for 'dashboard', go to 'officer'
-                if (viewId === 'dashboard' && currentUser && (currentUser.role === 'Officer' || currentUser.role === 'officer')) {
-                    const isDilip = Boolean(currentUser.email && currentUser.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com');
-                    if (isDilip) {
-                        viewId = 'officer';
-                    }
-                }
-
-                if (viewId === 'officer') {
-                    const isDilip = Boolean(currentUser && currentUser.email && (
-                        currentUser.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com' ||
-                        currentUser.email.toLowerCase().trim().startsWith('dilip')
-                    ));
-                    if (!isDilip) {
-                        showToast('Access Restricted: Officer Portal is reserved for administrator.', '🔒');
-                        viewId = 'dashboard';
-                    }
-                }
-
-                if (viewId === 'submit') {
-                    const isDilip = Boolean(currentUser && currentUser.email && currentUser.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com');
-                    if (isDilip) {
-                        showToast('Founder account: Grievance submission is disabled for the founder.', 'ℹ️');
-                        viewId = 'dashboard';
-                    }
-                }
-
                 currentView = viewId;
                 document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
                 document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -5496,9 +5469,18 @@
 
             showToast(`Google Authenticated: ${name}`, '🔐');
 
+            let authUser = {
+                id: Date.now(),
+                name: name,
+                email: email,
+                picture: picture,
+                role: role,
+                authProvider: 'Google OAuth 2.0'
+            };
+
             // Synchronize with SQLite backend
             try {
-                await fetch(`${API_BASE}/auth/google`, {
+                const res = await fetch(`${API_BASE}/auth/google`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -5510,15 +5492,14 @@
                         picture: picture
                     })
                 });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.user) {
+                        authUser = { ...authUser, ...data.user };
+                    }
+                }
             } catch (err) { }
 
-            const authUser = {
-                name: name,
-                email: email,
-                picture: picture,
-                role: role,
-                authProvider: 'Google OAuth 2.0'
-            };
             localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
 
             // Persist to kizuno_registered_users
@@ -5718,6 +5699,24 @@
                     });
                 }
                 localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+            } catch (e) {}
+
+            // Background sync to SQL database & users.csv
+            try {
+                fetch(`${API_BASE}/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        name: authUser.name,
+                        role: (authUser.role || 'citizen').toLowerCase()
+                    })
+                }).then(r => r.json()).then(d => {
+                    if (d && d.user && d.user.id) {
+                        authUser = { ...authUser, id: d.user.id };
+                        localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
+                    }
+                }).catch(() => {});
             } catch (e) {}
 
             try {
@@ -6298,7 +6297,7 @@
             if (navOfficerBtn) navOfficerBtn.style.setProperty('display', isDilip ? 'inline-flex' : 'none', 'important');
 
             const navSubmitBtn = document.getElementById('nav-submit');
-            if (navSubmitBtn) navSubmitBtn.style.setProperty('display', isDilip ? 'none' : 'inline-flex', 'important');
+            if (navSubmitBtn) navSubmitBtn.style.setProperty('display', isLoggedIn ? 'inline-flex' : 'none', 'important');
 
             // Mobile bottom dock buttons
             const mobAdminBtn = document.getElementById('mob-nav-admin');
@@ -6308,11 +6307,11 @@
             if (mobOfficerBtn) mobOfficerBtn.style.setProperty('display', isDilip ? 'flex' : 'none', 'important');
 
             const mobSubmitBtn = document.getElementById('mob-nav-submit');
-            if (mobSubmitBtn) mobSubmitBtn.style.setProperty('display', isDilip ? 'none' : 'flex', 'important');
+            if (mobSubmitBtn) mobSubmitBtn.style.setProperty('display', isLoggedIn ? 'flex' : 'none', 'important');
 
             // Citizen dashboard submission card
             const dashSubmitCard = document.getElementById('dashboard-submit-card');
-            if (dashSubmitCard) dashSubmitCard.style.setProperty('display', isDilip ? 'none' : 'block', 'important');
+            if (dashSubmitCard) dashSubmitCard.style.setProperty('display', isLoggedIn ? 'block' : 'none', 'important');
 
             // Header logout button: visible when logged in, hidden when signed out / on login view
             const logoutBtn = document.getElementById('header-logout-btn');
@@ -6414,22 +6413,12 @@
                 user && user.email && user.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com'
             );
 
-            if (isOfficer && isDilipAdmin) {
-                // Officer View: Show Officer portal ONLY for Dilip, hide citizen submit/my-complaints
-                if (navMyBtn) navMyBtn.style.display = 'none';
-                if (navDashboardBtn) navDashboardBtn.innerText = '👨‍💼 Officer Dashboard';
-                if (greetingEl) greetingEl.innerText = `Municipal Officer: ${user.name || 'Staff'}`;
-                if (citizenStats) citizenStats.style.display = 'none';
-                if (recentSection) recentSection.style.display = 'none';
-            } else {
-                // Citizen View & All Other Users: STRICTLY HIDE Officer Portal from others
-                if (navMyBtn) navMyBtn.style.display = 'inline-flex';
-                if (navDashboardBtn) navDashboardBtn.innerText = '📊 Dashboard';
-                if (greetingEl) greetingEl.innerText = isDilipAdmin ? `👑 Founder: ${user.name || 'Dilip Palanisamy'}` : `Welcome, ${user.name || 'Citizen'}!`;
-                if (dashGreetingEl) dashGreetingEl.innerText = isDilipAdmin ? `Welcome back, Founder ${user.name || 'Dilip'}!` : `Welcome to your Dashboard, ${user.name || 'Citizen'}!`;
-                if (citizenStats) citizenStats.style.display = 'flex';
-                if (recentSection) recentSection.style.display = 'block';
-            }
+            if (navMyBtn) navMyBtn.style.display = 'inline-flex';
+            if (navDashboardBtn) navDashboardBtn.innerText = isOfficer ? '👨‍💼 Officer Dashboard' : '📊 Dashboard';
+            if (greetingEl) greetingEl.innerText = isDilipAdmin ? `👑 Founder: ${user.name || 'Dilip Palanisamy'}` : `Welcome, ${user.name || 'Citizen'}!`;
+            if (dashGreetingEl) dashGreetingEl.innerText = isDilipAdmin ? `Welcome back, Founder ${user.name || 'Dilip'}!` : `Welcome to your Dashboard, ${user.name || 'Citizen'}!`;
+            if (citizenStats) citizenStats.style.display = 'flex';
+            if (recentSection) recentSection.style.display = 'block';
 
             try { updateCitizenDashboardStats(); } catch(e) { console.warn("updateCitizenDashboardStats notice:", e); }
             try { renderCitizenDashboardRecent(); } catch(e) { console.warn("renderCitizenDashboardRecent notice:", e); }

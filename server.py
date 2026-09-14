@@ -1241,13 +1241,10 @@ def list_authenticated_users(
     db: Session = Depends(get_db),
     _auth: bool = Depends(verify_admin_access)
 ):
-    """Retrieves all citizen users authenticated in the database (Excludes admin accounts)"""
-    admin_emails = {"admin@kizuno.gov.in", "admin@kizuno-ai.gov.in"}
+    """Retrieves all registered and authenticated users in the database (Protected for Admin only)"""
     users = db.query(User).filter(
         User.email.isnot(None),
-        User.email != "",
-        User.role != "admin",
-        ~User.email.in_(admin_emails)
+        User.email != ""
     ).order_by(User.last_login.desc()).all()
     return [u.to_dict() for u in users]
 
@@ -1287,20 +1284,21 @@ def get_admin_user_stats(
     _auth: bool = Depends(verify_admin_access)
 ):
     """
-    Computes live registered citizen statistics directly from SQL / Supabase:
-    Excludes admin accounts (role === 'admin' and admin emails).
+    Computes live registered user statistics directly from SQL / Supabase:
+    - Total Users
+    - Google Users
+    - Email Users
+    - Verified Users
+    - New Today (created within last 24h / today)
     """
-    admin_emails = {"admin@kizuno.gov.in", "admin@kizuno-ai.gov.in"}
     raw_users = db.query(User).filter(
         User.email.isnot(None),
-        User.email != "",
-        User.role != "admin",
-        ~User.email.in_(admin_emails)
+        User.email != ""
     ).all()
     unique_users = {}
     for u in raw_users:
         em = (u.email or "").strip().lower()
-        if not em or (u.role or "").lower() == "admin" or em in admin_emails:
+        if not em:
             continue
         if em not in unique_users:
             unique_users[em] = u
@@ -1337,16 +1335,12 @@ def get_admin_users(
     _auth: bool = Depends(verify_admin_access)
 ):
     """
-    Retrieves live registered citizen users list with search, sorting, and complaint counts.
+    Retrieves live registered users list with search, sorting, and complaint counts.
     Protected: Only authorized administrators can access.
-    Exclusion Rule: Strictly excludes role === 'admin' or admin email addresses.
     """
-    admin_emails = {"admin@kizuno.gov.in", "admin@kizuno-ai.gov.in"}
     query = db.query(User).filter(
         User.email.isnot(None),
-        User.email != "",
-        User.role != "admin",
-        ~User.email.in_(admin_emails)
+        User.email != ""
     )
     if search and isinstance(search, str):
         clean_search = f"%{search.strip()}%"
@@ -1368,12 +1362,12 @@ def get_admin_users(
         query = query.order_by(User.created_at.desc())
 
     users = query.all()
-    # Deduplicate users by email (case-insensitive) and enforce admin exclusion
+    # Deduplicate users by email (case-insensitive)
     seen_emails = set()
     clean_users = []
     for u in users:
         em = (u.email or "").strip().lower()
-        if not em or em in seen_emails or (u.role or "").lower() == "admin" or em in admin_emails:
+        if not em or em in seen_emails:
             continue
         seen_emails.add(em)
         clean_users.append(u.to_dict())
