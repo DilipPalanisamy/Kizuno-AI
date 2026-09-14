@@ -428,16 +428,208 @@
             color: #ffffff;
         }
 
+        /* Navigation Header Clusters */
+        .nav-brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .nav-quick-menu-wrapper {
+            position: relative;
+        }
+
+        .nav-three-dot-btn {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-bg);
+            border: 1.5px solid var(--border-light);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0;
+            outline: none;
+            touch-action: manipulation;
+        }
+
+        .nav-three-dot-btn:hover {
+            background: var(--bg-canvas);
+            color: var(--text-primary);
+            border-color: var(--border-subtle);
+            transform: scale(1.05);
+        }
+
+        .nav-three-dot-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Three-Dot Quick Tools & Theme Dropdown */
+        .nav-quick-dropdown {
+            position: absolute;
+            left: 0;
+            top: calc(100% + 10px);
+            width: 320px;
+            max-width: 90vw;
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 0.85rem;
+            z-index: 2500;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            animation: fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .quick-dropdown-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 0.65rem;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 0.65rem;
+        }
+
+        .quick-dropdown-title {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .quick-dropdown-close {
+            background: none;
+            border: none;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.2rem 0.4rem;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .quick-dropdown-close:hover {
+            color: var(--brand-red);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .quick-dropdown-item-wrap {
+            margin-bottom: 0.4rem;
+        }
+
+        .quick-menu-action-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 0.75rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-canvas);
+            color: var(--text-primary);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.18s ease;
+        }
+
+        .quick-menu-action-btn:hover {
+            border-color: var(--brand-primary);
+            background: var(--brand-primary-subtle);
+            transform: translateY(-1px);
+        }
+
+        .quick-action-icon {
+            font-size: 1.25rem;
+            line-height: 1;
+        }
+
+        .quick-action-texts {
+            flex: 1;
+        }
+
+        .quick-action-title {
+            font-size: 0.825rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .quick-action-desc {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+            margin-top: 2px;
+        }
+
+        .quick-dropdown-divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: 0.75rem 0;
+        }
+
+        .quick-section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.55rem;
+        }
+
+        .quick-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: var(--bg-canvas);
+            padding: 0.15rem 0.45rem;
+            border-radius: 9999px;
+            border: 1px solid var(--border-light);
+        }
+
+        .quick-theme-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        /* Right Cluster & Visible Logout Button */
+        .nav-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            position: relative;
+        }
+
         .user-pill {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.4rem 0.75rem;
+            padding: 0.38rem 0.75rem;
             border-radius: 9999px;
-            background: #f1f5f9;
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-light);
             font-size: 0.825rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .user-pill:hover {
+            background: var(--border-light);
+            color: var(--text-primary);
         }
 
         .user-avatar {
@@ -451,30 +643,87 @@
             justify-content: center;
             font-size: 0.75rem;
             font-weight: 700;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .header-logout-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: #fef2f2;
+            border: 1.5px solid #fecaca;
+            color: #dc2626;
+            padding: 0.42rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.775rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            touch-action: manipulation;
+            box-shadow: 0 1px 2px rgba(220, 38, 38, 0.06);
+            flex-shrink: 0;
+        }
+
+        .header-logout-btn:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(220, 38, 38, 0.12);
+        }
+
+        .header-logout-btn:active {
+            transform: scale(0.96);
+        }
+
+        [data-theme="dark-green"] .header-logout-btn,
+        [data-theme="terminal-cyan"] .header-logout-btn {
+            background: rgba(239, 68, 68, 0.12);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #f87171;
+        }
+
+        [data-theme="dark-green"] .header-logout-btn:hover,
+        [data-theme="terminal-cyan"] .header-logout-btn:hover {
+            background: rgba(239, 68, 68, 0.22);
+            border-color: rgba(239, 68, 68, 0.45);
+            color: #fca5a5;
+        }
+
+        [data-theme="high-contrast"] .header-logout-btn {
+            background: #000000;
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        [data-theme="dark-green"] .nav-three-dot-btn,
+        [data-theme="terminal-cyan"] .nav-three-dot-btn {
+            background: #111827;
+            border-color: #1e293b;
+            color: #94a3b8;
+        }
+        [data-theme="dark-green"] .nav-three-dot-btn:hover,
+        [data-theme="terminal-cyan"] .nav-three-dot-btn:hover {
+            background: #1e293b;
+            color: #f8fafc;
+            border-color: #334155;
+        }
+        [data-theme="high-contrast"] .nav-three-dot-btn {
+            background: #000000;
+            border: 2px solid #ffffff;
+            color: #ffffff;
+        }
+        [data-theme="dark-green"] .nav-quick-dropdown,
+        [data-theme="terminal-cyan"] .nav-quick-dropdown {
+            background: #111827;
+            border-color: #1e293b;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.4);
         }
 
         .backend-pill {
             display: none !important;
-        }
-
-        .user-pill {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.4rem 0.75rem;
-            border-radius: 9999px;
-            background: #f1f5f9;
-            font-size: 0.825rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.15s ease;
-            user-select: none;
-        }
-
-        .user-pill:hover {
-            background: var(--border-light);
-            color: var(--text-primary);
         }
 
         /* User Profile Dropdown Card */
@@ -1885,7 +2134,7 @@
         .mobile-bottom-nav {
             display: none;
             position: fixed;
-            bottom: 0;
+            bottom: var(--mob-dock-bottom, 0px);
             left: 0;
             right: 0;
             background: var(--card-bg);
@@ -1897,6 +2146,19 @@
             align-items: center;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+            transition: bottom 0.12s ease-out;
+        }
+
+        /* Strict Desktop Isolation: Mobile bottom dock MUST NEVER be visible on desktop screens (> 768px) */
+        @media (min-width: 769px) {
+            .mobile-bottom-nav,
+            #mobile-bottom-dock {
+                display: none !important;
+                visibility: hidden !important;
+                pointer-events: none !important;
+                height: 0 !important;
+                opacity: 0 !important;
+            }
         }
 
         .mobile-nav-item {
@@ -1963,7 +2225,7 @@
             .mobile-bottom-nav {
                 display: flex !important;
                 position: fixed !important;
-                bottom: 0 !important;
+                bottom: var(--mob-dock-bottom, 0px) !important;
                 left: 0 !important;
                 right: 0 !important;
                 height: calc(64px + env(safe-area-inset-bottom, 12px)) !important;
@@ -1976,6 +2238,7 @@
                 z-index: 9999 !important;
                 justify-content: space-around !important;
                 align-items: center !important;
+                transition: bottom 0.12s ease-out !important;
             }
 
             /* Strictly hide footer/mobile bottom dock on login page and modal */
@@ -1988,7 +2251,11 @@
             body:has(#login-modal[style*="display: flex"]) .mobile-bottom-nav,
             #view-login.active ~ .mobile-bottom-nav,
             #view-login.active ~ #mobile-bottom-dock,
-            #view-login[style*="display: flex"] ~ #mobile-bottom-dock {
+            #view-login[style*="display: flex"] ~ #mobile-bottom-dock,
+            body.on-login-view #site-copyright-footer,
+            body:has(#view-login.active) #site-copyright-footer,
+            #view-login.active ~ #site-copyright-footer,
+            #view-login[style*="display: flex"] ~ #site-copyright-footer {
                 display: none !important;
             }
 
@@ -2039,36 +2306,90 @@
             }
 
             .nav-container {
-                padding: 0.65rem 0.85rem !important;
+                padding: 0.5rem 0.75rem !important;
                 gap: 0.4rem !important;
+                justify-content: space-between !important;
+                width: 100% !important;
+                max-width: 100vw !important;
+                box-sizing: border-box !important;
+            }
+
+            .nav-brand-cluster {
+                gap: 0.45rem !important;
+                display: flex !important;
+                align-items: center !important;
+                flex-shrink: 0 !important;
+            }
+
+            .nav-three-dot-btn {
+                width: 35px !important;
+                height: 35px !important;
+                min-width: 35px !important;
+            }
+
+            .brand-logo {
+                gap: 0.45rem !important;
+            }
+
+            .brand-shield {
+                width: 30px !important;
+                height: 30px !important;
+                min-width: 30px !important;
+            }
+
+            .brand-title {
+                font-size: 1.08rem !important;
+                letter-spacing: -0.02em !important;
+                white-space: nowrap !important;
             }
 
             .brand-tagline {
                 display: none !important;
             }
 
-            .desktop-only-label {
-                display: none !important;
+            .nav-right-actions {
+                display: flex !important;
+                align-items: center !important;
+                gap: 0.4rem !important;
+                flex-shrink: 0 !important;
             }
 
-            #theme-btn-label {
-                display: none !important;
+            .user-pill {
+                padding: 0.3rem 0.55rem !important;
+                font-size: 0.75rem !important;
+                gap: 0.35rem !important;
             }
 
-            #theme-toggle-btn {
-                padding: 0.45rem 0.65rem !important;
+            .user-avatar {
+                width: 24px !important;
+                height: 24px !important;
+                font-size: 0.7rem !important;
             }
 
-
-            .user-profile-btn {
-                max-width: 140px !important;
-            }
-
-            .user-profile-btn span:first-of-type {
-                max-width: 75px !important;
+            .nav-user-name-text {
+                max-width: 55px !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
                 white-space: nowrap !important;
+                display: inline-block !important;
+            }
+
+            .header-logout-btn {
+                padding: 0.35rem 0.65rem !important;
+                font-size: 0.74rem !important;
+                gap: 0.28rem !important;
+                min-height: 32px !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .header-logout-btn .logout-icon {
+                font-size: 0.85rem !important;
+            }
+
+            .desktop-only-label {
+                display: none !important;
             }
 
             .app-view {
@@ -2266,6 +2587,51 @@
                 max-width: 95vw !important;
                 margin: auto !important;
                 border-radius: 18px !important;
+            }
+        }
+
+        @media (max-width: 440px) {
+            .nav-container {
+                padding: 0.45rem 0.5rem !important;
+                gap: 0.25rem !important;
+            }
+
+            .nav-brand-cluster {
+                gap: 0.35rem !important;
+            }
+
+            .nav-three-dot-btn {
+                width: 33px !important;
+                height: 33px !important;
+                min-width: 33px !important;
+            }
+
+            .brand-shield {
+                width: 28px !important;
+                height: 28px !important;
+                min-width: 28px !important;
+            }
+
+            .brand-title {
+                font-size: 1.02rem !important;
+            }
+
+            .nav-right-actions {
+                gap: 0.3rem !important;
+            }
+
+            .user-pill {
+                padding: 0.25rem 0.35rem !important;
+            }
+
+            .nav-user-name-text {
+                display: none !important;
+            }
+
+            .header-logout-btn {
+                padding: 0.32rem 0.52rem !important;
+                font-size: 0.72rem !important;
+                min-height: 30px !important;
             }
         }
 
@@ -2866,6 +3232,177 @@
             box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02);
             padding: 2.75rem 2.25rem;
         }
+
+        /* ========================================================
+           SITE COPYRIGHT & CITIZEN CHARTER FOOTER
+           ======================================================== */
+        .site-copyright-footer {
+            width: 100%;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-light);
+            margin-top: 3.5rem;
+            padding: 2.5rem 1.5rem 2rem 1.5rem;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 10;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .footer-inner-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-main-grid {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-brand-col {
+            max-width: 480px;
+        }
+
+        .footer-brand-header {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .footer-brand-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+
+        .footer-civic-badge {
+            font-size: 0.68rem;
+            font-weight: 700;
+            background: var(--brand-primary-subtle);
+            color: var(--brand-primary);
+            border: 1px solid var(--brand-primary-border);
+            padding: 0.2rem 0.55rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .footer-brand-desc {
+            font-size: 0.825rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        .footer-badges-col {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+            align-items: center;
+            max-width: 460px;
+        }
+
+        .footer-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 0.4rem 0.7rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .footer-badge-icon {
+            font-size: 0.9rem;
+        }
+
+        .footer-divider-line {
+            height: 1px;
+            background: var(--border-light);
+            margin: 1.75rem 0 1.25rem 0;
+        }
+
+        .footer-bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .footer-copyright-text {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .footer-legal-links {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .footer-dot {
+            opacity: 0.5;
+        }
+
+        /* Dark / Theme overrides for Footer */
+        [data-theme="dark-green"] .site-copyright-footer {
+            background: #0d131f;
+            border-top-color: #1e293b;
+        }
+        [data-theme="dark-green"] .footer-badge-pill {
+            background: #111827;
+            border-color: #1e293b;
+            color: #94a3b8;
+        }
+        [data-theme="terminal-cyan"] .site-copyright-footer {
+            background: #05101a;
+            border-top-color: #0d2b38;
+        }
+        [data-theme="terminal-cyan"] .footer-badge-pill {
+            background: #081a24;
+            border-color: #0e3b4a;
+        }
+        [data-theme="high-contrast"] .site-copyright-footer {
+            background: #000000;
+            border-top-color: #ffffff;
+            color: #ffffff;
+        }
+        [data-theme="high-contrast"] .footer-badge-pill {
+            background: #000000;
+            border-color: #ffffff;
+            color: #ffffff;
+        }
+
+        @media (max-width: 768px) {
+            .site-copyright-footer {
+                margin-top: 2rem;
+                padding: 1.75rem 1rem 1.5rem 1rem;
+            }
+            .footer-main-grid {
+                flex-direction: column;
+                gap: 1.25rem;
+            }
+            .footer-badges-col {
+                gap: 0.4rem;
+            }
+            .footer-bottom-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.35rem;
+            }
+        }
     </style>
     <!-- Official Google Identity Services SDK -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -2876,27 +3413,135 @@
     <!-- TOP APPLICATION NAVBAR -->
     <nav class="app-nav" id="main-app-nav">
         <div class="nav-container">
-            <a class="brand-logo" onclick="switchView('dashboard')">
-                <div class="brand-shield">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
-                </div>
-                <div class="brand-text">
-                    <span class="brand-title">Kizuno-AI</span>
-                    <span class="brand-tagline">Your Voice. Our Priority.</span>
-                </div>
-            </a>
+            <!-- LEFT CLUSTER: Three-Dot Utility Button + Brand Logo -->
+            <div class="nav-brand-cluster">
+                <!-- THREE-DOT QUICK TOOLS & THEMES (Before Logo) -->
+                <div class="nav-quick-menu-wrapper" id="nav-quick-menu-container">
+                    <button type="button" id="nav-three-dot-btn" onclick="toggleNavQuickMenu(event)" class="nav-three-dot-btn" title="Quick Tools & Preferences (Theme, Save & Restore)" aria-label="Quick Settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="5" r="2.2"></circle>
+                            <circle cx="12" cy="12" r="2.2"></circle>
+                            <circle cx="12" cy="19" r="2.2"></circle>
+                        </svg>
+                    </button>
 
+                    <!-- THREE-DOT QUICK DROPDOWN -->
+                    <div id="nav-quick-menu-dropdown" class="nav-quick-dropdown" style="display: none;" onclick="event.stopPropagation()">
+                        <div class="quick-dropdown-header">
+                            <span class="quick-dropdown-title">⚙️ Tools & Preferences</span>
+                            <button type="button" class="quick-dropdown-close" onclick="closeNavQuickMenu(event)" title="Close Menu">✕</button>
+                        </div>
+
+                        <!-- 1. SAVE & RESTORE ACTION -->
+                        <div class="quick-dropdown-item-wrap">
+                            <button type="button" class="quick-menu-action-btn" onclick="closeNavQuickMenu(event); openSyncModal();">
+                                <span class="quick-action-icon">💾</span>
+                                <div class="quick-action-texts">
+                                    <div class="quick-action-title">Save & Restore Data</div>
+                                    <div class="quick-action-desc">Download backup file or restore records</div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- 2. MULTI-DEVICE WI-FI SHARE ACTION -->
+                        <div class="quick-dropdown-item-wrap">
+                            <button type="button" class="quick-menu-action-btn" onclick="closeNavQuickMenu(event); openNetworkShareModal();">
+                                <span class="quick-action-icon">📱</span>
+                                <div class="quick-action-texts">
+                                    <div class="quick-action-title">Mobile Phone & Wi-Fi Link</div>
+                                    <div class="quick-action-desc">Scan QR code or share local Wi-Fi link</div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div class="quick-dropdown-divider"></div>
+
+                        <!-- 3. THEME SELECTION SECTION -->
+                        <div class="quick-dropdown-section">
+                            <div class="quick-section-heading">
+                                <span>🎨 Theme Palette</span>
+                                <span class="quick-badge">5 Styles</span>
+                            </div>
+
+                            <div class="quick-theme-list">
+                                <!-- 1. Executive Slate (DEFAULT) -->
+                                <button type="button" class="theme-option-btn active" onclick="setAppTheme('mono-slate'); closeNavQuickMenu(event);" data-theme-target="mono-slate">
+                                    <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #475569 50%, #1e293b 50%); border-color: #64748b;">🏛️</span>
+                                    <div class="theme-info-box">
+                                        <div class="theme-name-title" style="color: #334155; font-family: 'JetBrains Mono', monospace; font-weight: 800;">
+                                            <span>Executive Slate</span>
+                                            <span class="theme-badge-default" style="background: rgba(51, 65, 85, 0.16); color: #334155;">Default</span>
+                                        </div>
+                                        <div class="theme-color-subtext"><span style="color: #334155; font-weight: 700;">● #334155 Deep Slate</span> + Monochrome</div>
+                                    </div>
+                                    <span class="theme-check" id="check-mono-slate" style="color: #334155;">✓</span>
+                                </button>
+
+                                <!-- 2. Dark Slate & Green -->
+                                <button type="button" class="theme-option-btn" onclick="setAppTheme('dark-green'); closeNavQuickMenu(event);" data-theme-target="dark-green">
+                                    <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #22c55e 50%, #090d16 50%); border-color: #22c55e;">🌑</span>
+                                    <div class="theme-info-box">
+                                        <div class="theme-name-title" style="color: #22c55e;"><span>Dark Slate & Green</span></div>
+                                        <div class="theme-color-subtext"><span style="color: #22c55e; font-weight: 700;">● #22c55e Neon Green</span> + Dark Slate</div>
+                                    </div>
+                                    <span class="theme-check" id="check-dark-green"></span>
+                                </button>
+
+                                <!-- 3. Grey & Given Green -->
+                                <button type="button" class="theme-option-btn" onclick="setAppTheme('grey-green'); closeNavQuickMenu(event);" data-theme-target="grey-green">
+                                    <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #16a34a 50%, #334155 50%); border-color: #16a34a;">🌿</span>
+                                    <div class="theme-info-box">
+                                        <div class="theme-name-title" style="color: #16a34a;"><span>Grey & Given Green</span></div>
+                                        <div class="theme-color-subtext"><span style="color: #16a34a; font-weight: 700;">● #16a34a Given Green</span> + Slate</div>
+                                    </div>
+                                    <span class="theme-check" id="check-grey-green"></span>
+                                </button>
+
+                                <!-- 4. Classic Civic Blue -->
+                                <button type="button" class="theme-option-btn" onclick="setAppTheme('classic-blue'); closeNavQuickMenu(event);" data-theme-target="classic-blue">
+                                    <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #2563eb 50%, #1e293b 50%); border-color: #2563eb;">🌊</span>
+                                    <div class="theme-info-box">
+                                        <div class="theme-name-title" style="color: #3b82f6;"><span>Classic Civic Blue</span></div>
+                                        <div class="theme-color-subtext"><span style="color: #3b82f6; font-weight: 700;">● #2563eb Civic Blue</span> + Clean Slate</div>
+                                    </div>
+                                    <span class="theme-check" id="check-classic-blue"></span>
+                                </button>
+
+                                <!-- 5. Forest Emerald -->
+                                <button type="button" class="theme-option-btn" onclick="setAppTheme('forest-emerald'); closeNavQuickMenu(event);" data-theme-target="forest-emerald">
+                                    <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #059669 50%, #27272a 50%); border-color: #059669;">🌲</span>
+                                    <div class="theme-info-box">
+                                        <div class="theme-name-title" style="color: #10b981;"><span>Forest Emerald</span></div>
+                                        <div class="theme-color-subtext"><span style="color: #10b981; font-weight: 700;">● #059669 Emerald</span> + Warm Slate</div>
+                                    </div>
+                                    <span class="theme-check" id="check-forest-emerald"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BRAND LOGO (Immediately after Three-Dot) -->
+                <a class="brand-logo" onclick="switchView('dashboard')">
+                    <div class="brand-shield">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-title">Kizuno-AI</span>
+                        <span class="brand-tagline">Your Voice. Our Priority.</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- DESKTOP NAVIGATION LINKS (Hidden on Mobile) -->
             <div class="nav-links">
                 <button type="button" class="nav-btn active" id="nav-dashboard" onclick="switchView('dashboard')">📊 Dashboard</button>
-                <button type="button" class="nav-btn" id="nav-track" onclick="switchView('track')">Track
-                    Complaint</button>
-                <button type="button" class="nav-btn" id="nav-submit" onclick="switchView('submit')">Submit
-                    Complaint</button>
-                <button type="button" class="nav-btn" id="nav-my" onclick="switchView('my-complaints')">My
-                    Complaints</button>
+                <button type="button" class="nav-btn" id="nav-track" onclick="switchView('track')">Track Complaint</button>
+                <button type="button" class="nav-btn" id="nav-submit" onclick="switchView('submit')">Submit Complaint</button>
+                <button type="button" class="nav-btn" id="nav-my" onclick="switchView('my-complaints')">My Complaints</button>
                 <button type="button" class="nav-btn officer-btn" id="nav-officer" onclick="switchView('officer')" style="display: none;">
                     👨‍💼 Officer Portal
                 </button>
@@ -2905,129 +3550,20 @@
                 </a>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 0.6rem;">
-                <!-- THEME SWITCHER DROPDOWN -->
-                <div style="position: relative;" id="theme-switcher-container">
-                    <button type="button" id="theme-toggle-btn" onclick="toggleThemeMenu(event)" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-primary);" title="Switch color theme">
-                        <span id="theme-btn-icon">🏛️</span>
-                        <span id="theme-btn-label">Mono Slate</span>
-                        <span style="font-size: 0.65rem; opacity: 0.7;">▼</span>
-                    </button>
-                    <div id="theme-dropdown" class="theme-dropdown-menu" style="display: none; position: absolute; right: 0; top: calc(100% + 8px); min-width: 315px; z-index: 200;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.35rem 0.5rem 0.5rem; border-bottom: 1px solid var(--border-light); margin-bottom: 0.45rem;">
-                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;">
-                                Choose Project Palette
-                            </span>
-                            <span style="font-size: 0.65rem; font-weight: 700; color: #64748b;">5 Themes</span>
-                        </div>
-
-                        <!-- 1. Executive Slate (DEFAULT / FIRST OPENING THEME) -->
-                        <button type="button" class="theme-option-btn active" onclick="setAppTheme('mono-slate')" data-theme-target="mono-slate">
-                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #475569 50%, #1e293b 50%); border-color: #64748b;">
-                                🏛️
-                            </span>
-                            <div class="theme-info-box">
-                                <div class="theme-name-title" style="color: #334155; font-family: 'JetBrains Mono', monospace; font-weight: 800;">
-                                    <span>Executive Slate</span>
-                                    <span class="theme-badge-default" style="background: rgba(51, 65, 85, 0.16); color: #334155;">Default</span>
-                                </div>
-                                <div class="theme-color-subtext">
-                                    <span style="color: #334155; font-weight: 700;">● #334155 Deep Slate</span>
-                                    <span>+ Monochrome</span>
-                                </div>
-                            </div>
-                            <span class="theme-check" id="check-mono-slate" style="color: #334155;">✓</span>
-                        </button>
-
-                        <!-- 2. Dark Slate & Green -->
-                        <button type="button" class="theme-option-btn" onclick="setAppTheme('dark-green')" data-theme-target="dark-green">
-                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #22c55e 50%, #090d16 50%); border-color: #22c55e;">
-                                🌑
-                            </span>
-                            <div class="theme-info-box">
-                                <div class="theme-name-title" style="color: #22c55e;">
-                                    <span>Dark Slate & Green</span>
-                                </div>
-                                <div class="theme-color-subtext">
-                                    <span style="color: #22c55e; font-weight: 700;">● #22c55e Neon Green</span>
-                                    <span>+ #090d16 Slate</span>
-                                </div>
-                            </div>
-                            <span class="theme-check" id="check-dark-green"></span>
-                        </button>
-
-                        <!-- 3. Grey & Given Green -->
-                        <button type="button" class="theme-option-btn" onclick="setAppTheme('grey-green')" data-theme-target="grey-green">
-                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #16a34a 50%, #334155 50%); border-color: #16a34a;">
-                                🌿
-                            </span>
-                            <div class="theme-info-box">
-                                <div class="theme-name-title" style="color: #16a34a;">
-                                    <span>Grey & Given Green</span>
-                                </div>
-                                <div class="theme-color-subtext">
-                                    <span style="color: #16a34a; font-weight: 700;">● #16a34a Given Green</span>
-                                    <span>+ #334155 Slate</span>
-                                </div>
-                            </div>
-                            <span class="theme-check" id="check-grey-green"></span>
-                        </button>
-
-                        <!-- 4. Classic Civic Blue -->
-                        <button type="button" class="theme-option-btn" onclick="setAppTheme('classic-blue')" data-theme-target="classic-blue">
-                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #2563eb 50%, #1e293b 50%); border-color: #2563eb;">
-                                🌊
-                            </span>
-                            <div class="theme-info-box">
-                                <div class="theme-name-title" style="color: #3b82f6;">
-                                    <span>Classic Civic Blue</span>
-                                </div>
-                                <div class="theme-color-subtext">
-                                    <span style="color: #3b82f6; font-weight: 700;">● #2563eb Civic Blue</span>
-                                    <span>+ #f8fafc Canvas</span>
-                                </div>
-                            </div>
-                            <span class="theme-check" id="check-classic-blue"></span>
-                        </button>
-
-                        <!-- 5. Forest Emerald -->
-                        <button type="button" class="theme-option-btn" onclick="setAppTheme('forest-emerald')" data-theme-target="forest-emerald">
-                            <span class="theme-swatch-badge" style="background: linear-gradient(135deg, #059669 50%, #27272a 50%); border-color: #059669;">
-                                🌲
-                            </span>
-                            <div class="theme-info-box">
-                                <div class="theme-name-title" style="color: #10b981;">
-                                    <span>Forest Emerald</span>
-                                </div>
-                                <div class="theme-color-subtext">
-                                    <span style="color: #10b981; font-weight: 700;">● #059669 Emerald</span>
-                                    <span>+ Warm Stone</span>
-                                </div>
-                            </div>
-                            <span class="theme-check" id="check-forest-emerald"></span>
-                        </button>
-                    </div>
-                </div>
-
-                <button type="button" onclick="openSyncModal()" class="btn-secondary" style="font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; border: 1px solid var(--border-light); background: var(--card-bg); color: var(--text-primary);" title="Save or restore complaints">
-                    <span>💾</span>
-                    <span>Save & Restore</span>
-                </button>
-                <div id="backend-status-pill" class="backend-pill" title="Kizuno-AI Engine Status" style="display: none !important;">
-                    <span class="backend-dot"></span>
-                    <span id="backend-status-text">Kizuno-AI Engine Active</span>
-                </div>
-                <div class="user-pill" id="nav-user-pill" onclick="toggleUserProfileDropdown(event)" style="cursor: pointer; position: relative;" title="Click to view your details (Username, Gmail)">
+            <!-- RIGHT CLUSTER: User Profile Pill + Prominent Accessible Logout Button -->
+            <div class="nav-right-actions">
+                <div class="user-pill" id="nav-user-pill" onclick="toggleUserProfileDropdown(event)" title="Click to view details (Username, Gmail)">
                     <div class="user-avatar" id="nav-user-initial">C</div>
-                    <span id="nav-user-name">Citizen View</span>
-                    <button type="button" onclick="event.stopPropagation(); userSignOut();"
-                        style="background: rgba(0,0,0,0.06); border: 1px solid var(--border-light); padding: 0.2rem 0.55rem; border-radius: 9999px; font-size: 0.725rem; font-weight: 700; cursor: pointer; color: var(--text-secondary); margin-left: 0.35rem;"
-                        title="Sign out of account">
-                        Sign Out
-                    </button>
+                    <span id="nav-user-name" class="nav-user-name-text">Citizen View</span>
                 </div>
 
-                <!-- USER PROFILE DETAILS DROPDOWN (Clicking 'd' avatar or user pill) -->
+                <!-- DEDICATED VISIBLE LOGOUT BUTTON -->
+                <button type="button" class="header-logout-btn" id="header-logout-btn" onclick="userSignOut()" title="Sign out of account">
+                    <span class="logout-icon">🚪</span>
+                    <span class="logout-label">Sign Out</span>
+                </button>
+
+                <!-- USER PROFILE DETAILS DROPDOWN -->
                 <div id="user-profile-dropdown" class="profile-dropdown-card" style="display: none;" onclick="event.stopPropagation()">
                     <div class="profile-dropdown-header">
                         <div class="profile-dropdown-avatar" id="profile-card-avatar">👤</div>
@@ -3067,7 +3603,7 @@
                     <div class="profile-dropdown-divider"></div>
 
                     <div class="profile-dropdown-actions">
-                        <button type="button" class="btn-secondary" onclick="closeUserProfileDropdown(event); switchView('my');" style="flex: 1; font-size: 0.775rem; justify-content: center; padding: 0.5rem 0.6rem; border-radius: 8px; font-weight: 700; cursor: pointer;">
+                        <button type="button" class="btn-secondary" onclick="closeUserProfileDropdown(event); switchView('my-complaints');" style="flex: 1; font-size: 0.775rem; justify-content: center; padding: 0.5rem 0.6rem; border-radius: 8px; font-weight: 700; cursor: pointer;">
                             📋 My Complaints
                         </button>
                         <button type="button" onclick="closeUserProfileDropdown(event); userSignOut();" style="flex: 1; font-size: 0.775rem; justify-content: center; padding: 0.5rem 0.6rem; border: 1px solid #fecaca; background: #fef2f2; color: #dc2626; border-radius: 8px; font-weight: 700; cursor: pointer;">
@@ -3504,19 +4040,19 @@
                     <div class="form-group">
                         <label class="form-label" for="form-title">Issue Title <span class="req">*</span></label>
                         <input type="text" class="form-control" id="form-title"
-                            placeholder="e.g. Streetlight not working" value="Streetlight not working" required>
+                            placeholder="e.g. Broken water pipeline or faulty streetlight" value="" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="form-desc">Description <span class="req">*</span></label>
-                        <textarea class="form-control" id="form-desc" placeholder="Describe the problem in detail..."
-                            required>The streetlight near my house has not been working for the past 3 days. It's very dark at night.</textarea>
+                        <textarea class="form-control" id="form-desc" placeholder="Describe the civic issue in detail, landmarks, and severity..."
+                            required></textarea>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="form-location">Location <span class="req">*</span></label>
                         <input type="text" class="form-control" id="form-location"
-                            placeholder="e.g. Gandhipuram, Coimbatore" value="Gandhipuram, Coimbatore" required>
+                            placeholder="e.g. 100 Feet Road, Gandhipuram, Coimbatore" value="" required>
                     </div>
 
                     <div class="form-group">
@@ -3530,13 +4066,13 @@
                             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">PNG, JPG up
                                 to 5MB</div>
                         </div>
-                        <div class="upload-preview-box" id="upload-preview-container">
-                            <img src="https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=200&auto=format&fit=crop&q=80"
-                                alt="Streetlight" class="upload-preview-img" id="upload-preview-img">
+                        <div class="upload-preview-box" id="upload-preview-container" style="display: none;">
+                            <img src=""
+                                alt="Photograph" class="upload-preview-img" id="upload-preview-img">
                             <div style="flex: 1;">
                                 <div style="font-size: 0.85rem; font-weight: 700;" id="upload-filename">
-                                    streetlight_hazard.jpg</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">2.4 MB • Photographic
+                                    evidence.jpg</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);" id="upload-filesize">Photographic
                                     Evidence Attached</div>
                             </div>
                         </div>
@@ -3592,7 +4128,7 @@
                                 style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Internal
                                 SQL Ref</span>
                         </div>
-                        <div class="key-value" id="generated-complaint-id">CIV-2026-1042</div>
+                        <div class="key-value" id="generated-complaint-id">—</div>
                         <div class="key-subtext">Departmental Reference ID</div>
                     </div>
 
@@ -3602,7 +4138,7 @@
                             <span style="color: var(--brand-primary); font-weight: 800;">Public Tracking Key</span>
                             <button type="button" class="copy-btn" onclick="copyTrackingKey()">Copy Key</button>
                         </div>
-                        <div class="key-value" id="generated-tracking-key">TN-GOV-X7K92P4M</div>
+                        <div class="key-value" id="generated-tracking-key">—</div>
                         <div class="key-subtext">Share or use this key to monitor day-wise progress</div>
                     </div>
                 </div>
@@ -4094,6 +4630,62 @@
             </div>
         </div>
     </main>
+
+    <!-- ========================================================
+         SITE COPYRIGHT & CITIZEN CHARTER FOOTER
+         ======================================================== -->
+    <footer class="site-copyright-footer" id="site-copyright-footer">
+        <div class="footer-inner-container">
+            <div class="footer-main-grid">
+                <div class="footer-brand-col">
+                    <div class="footer-brand-header">
+                        <div class="brand-shield" style="width: 28px; height: 28px; border-radius: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </div>
+                        <span class="footer-brand-title">Kizuno-AI</span>
+                        <span class="footer-civic-badge">Municipal Redressal</span>
+                    </div>
+                    <p class="footer-brand-desc">
+                        Official AI-powered citizen grievance redressal platform providing transparent, day-wise municipal progress tracking, SLA accountability, and community transparency.
+                    </p>
+                </div>
+
+                <div class="footer-badges-col">
+                    <div class="footer-badge-pill">
+                        <span class="footer-badge-icon">🏛️</span>
+                        <span>Civic Redressal Portal</span>
+                    </div>
+                    <div class="footer-badge-pill">
+                        <span class="footer-badge-icon">🔒</span>
+                        <span>256-Bit SSL Encrypted</span>
+                    </div>
+                    <div class="footer-badge-pill">
+                        <span class="footer-badge-icon">⚡</span>
+                        <span>Real-Time Database Sync</span>
+                    </div>
+                    <div class="footer-badge-pill">
+                        <span class="footer-badge-icon">⏱️</span>
+                        <span>SLA Timeline Guarantee</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-divider-line"></div>
+
+            <div class="footer-bottom-bar">
+                <div class="footer-copyright-text">
+                    &copy; 2026 Kizuno-AI Municipal Redressal Platform. All rights reserved.
+                </div>
+                <div class="footer-legal-links">
+                    <span>Citizen Rights Protection</span>
+                    <span class="footer-dot">•</span>
+                    <span>Transparent Municipal Governance</span>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- ========================================================
          VIEW 12: LOGIN MODAL (OFFICIALS / CITIZENS) (Screen 12)
@@ -4757,7 +5349,7 @@
                     (viewId === 'home' ? document.getElementById('mob-nav-dashboard') : null);
                 if (activeMobBtn) activeMobBtn.classList.add('active');
 
-                // Bottom dock & body padding visibility: strictly hide on login view
+                // Bottom dock & footer visibility: strictly mobile format only (<= 768px) and hidden on login view
                 const mobDock = document.getElementById('mobile-bottom-dock');
                 if (viewId === 'login') {
                     document.body.classList.add('on-login-view');
@@ -4767,11 +5359,26 @@
                 } else {
                     document.body.classList.remove('on-login-view');
                     if (mobDock) {
-                        mobDock.style.setProperty('display', 'flex', 'important');
+                        if (window.innerWidth <= 768) {
+                            mobDock.style.setProperty('display', 'flex', 'important');
+                        } else {
+                            mobDock.style.setProperty('display', 'none', 'important');
+                        }
                     }
                 }
 
+                // Keep portal & header visibility strictly in sync on every view transition
+                try {
+                    const savedAuth = localStorage.getItem('kizuno_auth_user');
+                    const authObj = savedAuth ? JSON.parse(savedAuth) : null;
+                    if (typeof updatePortalVisibility === 'function') {
+                        updatePortalVisibility(authObj);
+                    }
+                } catch(e) {}
+
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+                updateMobileDockPosition();
+                setTimeout(updateMobileDockPosition, 60);
 
                 if (viewId === 'officer') {
                     try { renderOfficerTable(); } catch (e) { console.warn("renderOfficerTable non-fatal notice:", e); }
@@ -4882,7 +5489,7 @@
             if (response && response.credential) {
                 profile = parseJwt(response.credential);
             }
-            const email = profile?.email || 'citizen.google@gmail.com';
+            const email = (profile?.email || 'citizen.google@gmail.com').trim().toLowerCase();
             const name = profile?.name || email.split('@')[0];
             const picture = profile?.picture || '';
             const role = selectedLoginRole === 'officer' ? 'Officer' : 'Citizen';
@@ -4913,6 +5520,37 @@
                 authProvider: 'Google OAuth 2.0'
             };
             localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
+
+            // Persist to kizuno_registered_users
+            try {
+                const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                const existingIdx = regUsers.findIndex(u => (u.email || '').toLowerCase() === email);
+                const userObj = {
+                    id: existingIdx >= 0 && regUsers[existingIdx].id ? regUsers[existingIdx].id : `G-${Date.now()}`,
+                    name: name,
+                    email: email,
+                    role: role.toLowerCase(),
+                    registration_method: 'google',
+                    is_verified: true,
+                    email_verified: true,
+                    created_at: existingIdx >= 0 && regUsers[existingIdx].created_at ? regUsers[existingIdx].created_at : new Date().toISOString(),
+                    last_login: new Date().toISOString(),
+                    picture: picture
+                };
+                if (existingIdx >= 0) {
+                    regUsers[existingIdx] = { ...regUsers[existingIdx], ...userObj };
+                } else {
+                    regUsers.push(userObj);
+                }
+                localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+            } catch (e) {}
+
+            // Broadcast login across all tabs (Admin & Officer portals)
+            try {
+                const bc = new BroadcastChannel('kizuno_live_sync');
+                bc.postMessage({ type: 'USER_LOGIN', user: authUser });
+            } catch (e) {}
+
             applyUserSession(authUser);
             closeLoginModal();
 
@@ -5014,10 +5652,19 @@
                     if (res.ok && data.success) {
                         localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
                         const registeredUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
-                        if (!registeredUsers.some(u => (u.email || '').toLowerCase() === email)) {
+                        const existingIdx = registeredUsers.findIndex(u => (u.email || '').toLowerCase() === email);
+                        if (existingIdx >= 0) {
+                            registeredUsers[existingIdx] = { ...registeredUsers[existingIdx], ...data.user, last_login: new Date().toISOString() };
+                        } else {
                             registeredUsers.push(data.user);
-                            localStorage.setItem('kizuno_registered_users', JSON.stringify(registeredUsers));
                         }
+                        localStorage.setItem('kizuno_registered_users', JSON.stringify(registeredUsers));
+
+                        try {
+                            const bc = new BroadcastChannel('kizuno_live_sync');
+                            bc.postMessage({ type: 'USER_LOGIN', user: data.user });
+                        } catch (e) {}
+
                         applyUserSession(data.user);
                         switchView('dashboard');
                         showToast(data.message || `Welcome back, ${data.user.name}! Citizen Dashboard Loaded`, '✓');
@@ -5054,6 +5701,30 @@
             };
 
             localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
+
+            // Persist to kizuno_registered_users
+            try {
+                const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                const existingIdx = regUsers.findIndex(u => (u.email || '').toLowerCase() === email);
+                if (existingIdx >= 0) {
+                    regUsers[existingIdx] = { ...regUsers[existingIdx], ...authUser, last_login: new Date().toISOString() };
+                } else {
+                    regUsers.push({
+                        ...authUser,
+                        registration_method: 'email',
+                        email_verified: true,
+                        created_at: new Date().toISOString(),
+                        last_login: new Date().toISOString()
+                    });
+                }
+                localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+            } catch (e) {}
+
+            try {
+                const bc = new BroadcastChannel('kizuno_live_sync');
+                bc.postMessage({ type: 'USER_LOGIN', user: authUser });
+            } catch (e) {}
+
             applyUserSession(authUser);
             switchView('dashboard');
             showToast(`Welcome back, ${authUser.name}! Citizen Dashboard Loaded`, '✓');
@@ -5338,10 +6009,19 @@
                     if (res.ok && data.success) {
                         localStorage.setItem('kizuno_auth_user', JSON.stringify(data.user));
                         const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
-                        if (!regUsers.some(u => (u.email || '').toLowerCase() === email)) {
+                        const existingIdx = regUsers.findIndex(u => (u.email || '').toLowerCase() === email);
+                        if (existingIdx >= 0) {
+                            regUsers[existingIdx] = { ...regUsers[existingIdx], ...data.user, last_login: new Date().toISOString() };
+                        } else {
                             regUsers.push(data.user);
-                            localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
                         }
+                        localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+
+                        try {
+                            const bc = new BroadcastChannel('kizuno_live_sync');
+                            bc.postMessage({ type: 'USER_REGISTERED', user: data.user });
+                        } catch (e) {}
+
                         applyUserSession(data.user);
 
                         const p = document.getElementById('signup-password');
@@ -5379,14 +6059,27 @@
                         email: email,
                         role: 'Citizen',
                         picture: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
-                        authProvider: 'Kizuno Local Cache'
+                        authProvider: 'Kizuno Local Cache',
+                        registration_method: 'email',
+                        email_verified: true,
+                        created_at: new Date().toISOString(),
+                        last_login: new Date().toISOString()
                     };
                     localStorage.setItem('kizuno_auth_user', JSON.stringify(offlineUser));
                     const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
-                    if (!regUsers.some(u => (u.email || '').toLowerCase() === email)) {
+                    const existingIdx = regUsers.findIndex(u => (u.email || '').toLowerCase() === email);
+                    if (existingIdx >= 0) {
+                        regUsers[existingIdx] = { ...regUsers[existingIdx], ...offlineUser, last_login: new Date().toISOString() };
+                    } else {
                         regUsers.push(offlineUser);
-                        localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
                     }
+                    localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+
+                    try {
+                        const bc = new BroadcastChannel('kizuno_live_sync');
+                        bc.postMessage({ type: 'USER_REGISTERED', user: offlineUser });
+                    } catch (e) {}
+
                     applyUserSession(offlineUser);
 
                     const p = document.getElementById('signup-password');
@@ -5423,14 +6116,46 @@
             const pic = role === 'officer'
                 ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
                 : "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80";
+            const cleanEmail = (email || '').trim().toLowerCase();
             const authUser = {
                 name: name,
-                email: email,
+                email: cleanEmail,
                 picture: pic,
                 role: role === 'officer' ? 'Officer' : 'Citizen',
                 authProvider: 'Google OAuth 2.0 (Verified)'
             };
             localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
+
+            // Persist to kizuno_registered_users
+            try {
+                const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                const existingIdx = regUsers.findIndex(u => (u.email || '').toLowerCase() === cleanEmail);
+                const userObj = {
+                    id: existingIdx >= 0 && regUsers[existingIdx].id ? regUsers[existingIdx].id : `G-${Date.now()}`,
+                    name: name,
+                    email: cleanEmail,
+                    role: (role || 'citizen').toLowerCase(),
+                    registration_method: 'google',
+                    is_verified: true,
+                    email_verified: true,
+                    created_at: existingIdx >= 0 && regUsers[existingIdx].created_at ? regUsers[existingIdx].created_at : new Date().toISOString(),
+                    last_login: new Date().toISOString(),
+                    picture: pic
+                };
+                if (existingIdx >= 0) {
+                    regUsers[existingIdx] = { ...regUsers[existingIdx], ...userObj };
+                } else {
+                    regUsers.push(userObj);
+                }
+                localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+            } catch (e) {}
+
+            // Broadcast login across all tabs (Admin & Officer portals)
+            try {
+                const bc = new BroadcastChannel('kizuno_live_sync');
+                bc.postMessage({ type: 'USER_LOGIN', user: authUser });
+            } catch (e) {}
+
             applyUserSession(authUser);
             closeLoginModal();
             showToast(`Signed in as ${name}`, '✓');
@@ -5441,7 +6166,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        email: email,
+                        email: cleanEmail,
                         name: name,
                         role: (role || 'citizen').toLowerCase(),
                         picture: pic
@@ -5528,19 +6253,90 @@
             dropdown.style.display = 'block';
         }
 
+        function toggleNavQuickMenu(e) {
+            if (e) e.stopPropagation();
+            const dropdown = document.getElementById('nav-quick-menu-dropdown');
+            if (!dropdown) return;
+            const isShowing = dropdown.style.display === 'block';
+            dropdown.style.display = isShowing ? 'none' : 'block';
+            if (!isShowing) {
+                closeUserProfileDropdown();
+            }
+        }
+
+        function closeNavQuickMenu(e) {
+            if (e) e.stopPropagation();
+            const dropdown = document.getElementById('nav-quick-menu-dropdown');
+            if (dropdown) dropdown.style.display = 'none';
+        }
+
         function closeUserProfileDropdown(e) {
             if (e) e.stopPropagation();
             const dropdown = document.getElementById('user-profile-dropdown');
             if (dropdown) dropdown.style.display = 'none';
         }
 
+        /**
+         * Strict Portal & Header Visibility Manager
+         * Guarantees:
+         * 1. In mobile format, Admin & Officer portal buttons in footer dock show ONLY to dilippalanisamy09@gmail.com
+         * 2. On desktop nav, Admin & Officer buttons show ONLY to dilippalanisamy09@gmail.com
+         * 3. Submit Complaint button is hidden for Dilip (founder account) and shown for citizens
+         * 4. Header Logout button is prominently shown when logged in, and cleanly hidden when signed out / on login view
+         */
+        function updatePortalVisibility(user) {
+            const isDilip = Boolean(
+                user && user.email && user.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com'
+            );
+            const isLoggedIn = Boolean(user && user.email);
+
+            // Desktop navbar buttons
+            const navAdminBtn = document.getElementById('nav-admin');
+            if (navAdminBtn) navAdminBtn.style.setProperty('display', isDilip ? 'inline-flex' : 'none', 'important');
+
+            const navOfficerBtn = document.getElementById('nav-officer');
+            if (navOfficerBtn) navOfficerBtn.style.setProperty('display', isDilip ? 'inline-flex' : 'none', 'important');
+
+            const navSubmitBtn = document.getElementById('nav-submit');
+            if (navSubmitBtn) navSubmitBtn.style.setProperty('display', isDilip ? 'none' : 'inline-flex', 'important');
+
+            // Mobile bottom dock buttons
+            const mobAdminBtn = document.getElementById('mob-nav-admin');
+            if (mobAdminBtn) mobAdminBtn.style.setProperty('display', isDilip ? 'flex' : 'none', 'important');
+
+            const mobOfficerBtn = document.getElementById('mob-nav-officer');
+            if (mobOfficerBtn) mobOfficerBtn.style.setProperty('display', isDilip ? 'flex' : 'none', 'important');
+
+            const mobSubmitBtn = document.getElementById('mob-nav-submit');
+            if (mobSubmitBtn) mobSubmitBtn.style.setProperty('display', isDilip ? 'none' : 'flex', 'important');
+
+            // Citizen dashboard submission card
+            const dashSubmitCard = document.getElementById('dashboard-submit-card');
+            if (dashSubmitCard) dashSubmitCard.style.setProperty('display', isDilip ? 'none' : 'block', 'important');
+
+            // Header logout button: visible when logged in, hidden when signed out / on login view
+            const logoutBtn = document.getElementById('header-logout-btn');
+            if (logoutBtn) {
+                const showLogout = isLoggedIn && currentView !== 'login' && !document.body.classList.contains('on-login-view');
+                logoutBtn.style.setProperty('display', showLogout ? 'inline-flex' : 'none', 'important');
+            }
+        }
+
         function userSignOut() {
             localStorage.removeItem('kizuno_auth_user');
             closeUserProfileDropdown();
+            closeNavQuickMenu();
             const nameEl = document.getElementById('nav-user-name');
             const avatarEl = document.getElementById('nav-user-initial');
             if (nameEl) nameEl.innerText = 'Log In';
-            if (avatarEl) avatarEl.innerText = '🔐';
+            if (avatarEl) {
+                avatarEl.innerHTML = '🔐';
+                avatarEl.style.background = 'var(--brand-primary)';
+                avatarEl.style.color = '#ffffff';
+            }
+
+            // Immediately enforce that Admin and Officer portals are hidden from everywhere
+            updatePortalVisibility(null);
 
             // Clear citizen cards and stats in DOM immediately so they don't leak visually
             const aEl = document.getElementById('my-stat-active');
@@ -5577,11 +6373,6 @@
             const returnDashboardBtn = document.getElementById('login-return-dashboard-container');
             if (returnDashboardBtn) returnDashboardBtn.style.display = 'none';
 
-            const navAdminBtn = document.getElementById('nav-admin');
-            if (navAdminBtn) navAdminBtn.style.display = 'none';
-            const navOfficerBtn = document.getElementById('nav-officer');
-            if (navOfficerBtn) navOfficerBtn.style.display = 'none';
-
             showToast('Signed out successfully', 'ℹ️');
             switchView('login');
             setTimeout(clearAllAuthFormInputs, 60);
@@ -5609,8 +6400,6 @@
                 const offAvatarEl = document.getElementById('officer-sidebar-avatar');
                 if (offAvatarEl && user.name) offAvatarEl.innerText = user.name.replace('Officer', '').trim().charAt(0).toUpperCase() || 'D';
             }
-            const navOfficerBtn = document.getElementById('nav-officer');
-            const navSubmitBtn = document.getElementById('nav-submit');
             const navMyBtn = document.getElementById('nav-my');
             const navDashboardBtn = document.getElementById('nav-dashboard') || document.getElementById('nav-home');
             const greetingEl = document.getElementById('home-user-greeting');
@@ -5618,42 +6407,15 @@
             const citizenStats = document.getElementById('citizen-live-stats');
             const recentSection = document.getElementById('citizen-dashboard-recent-section');
 
-            // Admin Portal Visibility: STRICTLY VISIBLE ONLY TO dilippalanisamy09@gmail.com
+            // Apply centralized portal & header visibility rules (strictly Dilip for Admin & Officer)
+            updatePortalVisibility(user);
+
             const isDilipAdmin = Boolean(
                 user && user.email && user.email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com'
             );
-            const navAdminBtn = document.getElementById('nav-admin');
-            if (navAdminBtn) {
-                navAdminBtn.style.display = isDilipAdmin ? 'inline-flex' : 'none';
-            }
-
-            // Founder Account (Dilip Palanisamy): As founder, Submit Complaint is completely removed
-            if (navSubmitBtn) {
-                navSubmitBtn.style.display = isDilipAdmin ? 'none' : 'inline-flex';
-            }
-            const mobSubmitBtn = document.getElementById('mob-nav-submit');
-            if (mobSubmitBtn) {
-                mobSubmitBtn.style.display = isDilipAdmin ? 'none' : 'flex';
-            }
-
-            const dashSubmitCard = document.getElementById('dashboard-submit-card');
-            if (dashSubmitCard) {
-                dashSubmitCard.style.display = isDilipAdmin ? 'none' : 'block';
-            }
-
-            const mobAdminBtn = document.getElementById('mob-nav-admin');
-            if (mobAdminBtn) {
-                mobAdminBtn.style.display = isDilipAdmin ? 'flex' : 'none';
-            }
-            const mobOfficerBtn = document.getElementById('mob-nav-officer');
-            if (mobOfficerBtn) {
-                mobOfficerBtn.style.display = isDilipAdmin ? 'flex' : 'none';
-            }
 
             if (isOfficer && isDilipAdmin) {
                 // Officer View: Show Officer portal ONLY for Dilip, hide citizen submit/my-complaints
-                if (navOfficerBtn) navOfficerBtn.style.display = 'inline-flex';
-                if (navSubmitBtn) navSubmitBtn.style.display = 'none';
                 if (navMyBtn) navMyBtn.style.display = 'none';
                 if (navDashboardBtn) navDashboardBtn.innerText = '👨‍💼 Officer Dashboard';
                 if (greetingEl) greetingEl.innerText = `Municipal Officer: ${user.name || 'Staff'}`;
@@ -5661,8 +6423,6 @@
                 if (recentSection) recentSection.style.display = 'none';
             } else {
                 // Citizen View & All Other Users: STRICTLY HIDE Officer Portal from others
-                if (navOfficerBtn) navOfficerBtn.style.display = isDilipAdmin ? 'inline-flex' : 'none';
-                if (navSubmitBtn) navSubmitBtn.style.display = isDilipAdmin ? 'none' : 'inline-flex';
                 if (navMyBtn) navMyBtn.style.display = 'inline-flex';
                 if (navDashboardBtn) navDashboardBtn.innerText = '📊 Dashboard';
                 if (greetingEl) greetingEl.innerText = isDilipAdmin ? `👑 Founder: ${user.name || 'Dilip Palanisamy'}` : `Welcome, ${user.name || 'Citizen'}!`;
@@ -6592,11 +7352,14 @@
         async function handleFormSubmission(e) {
             e.preventDefault();
             const category = document.getElementById('form-category').value;
-            const title = document.getElementById('form-title').value;
-            const desc = document.getElementById('form-desc').value;
-            const location = document.getElementById('form-location').value;
+            const title = document.getElementById('form-title').value.trim();
+            const desc = document.getElementById('form-desc').value.trim();
+            const location = document.getElementById('form-location').value.trim();
             const priority = document.getElementById('form-priority').value;
-            const photoUrl = document.getElementById('upload-preview-img').src;
+
+            const previewContainer = document.getElementById('upload-preview-container');
+            const previewImg = document.getElementById('upload-preview-img');
+            const photoUrl = (previewContainer && previewContainer.style.display !== 'none' && previewImg) ? (previewImg.src || '') : '';
 
             // Associate grievance directly with the authenticated citizen owner
             const authUser = JSON.parse(localStorage.getItem('kizuno_auth_user') || '{}');
@@ -6609,14 +7372,24 @@
                 return;
             }
 
-            if (citizenEmail === 'dilippalanisamy09@gmail.com') {
-                showToast('Founder account: Grievance submission is disabled for the founder.', '⚠️');
-                return;
-            }
-
             if (!isBackendConnected) {
                 await checkBackendHealth();
             }
+
+            // Function to reset form fields cleanly
+            const resetGrievanceForm = () => {
+                const formTitle = document.getElementById('form-title');
+                if (formTitle) formTitle.value = '';
+                const formDesc = document.getElementById('form-desc');
+                if (formDesc) formDesc.value = '';
+                const formLoc = document.getElementById('form-location');
+                if (formLoc) formLoc.value = '';
+                const pBox = document.getElementById('upload-preview-container');
+                if (pBox) pBox.style.display = 'none';
+                const pImg = document.getElementById('upload-preview-img');
+                if (pImg) pImg.src = '';
+                userUploadedCustomPhoto = false;
+            };
 
             if (isBackendConnected) {
                 try {
@@ -6649,7 +7422,39 @@
                             KIZUNO_SQL_DB.complaints.unshift(created);
                         }
                         persistComplaintsToStorage();
+
+                        // Ensure citizen is registered in kizuno_registered_users
+                        try {
+                            const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                            const existingUser = regUsers.find(u => (u.email || '').toLowerCase() === citizenEmail);
+                            if (!existingUser) {
+                                regUsers.push({
+                                    id: `C-${Date.now()}`,
+                                    name: citizenName,
+                                    email: citizenEmail,
+                                    role: 'citizen',
+                                    registration_method: 'email',
+                                    is_verified: true,
+                                    email_verified: true,
+                                    created_at: new Date().toISOString(),
+                                    last_login: new Date().toISOString()
+                                });
+                                localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+                            }
+                        } catch (e) {}
+
+                        // Broadcast new complaint to all open tabs (Officer and Admin portals)
+                        try {
+                            const bc = new BroadcastChannel('kizuno_live_sync');
+                            bc.postMessage({
+                                type: 'NEW_COMPLAINT',
+                                complaint: created,
+                                user: { name: citizenName, email: citizenEmail }
+                            });
+                        } catch (e) {}
+
                         displaySubmittedComplaint(created);
+                        resetGrievanceForm();
                         await syncFromSQL(true);
                         renderCitizenDashboardRecent();
                         updateCitizenDashboardStats();
@@ -6703,6 +7508,36 @@
 
             KIZUNO_SQL_DB.complaints.unshift(newComplaint);
             persistComplaintsToStorage();
+
+            // Ensure citizen is registered in kizuno_registered_users
+            try {
+                const regUsers = JSON.parse(localStorage.getItem('kizuno_registered_users') || '[]');
+                const existingUser = regUsers.find(u => (u.email || '').toLowerCase() === citizenEmail);
+                if (!existingUser) {
+                    regUsers.push({
+                        id: `C-${Date.now()}`,
+                        name: citizenName,
+                        email: citizenEmail,
+                        role: 'citizen',
+                        registration_method: 'email',
+                        is_verified: true,
+                        email_verified: true,
+                        created_at: new Date().toISOString(),
+                        last_login: new Date().toISOString()
+                    });
+                    localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
+                }
+            } catch (e) {}
+
+            try {
+                const bc = new BroadcastChannel('kizuno_live_sync');
+                bc.postMessage({
+                    type: 'NEW_COMPLAINT',
+                    complaint: newComplaint,
+                    user: { name: citizenName, email: citizenEmail }
+                });
+            } catch (e) {}
+
             updateKpiCounters();
             renderCitizenDashboardRecent();
             updateCitizenDashboardStats();
@@ -6710,6 +7545,7 @@
             renderOfficerTable();
 
             displaySubmittedComplaint(newComplaint);
+            resetGrievanceForm();
             switchView('submitted');
             showToast('Saved to local storage. Connect to central server (python server.py) to sync with Officer Portal!', '⚠️');
         }
@@ -7135,25 +7971,6 @@
             } else {
                 prioritySelect.value = 'Low';
             }
-
-            // Dynamically synchronize the default evidence photo with the selected issue category if user has not uploaded custom photo
-            if (!userUploadedCustomPhoto) {
-                const previewImg = document.getElementById('upload-preview-img');
-                const filenameEl = document.getElementById('upload-filename');
-                if (cat === 'Road Damage') {
-                    if (previewImg) previewImg.src = "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?w=600&auto=format&fit=crop&q=80";
-                    if (filenameEl) filenameEl.innerText = "pothole_road_evidence.jpg";
-                } else if (cat === 'Water Leak') {
-                    if (previewImg) previewImg.src = "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f3?w=600&auto=format&fit=crop&q=80";
-                    if (filenameEl) filenameEl.innerText = "pipe_leakage_evidence.jpg";
-                } else if (cat === 'Garbage') {
-                    if (previewImg) previewImg.src = "https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80";
-                    if (filenameEl) filenameEl.innerText = "garbage_overflow_evidence.jpg";
-                } else if (cat === 'Streetlight') {
-                    if (previewImg) previewImg.src = "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=600&auto=format&fit=crop&q=80";
-                    if (filenameEl) filenameEl.innerText = "streetlight_hazard.jpg";
-                }
-            }
         }
 
         function handlePhotoSelect(event) {
@@ -7162,8 +7979,14 @@
                 userUploadedCustomPhoto = true;
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    document.getElementById('upload-preview-img').src = e.target.result;
-                    document.getElementById('upload-filename').innerText = file.name;
+                    const previewBox = document.getElementById('upload-preview-container');
+                    if (previewBox) previewBox.style.display = 'flex';
+                    const previewImg = document.getElementById('upload-preview-img');
+                    if (previewImg) previewImg.src = e.target.result;
+                    const filenameEl = document.getElementById('upload-filename');
+                    if (filenameEl) filenameEl.innerText = file.name;
+                    const sizeEl = document.getElementById('upload-filesize');
+                    if (sizeEl) sizeEl.innerText = `${(file.size / 1024 / 1024).toFixed(2)} MB • Photographic Evidence Attached`;
                 };
                 reader.readAsDataURL(file);
             }
@@ -7206,8 +8029,13 @@
                 document.body.classList.remove('modal-open');
                 const mobDock = document.getElementById('mobile-bottom-dock');
                 if (mobDock && currentView !== 'login') {
-                    mobDock.style.setProperty('display', 'flex', 'important');
+                    if (window.innerWidth <= 768) {
+                        mobDock.style.setProperty('display', 'flex', 'important');
+                    } else {
+                        mobDock.style.setProperty('display', 'none', 'important');
+                    }
                 }
+                updateMobileDockPosition();
                 document.getElementById('login-modal').style.display = 'none';
             }
         }
@@ -7326,6 +8154,13 @@
                     dropdown.style.display = 'none';
                 }
 
+                // Close three-dot quick menu dropdown when clicking outside
+                const quickDropdown = document.getElementById('nav-quick-menu-dropdown');
+                const quickContainer = document.getElementById('nav-quick-menu-container');
+                if (quickDropdown && quickContainer && !quickContainer.contains(e.target)) {
+                    quickDropdown.style.display = 'none';
+                }
+
                 // Close user profile dropdown when clicking outside
                 const profileDropdown = document.getElementById('user-profile-dropdown');
                 const userPill = document.getElementById('nav-user-pill');
@@ -7355,6 +8190,7 @@
             // Session validation: only route to dashboard if user is legitimately authenticated
             if (u && u.email) {
                 applyUserSession(u);
+                updatePortalVisibility(u);
                 const returnDashboardBtn = document.getElementById('login-return-dashboard-container');
                 if (returnDashboardBtn) returnDashboardBtn.style.display = 'block';
 
@@ -7366,8 +8202,7 @@
             } else {
                 // No authenticated session -> Cleanly route to Login / Account Creation
                 localStorage.removeItem('kizuno_auth_user');
-                const navAdminBtn = document.getElementById('nav-admin');
-                if (navAdminBtn) navAdminBtn.style.display = 'none';
+                updatePortalVisibility(null);
                 clearAllAuthFormInputs();
                 const returnDashboardBtn = document.getElementById('login-return-dashboard-container');
                 if (returnDashboardBtn) returnDashboardBtn.style.display = 'none';
@@ -7384,7 +8219,83 @@
             if (KIZUNO_SQL_DB.complaints.length > 0) {
                 displaySubmittedComplaint(KIZUNO_SQL_DB.complaints[0]);
             }
+
+            // Real-Time Cross-Tab Live Sync
+            try {
+                const liveSyncChannel = new BroadcastChannel('kizuno_live_sync');
+                liveSyncChannel.onmessage = async (ev) => {
+                    if (ev.data && (ev.data.type === 'NEW_COMPLAINT' || ev.data.type === 'COMPLAINT_UPDATED')) {
+                        await syncFromSQL(true);
+                        renderOfficerTable();
+                        renderMyComplaints();
+                        renderCitizenDashboardRecent();
+                        updateCitizenDashboardStats();
+                    }
+                };
+            } catch (e) {}
+
+            window.addEventListener('storage', async (ev) => {
+                if (ev.key === 'kizuno_saved_complaints' || ev.key === 'kizuno_complaints_backup') {
+                    await syncFromSQL(true);
+                    renderOfficerTable();
+                    renderMyComplaints();
+                    renderCitizenDashboardRecent();
+                    updateCitizenDashboardStats();
+                }
+            });
+
+            // Initialize mobile bottom dock positioning
+            updateMobileDockPosition();
         });
+
+        /**
+         * Mobile Dock Adaptive Footer Positioning:
+         * 1. Mobile Format Only: strictly hidden on desktop (> 768px).
+         * 2. Hidden on login view or open modal.
+         * 3. Adapts dynamically as user scrolls: when the copyright page/footer comes into view,
+         *    the dock ends cleanly ABOVE the copyright page/footer so it never covers it!
+         */
+        function updateMobileDockPosition() {
+            const dock = document.getElementById('mobile-bottom-dock');
+            const footer = document.getElementById('site-copyright-footer');
+            if (!dock) return;
+
+            // Desktop Isolation: NEVER show mobile bottom dock on desktop
+            if (window.innerWidth > 768) {
+                dock.style.setProperty('display', 'none', 'important');
+                document.documentElement.style.setProperty('--mob-dock-bottom', '0px');
+                return;
+            }
+
+            // Strictly hide on login view or modals
+            if (currentView === 'login' || document.body.classList.contains('on-login-view') || document.body.classList.contains('modal-open')) {
+                dock.style.setProperty('display', 'none', 'important');
+                return;
+            }
+
+            // On mobile format: show dock
+            dock.style.setProperty('display', 'flex', 'important');
+
+            if (!footer) {
+                document.documentElement.style.setProperty('--mob-dock-bottom', '0px');
+                return;
+            }
+
+            const footerRect = footer.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+
+            // When copyright page/footer enters the viewport from the bottom:
+            if (footerRect.top < windowHeight) {
+                const overlap = Math.max(0, Math.ceil(windowHeight - footerRect.top));
+                document.documentElement.style.setProperty('--mob-dock-bottom', `${overlap}px`);
+            } else {
+                document.documentElement.style.setProperty('--mob-dock-bottom', '0px');
+            }
+        }
+
+        // Attach listeners for dynamic scroll and viewport resizing
+        window.addEventListener('scroll', updateMobileDockPosition, { passive: true });
+        window.addEventListener('resize', updateMobileDockPosition);
     </script>
 
     <!-- MOBILE BOTTOM NAVIGATION DOCK (App-Like Native Feel for Smartphones) -->

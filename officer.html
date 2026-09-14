@@ -1112,6 +1112,126 @@
                 border-radius: 16px !important;
             }
         }
+
+        /* Site Copyright Footer */
+        .site-copyright-footer {
+            width: 100%;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-light);
+            margin-top: 3.5rem;
+            padding: 2.25rem 1.5rem 1.75rem 1.5rem;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-inner-container {
+            max-width: 1350px;
+            margin: 0 auto;
+        }
+
+        .footer-main-grid {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-brand-col {
+            max-width: 480px;
+        }
+
+        .footer-brand-header {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            margin-bottom: 0.65rem;
+        }
+
+        .footer-brand-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+
+        .footer-civic-badge {
+            font-size: 0.68rem;
+            font-weight: 700;
+            background: var(--brand-primary-subtle);
+            color: var(--brand-primary);
+            border: 1px solid var(--border-light);
+            padding: 0.2rem 0.55rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .footer-brand-desc {
+            font-size: 0.825rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        .footer-badges-col {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+            align-items: center;
+            max-width: 460px;
+        }
+
+        .footer-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 0.4rem 0.7rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .footer-divider-line {
+            height: 1px;
+            background: var(--border-light);
+            margin: 1.5rem 0 1.25rem 0;
+        }
+
+        .footer-bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .footer-copyright-text {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .site-copyright-footer {
+                margin-top: 2rem;
+                padding: 1.5rem 1rem 1.25rem 1rem;
+            }
+            .footer-main-grid {
+                flex-direction: column;
+                gap: 1.25rem;
+            }
+            .footer-bottom-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.35rem;
+            }
+        }
     </style>
 </head>
 
@@ -1391,10 +1511,10 @@
                             Operational Action Console
                         </div>
                         <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-top: 0.2rem;" id="action-complaint-header">
-                            Complaint #CIV-2026-1042
+                            Operational Grievance Console
                         </h2>
                         <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.2rem;" id="action-complaint-sub">
-                            Streetlight not working • Gandhipuram, Coimbatore
+                            Select an action milestone below to progress this complaint
                         </div>
                     </div>
                     <button type="button" class="btn-secondary" onclick="closeOfficerActionPanel()" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
@@ -1469,6 +1589,52 @@
             </div>
         </main>
     </div>
+
+    <!-- SITE COPYRIGHT FOOTER -->
+    <footer class="site-copyright-footer" id="site-copyright-footer">
+        <div class="footer-inner-container">
+            <div class="footer-main-grid">
+                <div class="footer-brand-col">
+                    <div class="footer-brand-header">
+                        <div class="brand-shield" style="width: 28px; height: 28px; border-radius: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </div>
+                        <span class="footer-brand-title">Kizuno-AI</span>
+                        <span class="footer-civic-badge">Officer Operations</span>
+                    </div>
+                    <p class="footer-brand-desc">
+                        Official municipal administrative dashboard for triage, evidence verification, day-wise timeline milestone tracking, and strict SLA fulfillment.
+                    </p>
+                </div>
+
+                <div class="footer-badges-col">
+                    <div class="footer-badge-pill">
+                        <span class="footer-badge-icon">🏛️</span>
+                        <span>Municipal Officer Console</span>
+                    </div>
+                    <div class="footer-badge-pill">
+                        <span class="footer-badge-icon">🔒</span>
+                        <span>256-Bit SSL Encrypted</span>
+                    </div>
+                    <div class="footer-badge-pill">
+                        <span class="footer-badge-icon">⚡</span>
+                        <span>SQL Server Synchronized</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-divider-line"></div>
+
+            <div class="footer-bottom-bar">
+                <div class="footer-copyright-text">
+                    &copy; 2026 Kizuno-AI Municipal Redressal Platform. All rights reserved.
+                </div>
+                <div>Official Municipal Administration Console</div>
+            </div>
+        </div>
+    </footer>
 
     <!-- TIMELINE INSPECTOR MODAL -->
     <div class="modal-backdrop" id="timeline-modal">
@@ -2133,15 +2299,32 @@
             });
         }
 
-        /* Auto-polling every 5s */
+        /* Auto-polling every 3s */
         function startAutoPolling() {
             if (POLLING_TIMER) return;
             POLLING_TIMER = setInterval(() => {
                 if (document.visibilityState === 'visible') {
                     fetchComplaintsFromBackend(true);
                 }
-            }, 5000);
+            }, 3000);
         }
+
+        // Real-Time Cross-Tab Live Sync
+        try {
+            const officerSyncChannel = new BroadcastChannel('kizuno_live_sync');
+            officerSyncChannel.onmessage = (ev) => {
+                if (ev.data && (ev.data.type === 'NEW_COMPLAINT' || ev.data.type === 'COMPLAINT_UPDATED')) {
+                    console.log("[Officer Live Sync] Real-time grievance event received:", ev.data);
+                    fetchComplaintsFromBackend(true);
+                }
+            };
+        } catch (e) {}
+
+        window.addEventListener('storage', (ev) => {
+            if (ev.key === 'kizuno_saved_complaints' || ev.key === 'kizuno_complaints_backup') {
+                fetchComplaintsFromBackend(true);
+            }
+        });
 
         /* Theme Management */
         function toggleThemeMenu(event) {
