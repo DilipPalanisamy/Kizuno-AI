@@ -5,6 +5,7 @@ managing real SQL operations, and serving the frontend interface.
 """
 
 import os
+import sys
 import ssl
 import csv
 import json
@@ -20,6 +21,18 @@ import tempfile
 from datetime import datetime, timedelta, timezone
 from email.message import EmailMessage
 from typing import Optional, List, Any, Dict
+
+# Ensure UTF-8 console output on Windows without crashing on unicode characters
+if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
+if sys.stderr and hasattr(sys.stderr, 'reconfigure'):
+    try:
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass
 
 from dotenv import load_dotenv
 
@@ -250,13 +263,13 @@ Kizuna-AI Municipal Redressal Engine
 
     # Attempt 1: Port 587 (STARTTLS) - High-speed standard
     try:
-        with smtplib.SMTP(smtp_server, 587, timeout=2.5) as server:
+        with smtplib.SMTP(smtp_server, 587, timeout=6.0) as server:
             if hasattr(server, 'sock') and server.sock:
-                server.sock.settimeout(2.5)
+                server.sock.settimeout(6.0)
             server.starttls(context=context)
             server.login(sender_email, app_password)
             server.send_message(msg)
-        print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:587 (STARTTLS)")
+        print(f"[Kizuna-AI Auth] ✉️ Real email sent to {to_email} via {smtp_server}:587 (STARTTLS)")
         return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
     except Exception as e1:
         err1 = f"Port 587 error: {e1}"
@@ -265,12 +278,12 @@ Kizuna-AI Municipal Redressal Engine
 
     # Attempt 2: Port 465 (SSL direct) - Fast fallback
     try:
-        with smtplib.SMTP_SSL(smtp_server, 465, context=context, timeout=2.5) as server:
+        with smtplib.SMTP_SSL(smtp_server, 465, context=context, timeout=6.0) as server:
             if hasattr(server, 'sock') and server.sock:
-                server.sock.settimeout(2.5)
+                server.sock.settimeout(6.0)
             server.login(sender_email, app_password)
             server.send_message(msg)
-        print(f"[Kizuna-AI Auth] Real email sent to {to_email} via {smtp_server}:465 (SSL)")
+        print(f"[Kizuna-AI Auth] ✉️ Real email sent to {to_email} via {smtp_server}:465 (SSL)")
         return {"sent": True, "simulated": False, "message": f"Verification code sent to {to_email}"}
     except Exception as e2:
         err2 = f"Port 465 error: {e2}"
@@ -923,6 +936,7 @@ def send_verification_code(payload: SendVerificationDTO, db: Session = Depends(g
     # Generate 6-digit numeric OTP code
     code = f"{random.randint(100000, 999999)}"
     expires = datetime.now(timezone(timedelta(hours=5, minutes=30))) + timedelta(minutes=10)
+    print(f"\n[Kizuna-AI Auth] 🔑 Generated 6-Digit OTP for {clean_email} -> [{code}] (Valid for 10 mins)")
 
     # Invalidate any existing unused codes for this email
     db.query(EmailVerification).filter(
@@ -1181,7 +1195,8 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
             user.avatar_url = avatar_url
         user.role = role or user.role
         user.email_verified = True
-        user.registration_method = "google"
+        if not user.registration_method:
+            user.registration_method = "google"
         user.last_login = now_ist
     else:
         # New user: store with permanent creation timestamp
@@ -1206,7 +1221,7 @@ def authenticate_google(payload: GoogleAuthDTO, db: Session = Depends(get_db)):
         user_id=user.id,
         email=user.email,
         name=user.name,
-        registration_method="google",
+        registration_method=user.registration_method or "google",
         email_verified=True,
         created_at=user.created_at
     )
@@ -1257,6 +1272,7 @@ def get_supabase_config():
 
 
 @app.post("/api/admin/verify-pin")
+@app.post("/admin/verify-pin")
 def verify_admin_pin(payload: VerifyPinDTO):
     """Verifies Administrator Security PIN and issues secure session token"""
     if payload.pin.strip() == ADMIN_PIN:
@@ -1269,6 +1285,7 @@ def verify_admin_pin(payload: VerifyPinDTO):
 
 
 @app.get("/api/admin/stats")
+@app.get("/admin/stats")
 def get_admin_user_stats(
     db: Session = Depends(get_db),
     _auth: bool = Depends(verify_admin_access)
@@ -1318,6 +1335,7 @@ def get_admin_user_stats(
 
 
 @app.get("/api/admin/users")
+@app.get("/admin/users-list")
 def get_admin_users(
     search: Optional[str] = Query(None),
     sort: Optional[str] = Query("newest"),

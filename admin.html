@@ -1859,10 +1859,16 @@
             }
         }
 
+        function isGoogleUser(u) {
+            if (!u) return false;
+            const method = String(u.registration_method || u.registrationMethod || u.authProvider || '').toLowerCase();
+            return method.includes('google');
+        }
+
         function updateKPIs(stats = {}) {
             const total = allUsers.length;
-            const googleCount = allUsers.filter(u => (u.registration_method || u.registrationMethod || "").toLowerCase() === 'google').length;
-            const emailCount = allUsers.filter(u => (u.registration_method || u.registrationMethod || "").toLowerCase() === 'email').length;
+            const googleCount = allUsers.filter(isGoogleUser).length;
+            const emailCount = allUsers.filter(u => !isGoogleUser(u)).length;
             const verifiedCount = allUsers.filter(u => Boolean(u.email_verified || u.emailVerified || u.is_verified)).length;
 
             const todayStr = new Date().toDateString();
@@ -1912,9 +1918,9 @@
 
             // Filter by registration method
             if (activeFilterMethod === 'google') {
-                result = result.filter(u => (u.registration_method || u.registrationMethod || "").toLowerCase() === 'google');
+                result = result.filter(isGoogleUser);
             } else if (activeFilterMethod === 'email') {
-                result = result.filter(u => (u.registration_method || u.registrationMethod || "").toLowerCase() === 'email');
+                result = result.filter(u => !isGoogleUser(u));
             }
 
             // Sort logic
@@ -1968,8 +1974,7 @@
                 const name = user.name || "Citizen";
                 const email = user.email || "—";
                 const initial = name.charAt(0).toUpperCase();
-                const method = (user.registration_method || user.registrationMethod || "email").toLowerCase();
-                const isGoogle = method === "google";
+                const isGoogle = isGoogleUser(user);
                 const isVerified = Boolean(user.email_verified || user.emailVerified || user.is_verified);
 
                 const methodBadge = isGoogle
@@ -2041,8 +2046,8 @@
             document.getElementById("modal-field-name").innerText = user.name || "—";
             document.getElementById("modal-field-email").innerText = user.email || "—";
 
-            const method = (user.registration_method || user.registrationMethod || "email").toLowerCase();
-            document.getElementById("modal-field-method").innerHTML = method === "google"
+            const isGoogle = isGoogleUser(user);
+            document.getElementById("modal-field-method").innerHTML = isGoogle
                 ? `<span class="badge-method badge-google">🌐 Google OAuth</span>`
                 : `<span class="badge-method badge-email">✉️ Normal Email / Gmail</span>`;
 

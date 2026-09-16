@@ -3591,12 +3591,16 @@
                             <span class="profile-detail-value" id="profile-card-role-val">Citizen</span>
                         </div>
                         <div class="profile-detail-row">
+                            <span class="profile-detail-label">🌐 Login Method:</span>
+                            <span class="profile-detail-value" id="profile-card-method-val">✉️ Email &amp; Password</span>
+                        </div>
+                        <div class="profile-detail-row">
                             <span class="profile-detail-label">📋 My Complaints:</span>
                             <span class="profile-detail-value" id="profile-card-complaints-count">0 Complaints</span>
                         </div>
                         <div class="profile-detail-row">
                             <span class="profile-detail-label">🔒 Status:</span>
-                            <span class="profile-detail-value" style="color: #16a34a; font-weight: 700;">● Active & Verified</span>
+                            <span class="profile-detail-value" style="color: #16a34a; font-weight: 700;">● Active &amp; Verified</span>
                         </div>
                     </div>
 
@@ -5629,20 +5633,23 @@
             const allUsers = [...registeredUsers, ...defaultAccounts];
             const matched = allUsers.find(u => (u.email || '').toLowerCase() === email);
 
+            const userMethod = (matched && matched.registration_method) ? matched.registration_method : 'email';
             const authUser = matched ? {
                 id: matched.id || 1,
                 name: matched.name || email.split('@')[0],
                 email: email,
                 role: matched.role || 'Citizen',
                 picture: matched.picture || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
-                authProvider: 'Kizuno Client Cache'
+                registration_method: userMethod,
+                authProvider: 'email'
             } : {
                 id: Date.now(),
                 name: email.split('@')[0],
                 email: email,
                 role: 'Citizen',
                 picture: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
-                authProvider: 'Kizuno Client Cache'
+                registration_method: 'email',
+                authProvider: 'email'
             };
 
             localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
@@ -5665,19 +5672,15 @@
                 localStorage.setItem('kizuno_registered_users', JSON.stringify(regUsers));
             } catch (e) {}
 
-            // Background sync to SQL database & users.csv
+            // Background sync to backend without altering registration_method
             try {
-                fetch(`${API_BASE}/auth/google`, {
+                fetch(`${API_BASE}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: email,
-                        name: authUser.name,
-                        role: (authUser.role || 'citizen').toLowerCase()
-                    })
+                    body: JSON.stringify({ email, password })
                 }).then(r => r.json()).then(d => {
                     if (d && d.user && d.user.id) {
-                        authUser = { ...authUser, id: d.user.id };
+                        authUser = { ...authUser, ...d.user };
                         localStorage.setItem('kizuno_auth_user', JSON.stringify(authUser));
                     }
                 }).catch(() => {});
@@ -5748,7 +5751,7 @@
                 }
 
                 if (!isBackendConnected) {
-                    showToast('Backend server is not reachable. Please start server.py.', '⚠️');
+                    showToast('Backend server is not running! Start it with "python run.py" or "python server.py".', '⚠️');
                     return false;
                 }
 
@@ -5756,7 +5759,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, username }),
-                    signal: AbortSignal.timeout(8000)
+                    signal: AbortSignal.timeout(12000)
                 });
 
                 const data = await res.json();
@@ -5780,13 +5783,13 @@
                     statusText.innerHTML = `
                         <div style="background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 12px; padding: 1.15rem 1rem; margin-bottom: 1.15rem; text-align: left;">
                             <div style="font-size: 0.875rem; font-weight: 800; color: #1e40af; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.35rem;">
-                                <span>✉️</span> Verification Code Sent to Gmail
+                                <span>✉️</span> 6-Digit Verification Code Sent!
                             </div>
                             <p style="font-size: 0.8rem; color: #334155; margin: 0 0 0.4rem 0; line-height: 1.45;">
-                                A confidential 6-digit code has been sent to <strong style="color: var(--brand-primary);">${escapeHtml(email)}</strong>.
+                                An email from <strong>kizuno.ai.in@gmail.com</strong> has been sent to <strong style="color: var(--brand-primary);">${escapeHtml(email)}</strong>.
                             </p>
-                            <p style="font-size: 0.775rem; color: #64748b; margin: 0; line-height: 1.4;">
-                                Please check your <strong>Gmail inbox (or Spam folder)</strong> and type the exact 6-digit code below.
+                            <p style="font-size: 0.775rem; color: #b45309; background: #fef3c7; padding: 0.4rem 0.6rem; border-radius: 6px; margin: 0.4rem 0; line-height: 1.4;">
+                                ⚠️ <strong>Note:</strong> If you don't see it in your Primary inbox, please check your <strong>Spam / Junk folder</strong> or <strong>Updates/Promotions tab</strong>.
                             </p>
                         </div>
                     `;
@@ -6010,6 +6013,16 @@
             if (userValEl) userValEl.innerText = name;
             if (emailValEl) emailValEl.innerText = email;
             if (roleValEl) roleValEl.innerText = role;
+
+            const methodValEl = document.getElementById('profile-card-method-val');
+            const rawMethod = (authUser.registration_method || authUser.registrationMethod || authUser.authProvider || '').toLowerCase();
+            const isGoogleAuth = rawMethod.includes('google');
+            if (methodValEl) {
+                methodValEl.innerHTML = isGoogleAuth
+                    ? `<span style="color: #2563eb; font-weight: 700; background: #eff6ff; padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px solid #bfdbfe;">🌐 Google OAuth 2.0</span>`
+                    : `<span style="color: #0f172a; font-weight: 700; background: #f8fafc; padding: 0.2rem 0.5rem; border-radius: 6px; border: 1px solid #e2e8f0;">✉️ Email &amp; Password</span>`;
+            }
+
             if (roleBadgeEl) roleBadgeEl.innerText = (role === 'Officer' || role === 'officer') ? '🛡️ Municipal Officer' : '✓ Verified Citizen';
             if (email.toLowerCase().trim() === 'dilippalanisamy09@gmail.com') {
                 if (roleBadgeEl) roleBadgeEl.innerText = '👑 Founder & Admin';
